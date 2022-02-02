@@ -1,0 +1,11 @@
+---
+title: "Mineração de Dados"
+output:   
+  html_document: 
+    df_print: paged
+---
+
+
+* [Aula 1](content/Aula01.html)  
+* [Aula 2](content/Aula02.html)  
+* [Aula 3](content/Aula03.html)

@@ -1,0 +1,12 @@
+---
+title: "Mineração de dados"
+output: html_document
+---
+
+Bom dia / Boa tarde / Boa Noite, 
+
+Esta é a página principal do site da disciplina Mineração de Dados IME05-12547.
+
+Aqui vocês vão encontrar os exemplos apresentados em aula, que servirão de base para execução das atividades previstas no curso.
+
+Os outros materiais didáticos estarão disponíveis no AVA.

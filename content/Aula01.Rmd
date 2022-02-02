@@ -1,0 +1,215 @@
+---
+title: "Carregando dados, Manipulando e Visualizando"
+author: "Ricardo Accioly"
+date: ' `r Sys.Date()` '
+output:
+  html_document:
+    toc: yes
+    code_download: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.retina = 3, fig.height=4, fig.width=6, dev=c("png"), fig.path="imagens/Aula01/")
+
+```
+
+
+## Entrada de dados no R
+
+## Lendo dados de arquivos csv
+
+```{r csv}
+library(readr)
+url <- "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos-acervo-de-dados-tecnicos/tabela-de-pocos.csv"
+## O read_delim permite que seja definido o tipo de delimitador dos dados
+pocos <- read_delim(url, delim = ";", locale= locale(decimal_mark = ","), col_names = TRUE)
+str(pocos)
+head(pocos)
+```
+
+
+## Bibliotecas
+
+Vamos carregar as bibliotecas que serão usadas na manipulação e visualização de dados. 
+
+O pacote tidyverse carrega diversos pacotes muito uteis na manipulação e visualização de dados 
+
+
+```{r carregando_bibliotecas, echo=TRUE, message=TRUE}
+library("tidyverse")
+```
+
+
+Vamos primeiro conhecer o que tem na base de dados pocos. A base de dados possui `r  nrow(pocos)` linhas
+
+```{r conhecendo_pocos}
+class(pocos)  # Tipo de base de dados
+summary(pocos) # Sumario da base de dados
+```
+
+## Dados de poços
+
+Os dados da tabela poços tem 60 colunas.
+
+Vamos inicialmente selecionar algumas colunas para podermos trabalhar com os dados.
+
+**As colunas que vamos trabalhar são:**
+
+1) POCO
+2) OPERADOR
+3) ESTADO
+4) BACIA
+5) BLOCO
+6) CAMPO
+7) TERRA_MAR
+8) CATEGORIA
+9) SITUACAO
+10) INICIO
+11) TERMINO
+12) PROFUNDIDADE_MEDIDA_M
+
+Para selecionar colunas usamos a função `select`
+
+```{r selecionando}
+## Vamos selecionar as colunas listadas acima
+pocos_01 <- pocos %>% select(POCO,OPERADOR,ESTADO,BACIA,BLOCO, CAMPO,TERRA_MAR,CATEGORIA,SITUACAO, INICIO, TERMINO, PROFUNDIDADE_MEDIDA_M)
+head(pocos_01)
+```
+
+
+## Manipulação de dados
+Vamos eliminar as linhas de dados que apresenta dados ausentes "NA" nas colunas TERMINO e PROFUNDIDADE_MEDIDA_M.
+
+```{r eliminando_linhas}
+pocos_01 <- pocos_01 %>% drop_na(any_of(c("TERMINO","PROFUNDIDADE_MEDIDA_M")))
+# melhorando a visualização dos dados
+knitr::kable(
+  head(pocos_01, 10), booktabs = TRUE,
+  caption = 'Uma tabela mais elegante com as 10 primeras linhas de pocos_01.')
+```
+
+**Veja que existia um grande número de dados ausentes**
+
+Antes: `r  nrow(pocos)` linhas
+Depois: `r  nrow(pocos_01)` linhas
+
+## Corrigindo tipo de dados
+
+As colunas INICIO e TERMINO são datas, mas foram lidas como caracter, vamos corrigir isto!
+
+Para trabalhar com datas vamos usar o pacote `lubridate`
+
+```{r tipo_dados}
+library(lubridate)
+pocos_01$INICIO <- as_date(pocos_01$INICIO, format="%d/%m/%Y")
+pocos_01$TERMINO <- as_date(pocos_01$TERMINO, format="%d/%m/%Y")
+```
+
+## Filtrando dados
+
+Vamos analisar os poços de uma detreminada região, para isto podemos fltrar os poços de um bloco.
+Vamos filtrar somente os poços do CAMPO PEREGRINO usando a função `filter`.
+
+```{r filtrando}
+pocos_02 <- pocos_01 %>% filter(CAMPO=="PEREGRINO") ##  
+summary(pocos_02)
+knitr::kable(
+  head(pocos_02, 10), booktabs = TRUE,
+  caption = 'Uma tabela mais elegante com as 10 primeras linhas de pocos_02.')
+```
+
+### Avaliando os dados
+
+Os poços possuem diversas categorias, vamos ver que categorias existem nestes poços do bloco BES-100.
+
+```{r identificando}
+unique(pocos_02$CATEGORIA)
+```
+
+### Filtrando poços de desenvolvimento
+
+```{r filtrando2}
+pocos_03 <- pocos_02 %>% filter(CATEGORIA=="Desenvolvimento") ##  
+summary(pocos_03)
+knitr::kable(
+  head(pocos_03, 10), booktabs = TRUE,
+  caption = 'Uma tabela mais elegante com as 10 primeras linhas de pocos_03.')
+```
+
+## Criando uma coluna com mutate
+
+Vamos criar uma coluna que nos dará a duração da perfuração dos poços.
+
+```{r criando_coluna}
+pocos_03 <- pocos_03 %>% mutate(TPERF = (INICIO %--% TERMINO)/ddays(1))
+summary(pocos_03)
+```
+
+### Eliminando colunas com tempos negativos
+
+
+
+```{r filtrando_coluna}
+pocos_03 <- pocos_03 %>% filter(TPERF > 0) 
+```
+
+
+
+## Visualizando os dados de PEREGRINO
+
+### Box-Plot
+
+```{r boxplot}
+ggplot(pocos_03, aes(x=CAMPO, y=TPERF)) +
+  geom_boxplot()
+```
+
+
+Veja que existem alguns tempos bem elevados que estão representados por pontos no box-plot. Eles podem ser considerados pontos afastados (outliers), que neste caso vamos eliminar.
+
+
+```{r outliers}
+pocos_04 <- pocos_03 %>% filter(TPERF < 100)
+ggplot(pocos_04, aes(x=CAMPO, y=TPERF)) +
+  geom_boxplot()
+```
+
+
+### Histograma
+
+```{r histograma}
+ggplot(pocos_04, aes(x=TPERF)) +
+  geom_histogram()
+```
+
+
+Veja que desta forma o ggplot usa o seu padrão de 30 faixas de dados, que geralmente não é o mais adequado.
+
+Vamos usar uma regra adequada para definição de número de faixas.
+
+### Criando um histograma usando a regra de Sturges
+
+A regra de Sturges indica `r round(1+3.322*log10(nrow(pocos_04)),0)` faixas enquanto que o padrão do ggplot2 é 30.  
+
+```{r Sturges}
+ggplot(pocos_04, aes(x = TPERF)) +
+  geom_histogram(bins = round(1+3.322*log10(nrow(pocos_04)),0))
+```
+
+Veja que agora temos um histograma mais suave.
+
+
+### Gráfico de Dispersão
+
+```{r dispersao}
+ggplot(pocos_04, aes(x=PROFUNDIDADE_MEDIDA_M, y=TPERF)) + 
+  geom_point()
+```
+
+Podemos perceber que há uma relação entre o tempo de perfuração e a profundidade do poço.
+
+Também é possível se perceber que ainda existem dados com comportamentos estranhos. Poços rasos com profundidade muito diferente dos demais, além disso um poço muito profundo com duração muito pequena.
+
+Se fossemos construir um modelo certamente terímos que investigar o porque destes comportamentos.
+
+
