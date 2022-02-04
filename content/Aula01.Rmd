@@ -23,7 +23,6 @@ library(readr)
 url <- "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos-acervo-de-dados-tecnicos/tabela-de-pocos.csv"
 ## O read_delim permite que seja definido o tipo de delimitador dos dados
 pocos <- read_delim(url, delim = ";", locale= locale(decimal_mark = ","), col_names = TRUE)
-str(pocos)
 head(pocos)
 ```
 
@@ -81,11 +80,17 @@ head(pocos_01)
 Vamos eliminar as linhas de dados que apresenta dados ausentes "NA" nas colunas TERMINO e PROFUNDIDADE_MEDIDA_M.
 
 ```{r eliminando_linhas}
-pocos_01 <- pocos_01 %>% drop_na(any_of(c("TERMINO","PROFUNDIDADE_MEDIDA_M")))
+sum(is.na(pocos_01))
+sum(is.na(pocos_01$INICIO))
+sum(is.na(pocos_01$TERMINO))
+sum(is.na(pocos_01$PROFUNDIDADE_MEDIDA_M))
+pocos_01 <- pocos_01 %>% drop_na(any_of(c("TERMINO",
+                                          "PROFUNDIDADE_MEDIDA_M")))
 # melhorando a visualização dos dados
 knitr::kable(
   head(pocos_01, 10), booktabs = TRUE,
   caption = 'Uma tabela mais elegante com as 10 primeras linhas de pocos_01.')
+sum(is.na(pocos_01))
 ```
 
 **Veja que existia um grande número de dados ausentes**
@@ -211,5 +216,15 @@ Podemos perceber que há uma relação entre o tempo de perfuração e a profund
 Também é possível se perceber que ainda existem dados com comportamentos estranhos. Poços rasos com profundidade muito diferente dos demais, além disso um poço muito profundo com duração muito pequena.
 
 Se fossemos construir um modelo certamente terímos que investigar o porque destes comportamentos.
+
+
+### Alterando nome das colunas
+
+```{r renomeando_colunas}
+names(pocos_04)
+names(pocos_04) <- tolower(names(pocos_04))
+names(pocos_04)
+```
+
 
 

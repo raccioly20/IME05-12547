@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ricardo Accioly" />
 
-<meta name="date" content="2022-02-02" />
+<meta name="date" content="2022-02-04" />
 
 <title>Carregando dados, Manipulando e Visualizando</title>
 
@@ -184,7 +184,7 @@ pre code {
 
 <h1 class="title toc-ignore">Carregando dados, Manipulando e Visualizando</h1>
 <h4 class="author">Ricardo Accioly</h4>
-<h4 class="date">2022-02-02</h4>
+<h4 class="date">2022-02-04</h4>
 
 </div>
 
@@ -211,6 +211,7 @@ pre code {
 <li><a href="#histograma">Histograma</a></li>
 <li><a href="#criando-um-histograma-usando-a-regra-de-sturges">Criando um histograma usando a regra de Sturges</a></li>
 <li><a href="#gráfico-de-dispersão">Gráfico de Dispersão</a></li>
+<li><a href="#alterando-nome-das-colunas">Alterando nome das colunas</a></li>
 </ul></li>
 </ul>
 </div>
@@ -233,132 +234,6 @@ pocos &lt;- read_delim(url, delim = &quot;;&quot;, locale= locale(decimal_mark =
 <pre><code>## 
 ## i Use `spec()` to retrieve the full column specification for this data.
 ## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>str(pocos)</code></pre>
-<pre><code>## spec_tbl_df [30,185 x 60] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
-##  $ POCO                      : chr [1:30185] &quot;3-DEV-7-RJS&quot; &quot;7-AG-18D-SE&quot; &quot;7-GLF-1HA-ESS&quot; &quot;7-PIR-211D-AL&quot; ...
-##  $ CADASTRO                  : chr [1:30185] &quot;74281021240&quot; &quot;90120022121&quot; &quot;34271021222&quot; &quot;08115021292&quot; ...
-##  $ OPERADOR                  : chr [1:30185] &quot;Petro Rio O&amp;G&quot; &quot;Petrobras&quot; &quot;Petrobras&quot; &quot;Petrobras&quot; ...
-##  $ POCO_OPERADOR             : chr [1:30185] &quot;3DEV7RJS&quot; &quot;7AG18DSE&quot; &quot;7GLF1HAESS&quot; &quot;7PIR211DAL&quot; ...
-##  $ ESTADO                    : chr [1:30185] &quot;RJ&quot; &quot;SE&quot; &quot;ES&quot; &quot;AL&quot; ...
-##  $ BACIA                     : chr [1:30185] &quot;Campos&quot; &quot;Sergipe&quot; &quot;Espírito Santo&quot; &quot;Alagoas&quot; ...
-##  $ BLOCO                     : chr [1:30185] &quot;BM-C-8&quot; &quot;AG&quot; &quot;BES-100&quot; &quot;PIR&quot; ...
-##  $ SIG_CAMPO                 : chr [1:30185] &quot;POL  &quot; &quot;AG   &quot; &quot;GLF  &quot; &quot;PIR  &quot; ...
-##  $ CAMPO                     : chr [1:30185] &quot;POLVO&quot; &quot;AGUILHADA&quot; &quot;GOLFINHO&quot; &quot;PILAR&quot; ...
-##  $ TERRA_MAR                 : chr [1:30185] &quot;M&quot; &quot;T&quot; &quot;M&quot; &quot;T&quot; ...
-##  $ POCO_POS_ANP              : chr [1:30185] &quot;S&quot; &quot;S&quot; &quot;S&quot; &quot;S&quot; ...
-##  $ TIPO                      : chr [1:30185] &quot;3 &quot; &quot;7 &quot; &quot;7 &quot; &quot;7 &quot; ...
-##  $ CATEGORIA                 : chr [1:30185] &quot;Extensão&quot; &quot;Desenvolvimento&quot; &quot;Desenvolvimento&quot; &quot;Desenvolvimento&quot; ...
-##  $ RECLASSIFICACAO           : chr [1:30185] &quot;EXTENSÃO PARA PETRÓLEO&quot; &quot;PRODUTOR COMERCIAL DE PETRÓLEO&quot; &quot;PRODUTOR COMERCIAL DE PETRÓLEO&quot; &quot;PRODUTOR COMERCIAL DE PETRÓLEO E GÁS NATURAL&quot; ...
-##  $ SITUACAO                  : chr [1:30185] &quot;ABANDONADO PERMANENTEMENTE&quot; &quot;ABANDONADO TEMPORARIAMENTE COM MONITORAMENTO&quot; &quot;ABANDONADO PERMANENTEMENTE&quot; &quot;INJETANDO&quot; ...
-##  $ INICIO                    : chr [1:30185] &quot;10/02/2005 00:00&quot; &quot;08/01/2007 00:00&quot; &quot;27/01/2005 00:00&quot; &quot;29/03/2005 00:00&quot; ...
-##  $ TERMINO                   : chr [1:30185] NA &quot;31/01/2007 00:00&quot; &quot;19/03/2005 00:00&quot; NA ...
-##  $ CONCLUSAO                 : chr [1:30185] &quot;24/03/2005 00:00&quot; &quot;04/02/2007 00:00&quot; &quot;16/05/2005 00:00&quot; &quot;14/04/2005 00:00&quot; ...
-##  $ TITULARIDADE              : chr [1:30185] &quot;Público&quot; &quot;Público&quot; &quot;Público&quot; &quot;Público&quot; ...
-##  $ LATITUDE_BASE_4C          : chr [1:30185] &quot;-23:05:35,874&quot; &quot;-10:41:12,166&quot; &quot;-20:03:23,833&quot; &quot;-09:36:27,047&quot; ...
-##  $ LONGITUDE_BASE_4C         : chr [1:30185] &quot;-41:00:27,948&quot; &quot;-36:53:17,573&quot; &quot;-39:29:59,174&quot; &quot;-35:55:06,807&quot; ...
-##  $ LATITUDE_BASE_DD          : num [1:30185] -23.09 -10.69 -20.06 -9.61 -9.61 ...
-##  $ LONGITUDE_BASE_DD         : num [1:30185] -41 -36.9 -39.5 -35.9 -35.9 ...
-##  $ DATUM_HORIZONTAL          : chr [1:30185] &quot;SIRGAS2000&quot; &quot;SIRGAS2000&quot; &quot;SIRGAS2000&quot; &quot;SIRGAS2000&quot; ...
-##  $ TIPO_DE_COORDENADA_DE_BASE: chr [1:30185] &quot;Definitiva&quot; &quot;Definitiva&quot; &quot;Definitiva&quot; &quot;Definitiva&quot; ...
-##  $ DIRECAO                   : chr [1:30185] &quot;Vertical&quot; &quot;Direcional&quot; &quot;Horizontal&quot; &quot;Direcional&quot; ...
-##  $ PROFUNDIDADE_VERTICAL_M   : num [1:30185] 0 1406 NA NA 0 ...
-##  $ PROFUNDIDADE_SONDADOR_M   : num [1:30185] 2205 1543 4585 1555 1560 ...
-##  $ PROFUNDIDADE_MEDIDA_M     : num [1:30185] 2205 1543 4585 1555 1560 ...
-##  $ REFERENCIA_DE_PROFUNDIDADE: chr [1:30185] &quot;MR&quot; &quot;MR&quot; &quot;MR&quot; &quot;MR&quot; ...
-##  $ MESA_ROTATIVA             : num [1:30185] 25 101 20 29 23 53 25 22 54 7 ...
-##  $ COTA_ALTIMETRICA_M        : num [1:30185] 0 96.4 0 24 18.4 ...
-##  $ LAMINA_D_AGUA_M           : num [1:30185] 99.8 0 1460.5 0 0 ...
-##  $ DATUM_VERTICAL            : chr [1:30185] &quot;NM&quot; &quot;NM&quot; &quot;NM&quot; &quot;NM&quot; ...
-##  $ UNIDADE_ESTRATIGRAFICA    : logi [1:30185] NA NA NA NA NA NA ...
-##  $ GEOLOGIA_GRUPO_FINAL      : chr [1:30185] NA NA NA NA ...
-##  $ GEOLOGIA_FORMACAO_FINAL   : chr [1:30185] NA NA NA NA ...
-##  $ GEOLOGIA_MEMBRO_FINAL     : chr [1:30185] NA NA NA NA ...
-##  $ CDPE                      : chr [1:30185] &quot;Existe&quot; &quot;Existe&quot; &quot;Existe&quot; &quot;Existe&quot; ...
-##  $ AGP                       : chr [1:30185] NA NA NA NA ...
-##  $ PC                        : chr [1:30185] &quot;Existe&quot; NA NA NA ...
-##  $ PAG                       : chr [1:30185] NA NA NA NA ...
-##  $ PERFIS_CONVENCIONAIS      : chr [1:30185] &quot;Existe&quot; &quot;Existe&quot; NA NA ...
-##  $ DURANTE_PERFURACAO        : chr [1:30185] &quot;Existe&quot; NA &quot;Existe&quot; NA ...
-##  $ PERFIS_DIGITAIS           : chr [1:30185] NA NA &quot;Existe&quot; &quot;Existe&quot; ...
-##  $ PERFIS_PROCESSADOS        : chr [1:30185] NA NA NA NA ...
-##  $ PERFIS_ESPECIAIS          : chr [1:30185] &quot;Existe&quot; NA NA NA ...
-##  $ AMOSTRA_LATERAL           : chr [1:30185] NA NA NA NA ...
-##  $ SISMICA                   : chr [1:30185] &quot;Existe&quot; NA NA NA ...
-##  $ TABELA_TEMPO_PROFUNDIDADE : chr [1:30185] NA NA NA NA ...
-##  $ DADOS_DIRECIONAIS         : chr [1:30185] NA &quot;Existe&quot; &quot;Existe&quot; &quot;Existe&quot; ...
-##  $ TESTE_A_CABO              : chr [1:30185] &quot;Existe&quot; &quot;Existe&quot; NA NA ...
-##  $ TESTE_DE_FORMACAO         : chr [1:30185] NA NA NA NA ...
-##  $ CANHONEIO                 : chr [1:30185] NA NA NA NA ...
-##  $ TESTEMUNHO                : chr [1:30185] NA NA NA NA ...
-##  $ GEOQUIMICA                : chr [1:30185] NA NA NA NA ...
-##  $ SIG_SONDA                 : chr [1:30185] &quot;SS-48&quot; &quot;SC-82&quot; &quot;SS-56&quot; &quot;SC-91&quot; ...
-##  $ NOM_SONDA                 : chr [1:30185] &quot;PRIDE SOUTH ATLANTIC&quot; &quot;SONDA CONVENCIONAL 82&quot; &quot;ENSCO 6001&quot; &quot;SONDA CONVENCIONAL 91&quot; ...
-##  $ DHA_ATUALIZACAO           : chr [1:30185] &quot;02/01/2022 05:00&quot; &quot;02/01/2022 05:00&quot; &quot;02/01/2022 05:00&quot; &quot;02/01/2022 05:00&quot; ...
-##  $ ATINGIU_PRESAL            : chr [1:30185] &quot;N&quot; NA NA NA ...
-##  - attr(*, &quot;spec&quot;)=
-##   .. cols(
-##   ..   POCO = col_character(),
-##   ..   CADASTRO = col_character(),
-##   ..   OPERADOR = col_character(),
-##   ..   POCO_OPERADOR = col_character(),
-##   ..   ESTADO = col_character(),
-##   ..   BACIA = col_character(),
-##   ..   BLOCO = col_character(),
-##   ..   SIG_CAMPO = col_character(),
-##   ..   CAMPO = col_character(),
-##   ..   TERRA_MAR = col_character(),
-##   ..   POCO_POS_ANP = col_character(),
-##   ..   TIPO = col_character(),
-##   ..   CATEGORIA = col_character(),
-##   ..   RECLASSIFICACAO = col_character(),
-##   ..   SITUACAO = col_character(),
-##   ..   INICIO = col_character(),
-##   ..   TERMINO = col_character(),
-##   ..   CONCLUSAO = col_character(),
-##   ..   TITULARIDADE = col_character(),
-##   ..   LATITUDE_BASE_4C = col_character(),
-##   ..   LONGITUDE_BASE_4C = col_character(),
-##   ..   LATITUDE_BASE_DD = col_double(),
-##   ..   LONGITUDE_BASE_DD = col_double(),
-##   ..   DATUM_HORIZONTAL = col_character(),
-##   ..   TIPO_DE_COORDENADA_DE_BASE = col_character(),
-##   ..   DIRECAO = col_character(),
-##   ..   PROFUNDIDADE_VERTICAL_M = col_double(),
-##   ..   PROFUNDIDADE_SONDADOR_M = col_double(),
-##   ..   PROFUNDIDADE_MEDIDA_M = col_double(),
-##   ..   REFERENCIA_DE_PROFUNDIDADE = col_character(),
-##   ..   MESA_ROTATIVA = col_double(),
-##   ..   COTA_ALTIMETRICA_M = col_double(),
-##   ..   LAMINA_D_AGUA_M = col_double(),
-##   ..   DATUM_VERTICAL = col_character(),
-##   ..   UNIDADE_ESTRATIGRAFICA = col_logical(),
-##   ..   GEOLOGIA_GRUPO_FINAL = col_character(),
-##   ..   GEOLOGIA_FORMACAO_FINAL = col_character(),
-##   ..   GEOLOGIA_MEMBRO_FINAL = col_character(),
-##   ..   CDPE = col_character(),
-##   ..   AGP = col_character(),
-##   ..   PC = col_character(),
-##   ..   PAG = col_character(),
-##   ..   PERFIS_CONVENCIONAIS = col_character(),
-##   ..   DURANTE_PERFURACAO = col_character(),
-##   ..   PERFIS_DIGITAIS = col_character(),
-##   ..   PERFIS_PROCESSADOS = col_character(),
-##   ..   PERFIS_ESPECIAIS = col_character(),
-##   ..   AMOSTRA_LATERAL = col_character(),
-##   ..   SISMICA = col_character(),
-##   ..   TABELA_TEMPO_PROFUNDIDADE = col_character(),
-##   ..   DADOS_DIRECIONAIS = col_character(),
-##   ..   TESTE_A_CABO = col_character(),
-##   ..   TESTE_DE_FORMACAO = col_character(),
-##   ..   CANHONEIO = col_character(),
-##   ..   TESTEMUNHO = col_character(),
-##   ..   GEOQUIMICA = col_character(),
-##   ..   SIG_SONDA = col_character(),
-##   ..   NOM_SONDA = col_character(),
-##   ..   DHA_ATUALIZACAO = col_character(),
-##   ..   ATINGIU_PRESAL = col_character()
-##   .. )
-##  - attr(*, &quot;problems&quot;)=&lt;externalptr&gt;</code></pre>
 <pre class="r"><code>head(pocos)</code></pre>
 <pre><code>## # A tibble: 6 x 60
 ##   POCO    CADASTRO  OPERADOR  POCO_OPERADOR ESTADO BACIA  BLOCO SIG_CAMPO CAMPO 
@@ -560,7 +435,16 @@ head(pocos_01)</code></pre>
 <div id="manipulação-de-dados" class="section level2">
 <h2>Manipulação de dados</h2>
 <p>Vamos eliminar as linhas de dados que apresenta dados ausentes “NA” nas colunas TERMINO e PROFUNDIDADE_MEDIDA_M.</p>
-<pre class="r"><code>pocos_01 &lt;- pocos_01 %&gt;% drop_na(any_of(c(&quot;TERMINO&quot;,&quot;PROFUNDIDADE_MEDIDA_M&quot;)))
+<pre class="r"><code>sum(is.na(pocos_01))</code></pre>
+<pre><code>## [1] 30147</code></pre>
+<pre class="r"><code>sum(is.na(pocos_01$INICIO))</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>sum(is.na(pocos_01$TERMINO))</code></pre>
+<pre><code>## [1] 1835</code></pre>
+<pre class="r"><code>sum(is.na(pocos_01$PROFUNDIDADE_MEDIDA_M))</code></pre>
+<pre><code>## [1] 17828</code></pre>
+<pre class="r"><code>pocos_01 &lt;- pocos_01 %&gt;% drop_na(any_of(c(&quot;TERMINO&quot;,
+                                          &quot;PROFUNDIDADE_MEDIDA_M&quot;)))
 # melhorando a visualização dos dados
 knitr::kable(
   head(pocos_01, 10), booktabs = TRUE,
@@ -740,6 +624,8 @@ knitr::kable(
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>sum(is.na(pocos_01))</code></pre>
+<pre><code>## [1] 4255</code></pre>
 <p><strong>Veja que existia um grande número de dados ausentes</strong></p>
 <p>Antes: 30185 linhas Depois: 10630 linhas</p>
 </div>
@@ -1263,9 +1149,25 @@ ggplot(pocos_04, aes(x=CAMPO, y=TPERF)) +
 <p>Também é possível se perceber que ainda existem dados com comportamentos estranhos. Poços rasos com profundidade muito diferente dos demais, além disso um poço muito profundo com duração muito pequena.</p>
 <p>Se fossemos construir um modelo certamente terímos que investigar o porque destes comportamentos.</p>
 </div>
+<div id="alterando-nome-das-colunas" class="section level3">
+<h3>Alterando nome das colunas</h3>
+<pre class="r"><code>names(pocos_04)</code></pre>
+<pre><code>##  [1] &quot;POCO&quot;                  &quot;OPERADOR&quot;              &quot;ESTADO&quot;               
+##  [4] &quot;BACIA&quot;                 &quot;BLOCO&quot;                 &quot;CAMPO&quot;                
+##  [7] &quot;TERRA_MAR&quot;             &quot;CATEGORIA&quot;             &quot;SITUACAO&quot;             
+## [10] &quot;INICIO&quot;                &quot;TERMINO&quot;               &quot;PROFUNDIDADE_MEDIDA_M&quot;
+## [13] &quot;TPERF&quot;</code></pre>
+<pre class="r"><code>names(pocos_04) &lt;- tolower(names(pocos_04))
+names(pocos_04)</code></pre>
+<pre><code>##  [1] &quot;poco&quot;                  &quot;operador&quot;              &quot;estado&quot;               
+##  [4] &quot;bacia&quot;                 &quot;bloco&quot;                 &quot;campo&quot;                
+##  [7] &quot;terra_mar&quot;             &quot;categoria&quot;             &quot;situacao&quot;             
+## [10] &quot;inicio&quot;                &quot;termino&quot;               &quot;profundidade_medida_m&quot;
+## [13] &quot;tperf&quot;</code></pre>
+</div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNhcnJlZ2FuZG8gZGFkb3MsIE1hbmlwdWxhbmRvIGUgVmlzdWFsaXphbmRvIg0KYXV0aG9yOiAiUmljYXJkbyBBY2Npb2x5Ig0KZGF0ZTogJyBgciBTeXMuRGF0ZSgpYCAnDQpvdXRwdXQ6DQogIGh0bWxfZG9jdW1lbnQ6DQogICAgdG9jOiB5ZXMNCiAgICBjb2RlX2Rvd25sb2FkOiB5ZXMNCi0tLQ0KDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSwgZmlnLnJldGluYSA9IDMsIGZpZy5oZWlnaHQ9NCwgZmlnLndpZHRoPTYsIGRldj1jKCJwbmciKSwgZmlnLnBhdGg9ImltYWdlbnMvQXVsYTAxLyIpDQoNCmBgYA0KDQoNCiMjIEVudHJhZGEgZGUgZGFkb3Mgbm8gUg0KDQojIyBMZW5kbyBkYWRvcyBkZSBhcnF1aXZvcyBjc3YNCg0KYGBge3IgY3N2fQ0KbGlicmFyeShyZWFkcikNCnVybCA8LSAiaHR0cHM6Ly93d3cuZ292LmJyL2FucC9wdC1ici9jZW50cmFpcy1kZS1jb250ZXVkby9kYWRvcy1hYmVydG9zL2FycXVpdm9zLWFjZXJ2by1kZS1kYWRvcy10ZWNuaWNvcy90YWJlbGEtZGUtcG9jb3MuY3N2Ig0KIyMgTyByZWFkX2RlbGltIHBlcm1pdGUgcXVlIHNlamEgZGVmaW5pZG8gbyB0aXBvIGRlIGRlbGltaXRhZG9yIGRvcyBkYWRvcw0KcG9jb3MgPC0gcmVhZF9kZWxpbSh1cmwsIGRlbGltID0gIjsiLCBsb2NhbGU9IGxvY2FsZShkZWNpbWFsX21hcmsgPSAiLCIpLCBjb2xfbmFtZXMgPSBUUlVFKQ0Kc3RyKHBvY29zKQ0KaGVhZChwb2NvcykNCmBgYA0KDQoNCiMjIEJpYmxpb3RlY2FzDQoNClZhbW9zIGNhcnJlZ2FyIGFzIGJpYmxpb3RlY2FzIHF1ZSBzZXLDo28gdXNhZGFzIG5hIG1hbmlwdWxhw6fDo28gZSB2aXN1YWxpemHDp8OjbyBkZSBkYWRvcy4gDQoNCk8gcGFjb3RlIHRpZHl2ZXJzZSBjYXJyZWdhIGRpdmVyc29zIHBhY290ZXMgbXVpdG8gdXRlaXMgbmEgbWFuaXB1bGHDp8OjbyBlIHZpc3VhbGl6YcOnw6NvIGRlIGRhZG9zIA0KDQoNCmBgYHtyIGNhcnJlZ2FuZG9fYmlibGlvdGVjYXMsIGVjaG89VFJVRSwgbWVzc2FnZT1UUlVFfQ0KbGlicmFyeSgidGlkeXZlcnNlIikNCmBgYA0KDQoNClZhbW9zIHByaW1laXJvIGNvbmhlY2VyIG8gcXVlIHRlbSBuYSBiYXNlIGRlIGRhZG9zIHBvY29zLiBBIGJhc2UgZGUgZGFkb3MgcG9zc3VpIGByICBucm93KHBvY29zKWAgbGluaGFzDQoNCmBgYHtyIGNvbmhlY2VuZG9fcG9jb3N9DQpjbGFzcyhwb2NvcykgICMgVGlwbyBkZSBiYXNlIGRlIGRhZG9zDQpzdW1tYXJ5KHBvY29zKSAjIFN1bWFyaW8gZGEgYmFzZSBkZSBkYWRvcw0KYGBgDQoNCiMjIERhZG9zIGRlIHBvw6dvcw0KDQpPcyBkYWRvcyBkYSB0YWJlbGEgcG/Dp29zIHRlbSA2MCBjb2x1bmFzLg0KDQpWYW1vcyBpbmljaWFsbWVudGUgc2VsZWNpb25hciBhbGd1bWFzIGNvbHVuYXMgcGFyYSBwb2Rlcm1vcyB0cmFiYWxoYXIgY29tIG9zIGRhZG9zLg0KDQoqKkFzIGNvbHVuYXMgcXVlIHZhbW9zIHRyYWJhbGhhciBzw6NvOioqDQoNCjEpIFBPQ08NCjIpIE9QRVJBRE9SDQozKSBFU1RBRE8NCjQpIEJBQ0lBDQo1KSBCTE9DTw0KNikgQ0FNUE8NCjcpIFRFUlJBX01BUg0KOCkgQ0FURUdPUklBDQo5KSBTSVRVQUNBTw0KMTApIElOSUNJTw0KMTEpIFRFUk1JTk8NCjEyKSBQUk9GVU5ESURBREVfTUVESURBX00NCg0KUGFyYSBzZWxlY2lvbmFyIGNvbHVuYXMgdXNhbW9zIGEgZnVuw6fDo28gYHNlbGVjdGANCg0KYGBge3Igc2VsZWNpb25hbmRvfQ0KIyMgVmFtb3Mgc2VsZWNpb25hciBhcyBjb2x1bmFzIGxpc3RhZGFzIGFjaW1hDQpwb2Nvc18wMSA8LSBwb2NvcyAlPiUgc2VsZWN0KFBPQ08sT1BFUkFET1IsRVNUQURPLEJBQ0lBLEJMT0NPLCBDQU1QTyxURVJSQV9NQVIsQ0FURUdPUklBLFNJVFVBQ0FPLCBJTklDSU8sIFRFUk1JTk8sIFBST0ZVTkRJREFERV9NRURJREFfTSkNCmhlYWQocG9jb3NfMDEpDQpgYGANCg0KDQojIyBNYW5pcHVsYcOnw6NvIGRlIGRhZG9zDQpWYW1vcyBlbGltaW5hciBhcyBsaW5oYXMgZGUgZGFkb3MgcXVlIGFwcmVzZW50YSBkYWRvcyBhdXNlbnRlcyAiTkEiIG5hcyBjb2x1bmFzIFRFUk1JTk8gZSBQUk9GVU5ESURBREVfTUVESURBX00uDQoNCmBgYHtyIGVsaW1pbmFuZG9fbGluaGFzfQ0KcG9jb3NfMDEgPC0gcG9jb3NfMDEgJT4lIGRyb3BfbmEoYW55X29mKGMoIlRFUk1JTk8iLCJQUk9GVU5ESURBREVfTUVESURBX00iKSkpDQojIG1lbGhvcmFuZG8gYSB2aXN1YWxpemHDp8OjbyBkb3MgZGFkb3MNCmtuaXRyOjprYWJsZSgNCiAgaGVhZChwb2Nvc18wMSwgMTApLCBib29rdGFicyA9IFRSVUUsDQogIGNhcHRpb24gPSAnVW1hIHRhYmVsYSBtYWlzIGVsZWdhbnRlIGNvbSBhcyAxMCBwcmltZXJhcyBsaW5oYXMgZGUgcG9jb3NfMDEuJykNCmBgYA0KDQoqKlZlamEgcXVlIGV4aXN0aWEgdW0gZ3JhbmRlIG7Dum1lcm8gZGUgZGFkb3MgYXVzZW50ZXMqKg0KDQpBbnRlczogYHIgIG5yb3cocG9jb3MpYCBsaW5oYXMNCkRlcG9pczogYHIgIG5yb3cocG9jb3NfMDEpYCBsaW5oYXMNCg0KIyMgQ29ycmlnaW5kbyB0aXBvIGRlIGRhZG9zDQoNCkFzIGNvbHVuYXMgSU5JQ0lPIGUgVEVSTUlOTyBzw6NvIGRhdGFzLCBtYXMgZm9yYW0gbGlkYXMgY29tbyBjYXJhY3RlciwgdmFtb3MgY29ycmlnaXIgaXN0byENCg0KUGFyYSB0cmFiYWxoYXIgY29tIGRhdGFzIHZhbW9zIHVzYXIgbyBwYWNvdGUgYGx1YnJpZGF0ZWANCg0KYGBge3IgdGlwb19kYWRvc30NCmxpYnJhcnkobHVicmlkYXRlKQ0KcG9jb3NfMDEkSU5JQ0lPIDwtIGFzX2RhdGUocG9jb3NfMDEkSU5JQ0lPLCBmb3JtYXQ9IiVkLyVtLyVZIikNCnBvY29zXzAxJFRFUk1JTk8gPC0gYXNfZGF0ZShwb2Nvc18wMSRURVJNSU5PLCBmb3JtYXQ9IiVkLyVtLyVZIikNCmBgYA0KDQojIyBGaWx0cmFuZG8gZGFkb3MNCg0KVmFtb3MgYW5hbGlzYXIgb3MgcG/Dp29zIGRlIHVtYSBkZXRyZW1pbmFkYSByZWdpw6NvLCBwYXJhIGlzdG8gcG9kZW1vcyBmbHRyYXIgb3MgcG/Dp29zIGRlIHVtIGJsb2NvLg0KVmFtb3MgZmlsdHJhciBzb21lbnRlIG9zIHBvw6dvcyBkbyBDQU1QTyBQRVJFR1JJTk8gdXNhbmRvIGEgZnVuw6fDo28gYGZpbHRlcmAuDQoNCmBgYHtyIGZpbHRyYW5kb30NCnBvY29zXzAyIDwtIHBvY29zXzAxICU+JSBmaWx0ZXIoQ0FNUE89PSJQRVJFR1JJTk8iKSAjIyAgDQpzdW1tYXJ5KHBvY29zXzAyKQ0Ka25pdHI6OmthYmxlKA0KICBoZWFkKHBvY29zXzAyLCAxMCksIGJvb2t0YWJzID0gVFJVRSwNCiAgY2FwdGlvbiA9ICdVbWEgdGFiZWxhIG1haXMgZWxlZ2FudGUgY29tIGFzIDEwIHByaW1lcmFzIGxpbmhhcyBkZSBwb2Nvc18wMi4nKQ0KYGBgDQoNCiMjIyBBdmFsaWFuZG8gb3MgZGFkb3MNCg0KT3MgcG/Dp29zIHBvc3N1ZW0gZGl2ZXJzYXMgY2F0ZWdvcmlhcywgdmFtb3MgdmVyIHF1ZSBjYXRlZ29yaWFzIGV4aXN0ZW0gbmVzdGVzIHBvw6dvcyBkbyBibG9jbyBCRVMtMTAwLg0KDQpgYGB7ciBpZGVudGlmaWNhbmRvfQ0KdW5pcXVlKHBvY29zXzAyJENBVEVHT1JJQSkNCmBgYA0KDQojIyMgRmlsdHJhbmRvIHBvw6dvcyBkZSBkZXNlbnZvbHZpbWVudG8NCg0KYGBge3IgZmlsdHJhbmRvMn0NCnBvY29zXzAzIDwtIHBvY29zXzAyICU+JSBmaWx0ZXIoQ0FURUdPUklBPT0iRGVzZW52b2x2aW1lbnRvIikgIyMgIA0Kc3VtbWFyeShwb2Nvc18wMykNCmtuaXRyOjprYWJsZSgNCiAgaGVhZChwb2Nvc18wMywgMTApLCBib29rdGFicyA9IFRSVUUsDQogIGNhcHRpb24gPSAnVW1hIHRhYmVsYSBtYWlzIGVsZWdhbnRlIGNvbSBhcyAxMCBwcmltZXJhcyBsaW5oYXMgZGUgcG9jb3NfMDMuJykNCmBgYA0KDQojIyBDcmlhbmRvIHVtYSBjb2x1bmEgY29tIG11dGF0ZQ0KDQpWYW1vcyBjcmlhciB1bWEgY29sdW5hIHF1ZSBub3MgZGFyw6EgYSBkdXJhw6fDo28gZGEgcGVyZnVyYcOnw6NvIGRvcyBwb8Onb3MuDQoNCmBgYHtyIGNyaWFuZG9fY29sdW5hfQ0KcG9jb3NfMDMgPC0gcG9jb3NfMDMgJT4lIG11dGF0ZShUUEVSRiA9IChJTklDSU8gJS0tJSBURVJNSU5PKS9kZGF5cygxKSkNCnN1bW1hcnkocG9jb3NfMDMpDQpgYGANCg0KIyMjIEVsaW1pbmFuZG8gY29sdW5hcyBjb20gdGVtcG9zIG5lZ2F0aXZvcw0KDQoNCg0KYGBge3IgZmlsdHJhbmRvX2NvbHVuYX0NCnBvY29zXzAzIDwtIHBvY29zXzAzICU+JSBmaWx0ZXIoVFBFUkYgPiAwKSANCmBgYA0KDQoNCg0KIyMgVmlzdWFsaXphbmRvIG9zIGRhZG9zIGRlIFBFUkVHUklOTw0KDQojIyMgQm94LVBsb3QNCg0KYGBge3IgYm94cGxvdH0NCmdncGxvdChwb2Nvc18wMywgYWVzKHg9Q0FNUE8sIHk9VFBFUkYpKSArDQogIGdlb21fYm94cGxvdCgpDQpgYGANCg0KDQpWZWphIHF1ZSBleGlzdGVtIGFsZ3VucyB0ZW1wb3MgYmVtIGVsZXZhZG9zIHF1ZSBlc3TDo28gcmVwcmVzZW50YWRvcyBwb3IgcG9udG9zIG5vIGJveC1wbG90LiBFbGVzIHBvZGVtIHNlciBjb25zaWRlcmFkb3MgcG9udG9zIGFmYXN0YWRvcyAob3V0bGllcnMpLCBxdWUgbmVzdGUgY2FzbyB2YW1vcyBlbGltaW5hci4NCg0KDQpgYGB7ciBvdXRsaWVyc30NCnBvY29zXzA0IDwtIHBvY29zXzAzICU+JSBmaWx0ZXIoVFBFUkYgPCAxMDApDQpnZ3Bsb3QocG9jb3NfMDQsIGFlcyh4PUNBTVBPLCB5PVRQRVJGKSkgKw0KICBnZW9tX2JveHBsb3QoKQ0KYGBgDQoNCg0KIyMjIEhpc3RvZ3JhbWENCg0KYGBge3IgaGlzdG9ncmFtYX0NCmdncGxvdChwb2Nvc18wNCwgYWVzKHg9VFBFUkYpKSArDQogIGdlb21faGlzdG9ncmFtKCkNCmBgYA0KDQoNClZlamEgcXVlIGRlc3RhIGZvcm1hIG8gZ2dwbG90IHVzYSBvIHNldSBwYWRyw6NvIGRlIDMwIGZhaXhhcyBkZSBkYWRvcywgcXVlIGdlcmFsbWVudGUgbsOjbyDDqSBvIG1haXMgYWRlcXVhZG8uDQoNClZhbW9zIHVzYXIgdW1hIHJlZ3JhIGFkZXF1YWRhIHBhcmEgZGVmaW5pw6fDo28gZGUgbsO6bWVybyBkZSBmYWl4YXMuDQoNCiMjIyBDcmlhbmRvIHVtIGhpc3RvZ3JhbWEgdXNhbmRvIGEgcmVncmEgZGUgU3R1cmdlcw0KDQpBIHJlZ3JhIGRlIFN0dXJnZXMgaW5kaWNhIGByIHJvdW5kKDErMy4zMjIqbG9nMTAobnJvdyhwb2Nvc18wNCkpLDApYCBmYWl4YXMgZW5xdWFudG8gcXVlIG8gcGFkcsOjbyBkbyBnZ3Bsb3QyIMOpIDMwLiAgDQoNCmBgYHtyIFN0dXJnZXN9DQpnZ3Bsb3QocG9jb3NfMDQsIGFlcyh4ID0gVFBFUkYpKSArDQogIGdlb21faGlzdG9ncmFtKGJpbnMgPSByb3VuZCgxKzMuMzIyKmxvZzEwKG5yb3cocG9jb3NfMDQpKSwwKSkNCmBgYA0KDQpWZWphIHF1ZSBhZ29yYSB0ZW1vcyB1bSBoaXN0b2dyYW1hIG1haXMgc3VhdmUuDQoNCg0KIyMjIEdyw6FmaWNvIGRlIERpc3BlcnPDo28NCg0KYGBge3IgZGlzcGVyc2FvfQ0KZ2dwbG90KHBvY29zXzA0LCBhZXMoeD1QUk9GVU5ESURBREVfTUVESURBX00sIHk9VFBFUkYpKSArIA0KICBnZW9tX3BvaW50KCkNCmBgYA0KDQpQb2RlbW9zIHBlcmNlYmVyIHF1ZSBow6EgdW1hIHJlbGHDp8OjbyBlbnRyZSBvIHRlbXBvIGRlIHBlcmZ1cmHDp8OjbyBlIGEgcHJvZnVuZGlkYWRlIGRvIHBvw6dvLg0KDQpUYW1iw6ltIMOpIHBvc3PDrXZlbCBzZSBwZXJjZWJlciBxdWUgYWluZGEgZXhpc3RlbSBkYWRvcyBjb20gY29tcG9ydGFtZW50b3MgZXN0cmFuaG9zLiBQb8Onb3MgcmFzb3MgY29tIHByb2Z1bmRpZGFkZSBtdWl0byBkaWZlcmVudGUgZG9zIGRlbWFpcywgYWzDqW0gZGlzc28gdW0gcG/Dp28gbXVpdG8gcHJvZnVuZG8gY29tIGR1cmHDp8OjbyBtdWl0byBwZXF1ZW5hLg0KDQpTZSBmb3NzZW1vcyBjb25zdHJ1aXIgdW0gbW9kZWxvIGNlcnRhbWVudGUgdGVyw61tb3MgcXVlIGludmVzdGlnYXIgbyBwb3JxdWUgZGVzdGVzIGNvbXBvcnRhbWVudG9zLg0KDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNhcnJlZ2FuZG8gZGFkb3MsIE1hbmlwdWxhbmRvIGUgVmlzdWFsaXphbmRvIg0KYXV0aG9yOiAiUmljYXJkbyBBY2Npb2x5Ig0KZGF0ZTogJyBgciBTeXMuRGF0ZSgpYCAnDQpvdXRwdXQ6DQogIGh0bWxfZG9jdW1lbnQ6DQogICAgdG9jOiB5ZXMNCiAgICBjb2RlX2Rvd25sb2FkOiB5ZXMNCi0tLQ0KDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSwgZmlnLnJldGluYSA9IDMsIGZpZy5oZWlnaHQ9NCwgZmlnLndpZHRoPTYsIGRldj1jKCJwbmciKSwgZmlnLnBhdGg9ImltYWdlbnMvQXVsYTAxLyIpDQoNCmBgYA0KDQoNCiMjIEVudHJhZGEgZGUgZGFkb3Mgbm8gUg0KDQojIyBMZW5kbyBkYWRvcyBkZSBhcnF1aXZvcyBjc3YNCg0KYGBge3IgY3N2fQ0KbGlicmFyeShyZWFkcikNCnVybCA8LSAiaHR0cHM6Ly93d3cuZ292LmJyL2FucC9wdC1ici9jZW50cmFpcy1kZS1jb250ZXVkby9kYWRvcy1hYmVydG9zL2FycXVpdm9zLWFjZXJ2by1kZS1kYWRvcy10ZWNuaWNvcy90YWJlbGEtZGUtcG9jb3MuY3N2Ig0KIyMgTyByZWFkX2RlbGltIHBlcm1pdGUgcXVlIHNlamEgZGVmaW5pZG8gbyB0aXBvIGRlIGRlbGltaXRhZG9yIGRvcyBkYWRvcw0KcG9jb3MgPC0gcmVhZF9kZWxpbSh1cmwsIGRlbGltID0gIjsiLCBsb2NhbGU9IGxvY2FsZShkZWNpbWFsX21hcmsgPSAiLCIpLCBjb2xfbmFtZXMgPSBUUlVFKQ0KaGVhZChwb2NvcykNCmBgYA0KDQoNCiMjIEJpYmxpb3RlY2FzDQoNClZhbW9zIGNhcnJlZ2FyIGFzIGJpYmxpb3RlY2FzIHF1ZSBzZXLDo28gdXNhZGFzIG5hIG1hbmlwdWxhw6fDo28gZSB2aXN1YWxpemHDp8OjbyBkZSBkYWRvcy4gDQoNCk8gcGFjb3RlIHRpZHl2ZXJzZSBjYXJyZWdhIGRpdmVyc29zIHBhY290ZXMgbXVpdG8gdXRlaXMgbmEgbWFuaXB1bGHDp8OjbyBlIHZpc3VhbGl6YcOnw6NvIGRlIGRhZG9zIA0KDQoNCmBgYHtyIGNhcnJlZ2FuZG9fYmlibGlvdGVjYXMsIGVjaG89VFJVRSwgbWVzc2FnZT1UUlVFfQ0KbGlicmFyeSgidGlkeXZlcnNlIikNCmBgYA0KDQoNClZhbW9zIHByaW1laXJvIGNvbmhlY2VyIG8gcXVlIHRlbSBuYSBiYXNlIGRlIGRhZG9zIHBvY29zLiBBIGJhc2UgZGUgZGFkb3MgcG9zc3VpIGByICBucm93KHBvY29zKWAgbGluaGFzDQoNCmBgYHtyIGNvbmhlY2VuZG9fcG9jb3N9DQpjbGFzcyhwb2NvcykgICMgVGlwbyBkZSBiYXNlIGRlIGRhZG9zDQpzdW1tYXJ5KHBvY29zKSAjIFN1bWFyaW8gZGEgYmFzZSBkZSBkYWRvcw0KYGBgDQoNCiMjIERhZG9zIGRlIHBvw6dvcw0KDQpPcyBkYWRvcyBkYSB0YWJlbGEgcG/Dp29zIHRlbSA2MCBjb2x1bmFzLg0KDQpWYW1vcyBpbmljaWFsbWVudGUgc2VsZWNpb25hciBhbGd1bWFzIGNvbHVuYXMgcGFyYSBwb2Rlcm1vcyB0cmFiYWxoYXIgY29tIG9zIGRhZG9zLg0KDQoqKkFzIGNvbHVuYXMgcXVlIHZhbW9zIHRyYWJhbGhhciBzw6NvOioqDQoNCjEpIFBPQ08NCjIpIE9QRVJBRE9SDQozKSBFU1RBRE8NCjQpIEJBQ0lBDQo1KSBCTE9DTw0KNikgQ0FNUE8NCjcpIFRFUlJBX01BUg0KOCkgQ0FURUdPUklBDQo5KSBTSVRVQUNBTw0KMTApIElOSUNJTw0KMTEpIFRFUk1JTk8NCjEyKSBQUk9GVU5ESURBREVfTUVESURBX00NCg0KUGFyYSBzZWxlY2lvbmFyIGNvbHVuYXMgdXNhbW9zIGEgZnVuw6fDo28gYHNlbGVjdGANCg0KYGBge3Igc2VsZWNpb25hbmRvfQ0KIyMgVmFtb3Mgc2VsZWNpb25hciBhcyBjb2x1bmFzIGxpc3RhZGFzIGFjaW1hDQpwb2Nvc18wMSA8LSBwb2NvcyAlPiUgc2VsZWN0KFBPQ08sT1BFUkFET1IsRVNUQURPLEJBQ0lBLEJMT0NPLCBDQU1QTyxURVJSQV9NQVIsQ0FURUdPUklBLFNJVFVBQ0FPLCBJTklDSU8sIFRFUk1JTk8sIFBST0ZVTkRJREFERV9NRURJREFfTSkNCmhlYWQocG9jb3NfMDEpDQpgYGANCg0KDQojIyBNYW5pcHVsYcOnw6NvIGRlIGRhZG9zDQpWYW1vcyBlbGltaW5hciBhcyBsaW5oYXMgZGUgZGFkb3MgcXVlIGFwcmVzZW50YSBkYWRvcyBhdXNlbnRlcyAiTkEiIG5hcyBjb2x1bmFzIFRFUk1JTk8gZSBQUk9GVU5ESURBREVfTUVESURBX00uDQoNCmBgYHtyIGVsaW1pbmFuZG9fbGluaGFzfQ0Kc3VtKGlzLm5hKHBvY29zXzAxKSkNCnN1bShpcy5uYShwb2Nvc18wMSRJTklDSU8pKQ0Kc3VtKGlzLm5hKHBvY29zXzAxJFRFUk1JTk8pKQ0Kc3VtKGlzLm5hKHBvY29zXzAxJFBST0ZVTkRJREFERV9NRURJREFfTSkpDQpwb2Nvc18wMSA8LSBwb2Nvc18wMSAlPiUgZHJvcF9uYShhbnlfb2YoYygiVEVSTUlOTyIsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUFJPRlVORElEQURFX01FRElEQV9NIikpKQ0KIyBtZWxob3JhbmRvIGEgdmlzdWFsaXphw6fDo28gZG9zIGRhZG9zDQprbml0cjo6a2FibGUoDQogIGhlYWQocG9jb3NfMDEsIDEwKSwgYm9va3RhYnMgPSBUUlVFLA0KICBjYXB0aW9uID0gJ1VtYSB0YWJlbGEgbWFpcyBlbGVnYW50ZSBjb20gYXMgMTAgcHJpbWVyYXMgbGluaGFzIGRlIHBvY29zXzAxLicpDQpzdW0oaXMubmEocG9jb3NfMDEpKQ0KYGBgDQoNCioqVmVqYSBxdWUgZXhpc3RpYSB1bSBncmFuZGUgbsO6bWVybyBkZSBkYWRvcyBhdXNlbnRlcyoqDQoNCkFudGVzOiBgciAgbnJvdyhwb2NvcylgIGxpbmhhcw0KRGVwb2lzOiBgciAgbnJvdyhwb2Nvc18wMSlgIGxpbmhhcw0KDQojIyBDb3JyaWdpbmRvIHRpcG8gZGUgZGFkb3MNCg0KQXMgY29sdW5hcyBJTklDSU8gZSBURVJNSU5PIHPDo28gZGF0YXMsIG1hcyBmb3JhbSBsaWRhcyBjb21vIGNhcmFjdGVyLCB2YW1vcyBjb3JyaWdpciBpc3RvIQ0KDQpQYXJhIHRyYWJhbGhhciBjb20gZGF0YXMgdmFtb3MgdXNhciBvIHBhY290ZSBgbHVicmlkYXRlYA0KDQpgYGB7ciB0aXBvX2RhZG9zfQ0KbGlicmFyeShsdWJyaWRhdGUpDQpwb2Nvc18wMSRJTklDSU8gPC0gYXNfZGF0ZShwb2Nvc18wMSRJTklDSU8sIGZvcm1hdD0iJWQvJW0vJVkiKQ0KcG9jb3NfMDEkVEVSTUlOTyA8LSBhc19kYXRlKHBvY29zXzAxJFRFUk1JTk8sIGZvcm1hdD0iJWQvJW0vJVkiKQ0KYGBgDQoNCiMjIEZpbHRyYW5kbyBkYWRvcw0KDQpWYW1vcyBhbmFsaXNhciBvcyBwb8Onb3MgZGUgdW1hIGRldHJlbWluYWRhIHJlZ2nDo28sIHBhcmEgaXN0byBwb2RlbW9zIGZsdHJhciBvcyBwb8Onb3MgZGUgdW0gYmxvY28uDQpWYW1vcyBmaWx0cmFyIHNvbWVudGUgb3MgcG/Dp29zIGRvIENBTVBPIFBFUkVHUklOTyB1c2FuZG8gYSBmdW7Dp8OjbyBgZmlsdGVyYC4NCg0KYGBge3IgZmlsdHJhbmRvfQ0KcG9jb3NfMDIgPC0gcG9jb3NfMDEgJT4lIGZpbHRlcihDQU1QTz09IlBFUkVHUklOTyIpICMjICANCnN1bW1hcnkocG9jb3NfMDIpDQprbml0cjo6a2FibGUoDQogIGhlYWQocG9jb3NfMDIsIDEwKSwgYm9va3RhYnMgPSBUUlVFLA0KICBjYXB0aW9uID0gJ1VtYSB0YWJlbGEgbWFpcyBlbGVnYW50ZSBjb20gYXMgMTAgcHJpbWVyYXMgbGluaGFzIGRlIHBvY29zXzAyLicpDQpgYGANCg0KIyMjIEF2YWxpYW5kbyBvcyBkYWRvcw0KDQpPcyBwb8Onb3MgcG9zc3VlbSBkaXZlcnNhcyBjYXRlZ29yaWFzLCB2YW1vcyB2ZXIgcXVlIGNhdGVnb3JpYXMgZXhpc3RlbSBuZXN0ZXMgcG/Dp29zIGRvIGJsb2NvIEJFUy0xMDAuDQoNCmBgYHtyIGlkZW50aWZpY2FuZG99DQp1bmlxdWUocG9jb3NfMDIkQ0FURUdPUklBKQ0KYGBgDQoNCiMjIyBGaWx0cmFuZG8gcG/Dp29zIGRlIGRlc2Vudm9sdmltZW50bw0KDQpgYGB7ciBmaWx0cmFuZG8yfQ0KcG9jb3NfMDMgPC0gcG9jb3NfMDIgJT4lIGZpbHRlcihDQVRFR09SSUE9PSJEZXNlbnZvbHZpbWVudG8iKSAjIyAgDQpzdW1tYXJ5KHBvY29zXzAzKQ0Ka25pdHI6OmthYmxlKA0KICBoZWFkKHBvY29zXzAzLCAxMCksIGJvb2t0YWJzID0gVFJVRSwNCiAgY2FwdGlvbiA9ICdVbWEgdGFiZWxhIG1haXMgZWxlZ2FudGUgY29tIGFzIDEwIHByaW1lcmFzIGxpbmhhcyBkZSBwb2Nvc18wMy4nKQ0KYGBgDQoNCiMjIENyaWFuZG8gdW1hIGNvbHVuYSBjb20gbXV0YXRlDQoNClZhbW9zIGNyaWFyIHVtYSBjb2x1bmEgcXVlIG5vcyBkYXLDoSBhIGR1cmHDp8OjbyBkYSBwZXJmdXJhw6fDo28gZG9zIHBvw6dvcy4NCg0KYGBge3IgY3JpYW5kb19jb2x1bmF9DQpwb2Nvc18wMyA8LSBwb2Nvc18wMyAlPiUgbXV0YXRlKFRQRVJGID0gKElOSUNJTyAlLS0lIFRFUk1JTk8pL2RkYXlzKDEpKQ0Kc3VtbWFyeShwb2Nvc18wMykNCmBgYA0KDQojIyMgRWxpbWluYW5kbyBjb2x1bmFzIGNvbSB0ZW1wb3MgbmVnYXRpdm9zDQoNCg0KDQpgYGB7ciBmaWx0cmFuZG9fY29sdW5hfQ0KcG9jb3NfMDMgPC0gcG9jb3NfMDMgJT4lIGZpbHRlcihUUEVSRiA+IDApIA0KYGBgDQoNCg0KDQojIyBWaXN1YWxpemFuZG8gb3MgZGFkb3MgZGUgUEVSRUdSSU5PDQoNCiMjIyBCb3gtUGxvdA0KDQpgYGB7ciBib3hwbG90fQ0KZ2dwbG90KHBvY29zXzAzLCBhZXMoeD1DQU1QTywgeT1UUEVSRikpICsNCiAgZ2VvbV9ib3hwbG90KCkNCmBgYA0KDQoNClZlamEgcXVlIGV4aXN0ZW0gYWxndW5zIHRlbXBvcyBiZW0gZWxldmFkb3MgcXVlIGVzdMOjbyByZXByZXNlbnRhZG9zIHBvciBwb250b3Mgbm8gYm94LXBsb3QuIEVsZXMgcG9kZW0gc2VyIGNvbnNpZGVyYWRvcyBwb250b3MgYWZhc3RhZG9zIChvdXRsaWVycyksIHF1ZSBuZXN0ZSBjYXNvIHZhbW9zIGVsaW1pbmFyLg0KDQoNCmBgYHtyIG91dGxpZXJzfQ0KcG9jb3NfMDQgPC0gcG9jb3NfMDMgJT4lIGZpbHRlcihUUEVSRiA8IDEwMCkNCmdncGxvdChwb2Nvc18wNCwgYWVzKHg9Q0FNUE8sIHk9VFBFUkYpKSArDQogIGdlb21fYm94cGxvdCgpDQpgYGANCg0KDQojIyMgSGlzdG9ncmFtYQ0KDQpgYGB7ciBoaXN0b2dyYW1hfQ0KZ2dwbG90KHBvY29zXzA0LCBhZXMoeD1UUEVSRikpICsNCiAgZ2VvbV9oaXN0b2dyYW0oKQ0KYGBgDQoNCg0KVmVqYSBxdWUgZGVzdGEgZm9ybWEgbyBnZ3Bsb3QgdXNhIG8gc2V1IHBhZHLDo28gZGUgMzAgZmFpeGFzIGRlIGRhZG9zLCBxdWUgZ2VyYWxtZW50ZSBuw6NvIMOpIG8gbWFpcyBhZGVxdWFkby4NCg0KVmFtb3MgdXNhciB1bWEgcmVncmEgYWRlcXVhZGEgcGFyYSBkZWZpbmnDp8OjbyBkZSBuw7ptZXJvIGRlIGZhaXhhcy4NCg0KIyMjIENyaWFuZG8gdW0gaGlzdG9ncmFtYSB1c2FuZG8gYSByZWdyYSBkZSBTdHVyZ2VzDQoNCkEgcmVncmEgZGUgU3R1cmdlcyBpbmRpY2EgYHIgcm91bmQoMSszLjMyMipsb2cxMChucm93KHBvY29zXzA0KSksMClgIGZhaXhhcyBlbnF1YW50byBxdWUgbyBwYWRyw6NvIGRvIGdncGxvdDIgw6kgMzAuICANCg0KYGBge3IgU3R1cmdlc30NCmdncGxvdChwb2Nvc18wNCwgYWVzKHggPSBUUEVSRikpICsNCiAgZ2VvbV9oaXN0b2dyYW0oYmlucyA9IHJvdW5kKDErMy4zMjIqbG9nMTAobnJvdyhwb2Nvc18wNCkpLDApKQ0KYGBgDQoNClZlamEgcXVlIGFnb3JhIHRlbW9zIHVtIGhpc3RvZ3JhbWEgbWFpcyBzdWF2ZS4NCg0KDQojIyMgR3LDoWZpY28gZGUgRGlzcGVyc8Ojbw0KDQpgYGB7ciBkaXNwZXJzYW99DQpnZ3Bsb3QocG9jb3NfMDQsIGFlcyh4PVBST0ZVTkRJREFERV9NRURJREFfTSwgeT1UUEVSRikpICsgDQogIGdlb21fcG9pbnQoKQ0KYGBgDQoNClBvZGVtb3MgcGVyY2ViZXIgcXVlIGjDoSB1bWEgcmVsYcOnw6NvIGVudHJlIG8gdGVtcG8gZGUgcGVyZnVyYcOnw6NvIGUgYSBwcm9mdW5kaWRhZGUgZG8gcG/Dp28uDQoNClRhbWLDqW0gw6kgcG9zc8OtdmVsIHNlIHBlcmNlYmVyIHF1ZSBhaW5kYSBleGlzdGVtIGRhZG9zIGNvbSBjb21wb3J0YW1lbnRvcyBlc3RyYW5ob3MuIFBvw6dvcyByYXNvcyBjb20gcHJvZnVuZGlkYWRlIG11aXRvIGRpZmVyZW50ZSBkb3MgZGVtYWlzLCBhbMOpbSBkaXNzbyB1bSBwb8OnbyBtdWl0byBwcm9mdW5kbyBjb20gZHVyYcOnw6NvIG11aXRvIHBlcXVlbmEuDQoNClNlIGZvc3NlbW9zIGNvbnN0cnVpciB1bSBtb2RlbG8gY2VydGFtZW50ZSB0ZXLDrW1vcyBxdWUgaW52ZXN0aWdhciBvIHBvcnF1ZSBkZXN0ZXMgY29tcG9ydGFtZW50b3MuDQoNCg0KIyMjIEFsdGVyYW5kbyBub21lIGRhcyBjb2x1bmFzDQoNCmBgYHtyIHJlbm9tZWFuZG9fY29sdW5hc30NCm5hbWVzKHBvY29zXzA0KQ0KbmFtZXMocG9jb3NfMDQpIDwtIHRvbG93ZXIobmFtZXMocG9jb3NfMDQpKQ0KbmFtZXMocG9jb3NfMDQpDQpgYGANCg0KDQoNCg==</div>
 
 
 
