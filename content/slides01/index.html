@@ -1,0 +1,2698 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Mineração de Dados</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Ricardo Accioly" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Mineração de Dados
+## Importando, Manipulado e Visualizando
+### Ricardo Accioly
+
+---
+
+
+
+
+
+# Mineração de Dados
+
+--
+
+Nesta apresentação vamos ver passo a passo algumas das atividades comuns que são necessárias quando estamos nos preparando para desenvolver um modelo.
+
+--
+
+Vamos inicialmente utilizar o pacote `tidyverse` que é na realidade um conjunto de pacotes que permite a importação, manipulação e a visualização de um conjunto de dados. 
+
+--
+
+Neste exemplo vamos usar dados contidos no pacote `gapminder` que possui informação sobre países, por exemplo, população, PIB, etc.
+
+--
+
+A base de dados possui 1704 linhas
+
+--
+
+Vamos realizar algumas atividades básicas que podem ser estendidas para qualquer conjunto de dados.  
+
+---
+
+# O que vamos fazer
+
+--
+
+![](imagens/md.jpg)
+
+---
+
+# Carregando o tidyverse
+
+--
+
+count: false
+ 
+
+.panel1-ex_1-auto[
+
+```r
+*library(tidyverse)
+```
+]
+ 
+.panel2-ex_1-auto[
+
+]
+
+&lt;style&gt;
+.panel1-ex_1-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_1-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_1-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+![](imagens/tidyverse.jpg)
+
+---
+
+# Carregando o gapminder
+
+--
+
+count: false
+ 
+
+.panel1-ex_1A-auto[
+
+```r
+*library(gapminder)
+```
+]
+ 
+.panel2-ex_1A-auto[
+
+]
+
+&lt;style&gt;
+.panel1-ex_1A-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_1A-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_1A-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+# Carregando os dados
+
+--
+
+count: false
+ 
+
+.panel1-ex_2-auto[
+
+```r
+*data(gapminder)
+```
+]
+ 
+.panel2-ex_2-auto[
+
+]
+
+&lt;style&gt;
+.panel1-ex_2-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_2-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_2-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+layout: true
+# Conhecendo os dados
+
+---
+
+count: false
+ 
+
+.panel1-ex_2A-auto[
+
+```r
+*class(gapminder)  # tipo de dados
+```
+]
+ 
+.panel2-ex_2A-auto[
+
+```
+[1] "tbl_df"     "tbl"        "data.frame"
+```
+]
+
+&lt;style&gt;
+.panel1-ex_2A-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_2A-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_2A-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+count: false
+ 
+
+.panel1-ex_2B-auto[
+
+```r
+*str(gapminder)  # estrutura dos dados
+```
+]
+ 
+.panel2-ex_2B-auto[
+
+```
+tibble [1,704 x 6] (S3: tbl_df/tbl/data.frame)
+ $ country  : Factor w/ 142 levels "Afghanistan",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ continent: Factor w/ 5 levels "Africa","Americas",..: 3 3 3 3 3 3 3 3 3 3 ...
+ $ year     : int [1:1704] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+ $ lifeExp  : num [1:1704] 28.8 30.3 32 34 36.1 ...
+ $ pop      : int [1:1704] 8425333 9240934 10267083 11537966 13079460 14880372 12881816 13867957 16317921 22227415 ...
+ $ gdpPercap: num [1:1704] 779 821 853 836 740 ...
+```
+]
+
+&lt;style&gt;
+.panel1-ex_2B-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_2B-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_2B-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+count: false
+ 
+
+.panel1-ex_2C-auto[
+
+```r
+*summary(gapminder)
+```
+]
+ 
+.panel2-ex_2C-auto[
+
+```
+        country        continent        year         lifeExp     
+ Afghanistan:  12   Africa  :624   Min.   :1952   Min.   :23.60  
+ Albania    :  12   Americas:300   1st Qu.:1966   1st Qu.:48.20  
+ Algeria    :  12   Asia    :396   Median :1980   Median :60.71  
+ Angola     :  12   Europe  :360   Mean   :1980   Mean   :59.47  
+ Argentina  :  12   Oceania : 24   3rd Qu.:1993   3rd Qu.:70.85  
+ Australia  :  12                  Max.   :2007   Max.   :82.60  
+ (Other)    :1632                                                
+      pop              gdpPercap       
+ Min.   :6.001e+04   Min.   :   241.2  
+ 1st Qu.:2.794e+06   1st Qu.:  1202.1  
+ Median :7.024e+06   Median :  3531.8  
+ Mean   :2.960e+07   Mean   :  7215.3  
+ 3rd Qu.:1.959e+07   3rd Qu.:  9325.5  
+ Max.   :1.319e+09   Max.   :113523.1  
+                                       
+```
+]
+
+&lt;style&gt;
+.panel1-ex_2C-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_2C-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_2C-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+layout: false
+# Outras opções
+
+--
+
+count: false
+ 
+
+.panel1-ex_3-auto[
+
+```r
+*glimpse(gapminder)
+```
+]
+ 
+.panel2-ex_3-auto[
+
+```
+Rows: 1,704
+Columns: 6
+$ country   &lt;fct&gt; "Afghanistan", "Afghanistan", "Afghanistan", "Afghanistan", ~
+$ continent &lt;fct&gt; Asia, Asia, Asia, Asia, Asia, Asia, Asia, Asia, Asia, Asia, ~
+$ year      &lt;int&gt; 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992, 1997, ~
+$ lifeExp   &lt;dbl&gt; 28.801, 30.332, 31.997, 34.020, 36.088, 38.438, 39.854, 40.8~
+$ pop       &lt;int&gt; 8425333, 9240934, 10267083, 11537966, 13079460, 14880372, 12~
+$ gdpPercap &lt;dbl&gt; 779.4453, 820.8530, 853.1007, 836.1971, 739.9811, 786.1134, ~
+```
+]
+
+&lt;style&gt;
+.panel1-ex_3-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_3-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_3-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+# Outras opções
+
+--
+
+count: false
+ 
+
+.panel1-ex_3A-auto[
+
+```r
+*head(gapminder)  # linhas iniciais do conjunto de dados
+```
+]
+ 
+.panel2-ex_3A-auto[
+
+```
+# A tibble: 6 x 6
+  country     continent  year lifeExp      pop gdpPercap
+  &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+1 Afghanistan Asia       1952    28.8  8425333      779.
+2 Afghanistan Asia       1957    30.3  9240934      821.
+3 Afghanistan Asia       1962    32.0 10267083      853.
+4 Afghanistan Asia       1967    34.0 11537966      836.
+5 Afghanistan Asia       1972    36.1 13079460      740.
+6 Afghanistan Asia       1977    38.4 14880372      786.
+```
+]
+
+&lt;style&gt;
+.panel1-ex_3A-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_3A-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_3A-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+
+---
+# Dados do gapminder - Colunas
+
+--
+
+- country = país
+
+--
+
+- continent = continente
+
+--
+
+- year = ano
+
+--
+
+- lifeExp = expectativa de vida (em anos)
+
+--
+
+- pop = população
+
+--
+
+- gdpPercap = PIB per capita (US$)
+
+---
+
+# Filtrando os dados
+
+--
+
+count: false
+ 
+
+.panel1-ex_4-auto[
+
+```r
+## Criar um extrato do ano de 2007
+*gap_07 &lt;- filter(gapminder, year == 2007)
+```
+]
+ 
+.panel2-ex_4-auto[
+
+]
+
+&lt;style&gt;
+.panel1-ex_4-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_4-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_4-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+# Filtrando os dados
+
+--
+
+count: false
+ 
+
+.panel1-ex_4A-auto[
+
+```r
+## Criar um extrato do ano de 2007
+*head(gap_07)
+```
+]
+ 
+.panel2-ex_4A-auto[
+
+```
+# A tibble: 6 x 6
+  country     continent  year lifeExp      pop gdpPercap
+  &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+1 Afghanistan Asia       2007    43.8 31889923      975.
+2 Albania     Europe     2007    76.4  3600523     5937.
+3 Algeria     Africa     2007    72.3 33333216     6223.
+4 Angola      Africa     2007    42.7 12420476     4797.
+5 Argentina   Americas   2007    75.3 40301927    12779.
+6 Australia   Oceania    2007    81.2 20434176    34435.
+```
+]
+
+&lt;style&gt;
+.panel1-ex_4A-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_4A-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_4A-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+layout: true
+# Manipulação de dados
+
+---
+
+Vamos renomear os nomes das colunas para o português
+
+--
+
+count: false
+ 
+
+.panel1-ex_5-auto[
+
+```r
+*gap_07_p &lt;- rename(gap_07, pais = country, continente = continent,ano = year,
+*                expVida = lifeExp, pibPercap = gdpPercap)
+```
+]
+ 
+.panel2-ex_5-auto[
+
+]
+
+&lt;style&gt;
+.panel1-ex_5-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_5-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_5-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+count: false
+ 
+
+.panel1-ex_5A-auto[
+
+```r
+*knitr::kable(head(gap_07_p, 10), booktabs = TRUE, format = 'html')
+```
+]
+ 
+.panel2-ex_5A-auto[
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; pais &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; continente &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; ano &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; expVida &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; pop &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; pibPercap &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 43.828 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 31889923 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 974.5803 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Albania &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Europe &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 76.423 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3600523 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5937.0295 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Algeria &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Africa &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 72.301 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 33333216 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6223.3675 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Angola &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Africa &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 42.731 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12420476 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4797.2313 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Argentina &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Americas &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 75.320 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40301927 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12779.3796 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Australia &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Oceania &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 81.235 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20434176 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34435.3674 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Austria &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Europe &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 79.829 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8199783 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36126.4927 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Bahrain &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 75.635 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 708573 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 29796.0483 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Bangladesh &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 64.062 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 150448339 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1391.2538 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Belgium &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Europe &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 79.441 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10392226 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 33692.6051 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_5A-auto[
+
+```r
+knitr::kable(head(gap_07_p, 10), booktabs = TRUE, format = 'html')
+```
+]
+ 
+.panel2-ex_5A-auto[
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; pais &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; continente &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; ano &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; expVida &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; pop &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; pibPercap &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 43.828 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 31889923 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 974.5803 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Albania &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Europe &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 76.423 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3600523 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5937.0295 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Algeria &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Africa &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 72.301 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 33333216 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6223.3675 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Angola &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Africa &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 42.731 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12420476 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4797.2313 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Argentina &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Americas &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 75.320 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40301927 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12779.3796 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Australia &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Oceania &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 81.235 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20434176 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34435.3674 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Austria &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Europe &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 79.829 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8199783 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36126.4927 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Bahrain &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 75.635 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 708573 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 29796.0483 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Bangladesh &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 64.062 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 150448339 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1391.2538 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Belgium &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Europe &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 79.441 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10392226 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 33692.6051 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+&lt;style&gt;
+.panel1-ex_5A-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_5A-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_5A-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+count: false
+ 
+
+.panel1-ex_5B-auto[
+
+```r
+*gt::gt(head(gap_07_p, 10))
+```
+]
+ 
+.panel2-ex_5B-auto[
+<div id="zecfkbwhfq" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#zecfkbwhfq .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#zecfkbwhfq .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zecfkbwhfq .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#zecfkbwhfq .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#zecfkbwhfq .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zecfkbwhfq .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zecfkbwhfq .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#zecfkbwhfq .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#zecfkbwhfq .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#zecfkbwhfq .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#zecfkbwhfq .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#zecfkbwhfq .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#zecfkbwhfq .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#zecfkbwhfq .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#zecfkbwhfq .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#zecfkbwhfq .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#zecfkbwhfq .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#zecfkbwhfq .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zecfkbwhfq .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#zecfkbwhfq .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zecfkbwhfq .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#zecfkbwhfq .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#zecfkbwhfq .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zecfkbwhfq .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zecfkbwhfq .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#zecfkbwhfq .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zecfkbwhfq .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#zecfkbwhfq .gt_left {
+  text-align: left;
+}
+
+#zecfkbwhfq .gt_center {
+  text-align: center;
+}
+
+#zecfkbwhfq .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#zecfkbwhfq .gt_font_normal {
+  font-weight: normal;
+}
+
+#zecfkbwhfq .gt_font_bold {
+  font-weight: bold;
+}
+
+#zecfkbwhfq .gt_font_italic {
+  font-style: italic;
+}
+
+#zecfkbwhfq .gt_super {
+  font-size: 65%;
+}
+
+#zecfkbwhfq .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">pais</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">continente</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">ano</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">expVida</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">pop</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">pibPercap</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_center">Afghanistan</td>
+<td class="gt_row gt_center">Asia</td>
+<td class="gt_row gt_right">2007</td>
+<td class="gt_row gt_right">43.828</td>
+<td class="gt_row gt_right">31889923</td>
+<td class="gt_row gt_right">974.5803</td></tr>
+    <tr><td class="gt_row gt_center">Albania</td>
+<td class="gt_row gt_center">Europe</td>
+<td class="gt_row gt_right">2007</td>
+<td class="gt_row gt_right">76.423</td>
+<td class="gt_row gt_right">3600523</td>
+<td class="gt_row gt_right">5937.0295</td></tr>
+    <tr><td class="gt_row gt_center">Algeria</td>
+<td class="gt_row gt_center">Africa</td>
+<td class="gt_row gt_right">2007</td>
+<td class="gt_row gt_right">72.301</td>
+<td class="gt_row gt_right">33333216</td>
+<td class="gt_row gt_right">6223.3675</td></tr>
+    <tr><td class="gt_row gt_center">Angola</td>
+<td class="gt_row gt_center">Africa</td>
+<td class="gt_row gt_right">2007</td>
+<td class="gt_row gt_right">42.731</td>
+<td class="gt_row gt_right">12420476</td>
+<td class="gt_row gt_right">4797.2313</td></tr>
+    <tr><td class="gt_row gt_center">Argentina</td>
+<td class="gt_row gt_center">Americas</td>
+<td class="gt_row gt_right">2007</td>
+<td class="gt_row gt_right">75.320</td>
+<td class="gt_row gt_right">40301927</td>
+<td class="gt_row gt_right">12779.3796</td></tr>
+    <tr><td class="gt_row gt_center">Australia</td>
+<td class="gt_row gt_center">Oceania</td>
+<td class="gt_row gt_right">2007</td>
+<td class="gt_row gt_right">81.235</td>
+<td class="gt_row gt_right">20434176</td>
+<td class="gt_row gt_right">34435.3674</td></tr>
+    <tr><td class="gt_row gt_center">Austria</td>
+<td class="gt_row gt_center">Europe</td>
+<td class="gt_row gt_right">2007</td>
+<td class="gt_row gt_right">79.829</td>
+<td class="gt_row gt_right">8199783</td>
+<td class="gt_row gt_right">36126.4927</td></tr>
+    <tr><td class="gt_row gt_center">Bahrain</td>
+<td class="gt_row gt_center">Asia</td>
+<td class="gt_row gt_right">2007</td>
+<td class="gt_row gt_right">75.635</td>
+<td class="gt_row gt_right">708573</td>
+<td class="gt_row gt_right">29796.0483</td></tr>
+    <tr><td class="gt_row gt_center">Bangladesh</td>
+<td class="gt_row gt_center">Asia</td>
+<td class="gt_row gt_right">2007</td>
+<td class="gt_row gt_right">64.062</td>
+<td class="gt_row gt_right">150448339</td>
+<td class="gt_row gt_right">1391.2538</td></tr>
+    <tr><td class="gt_row gt_center">Belgium</td>
+<td class="gt_row gt_center">Europe</td>
+<td class="gt_row gt_right">2007</td>
+<td class="gt_row gt_right">79.441</td>
+<td class="gt_row gt_right">10392226</td>
+<td class="gt_row gt_right">33692.6051</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+]
+
+&lt;style&gt;
+.panel1-ex_5B-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_5B-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_5B-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+layout: false
+# Ordenando pelo PIB
+
+--
+
+count: false
+ 
+
+.panel1-ex_6-auto[
+
+```r
+# crescente
+*gap_07_p %&gt;% arrange(pibPercap)
+```
+]
+ 
+.panel2-ex_6-auto[
+
+```
+# A tibble: 142 x 6
+   pais                     continente   ano expVida      pop pibPercap
+   &lt;fct&gt;                    &lt;fct&gt;      &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+ 1 Congo, Dem. Rep.         Africa      2007    46.5 64606759      278.
+ 2 Liberia                  Africa      2007    45.7  3193942      415.
+ 3 Burundi                  Africa      2007    49.6  8390505      430.
+ 4 Zimbabwe                 Africa      2007    43.5 12311143      470.
+ 5 Guinea-Bissau            Africa      2007    46.4  1472041      579.
+ 6 Niger                    Africa      2007    56.9 12894865      620.
+ 7 Eritrea                  Africa      2007    58.0  4906585      641.
+ 8 Ethiopia                 Africa      2007    52.9 76511887      691.
+ 9 Central African Republic Africa      2007    44.7  4369038      706.
+10 Gambia                   Africa      2007    59.4  1688359      753.
+# ... with 132 more rows
+```
+]
+
+&lt;style&gt;
+.panel1-ex_6-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_6-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_6-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+# Ordenando pelo PIB
+
+--
+
+count: false
+ 
+
+.panel1-ex_6A-auto[
+
+```r
+# descrescente
+*gap_07_p %&gt;% arrange(desc(pibPercap))
+```
+]
+ 
+.panel2-ex_6A-auto[
+
+```
+# A tibble: 142 x 6
+   pais             continente   ano expVida       pop pibPercap
+   &lt;fct&gt;            &lt;fct&gt;      &lt;int&gt;   &lt;dbl&gt;     &lt;int&gt;     &lt;dbl&gt;
+ 1 Norway           Europe      2007    80.2   4627926    49357.
+ 2 Kuwait           Asia        2007    77.6   2505559    47307.
+ 3 Singapore        Asia        2007    80.0   4553009    47143.
+ 4 United States    Americas    2007    78.2 301139947    42952.
+ 5 Ireland          Europe      2007    78.9   4109086    40676.
+ 6 Hong Kong, China Asia        2007    82.2   6980412    39725.
+ 7 Switzerland      Europe      2007    81.7   7554661    37506.
+ 8 Netherlands      Europe      2007    79.8  16570613    36798.
+ 9 Canada           Americas    2007    80.7  33390141    36319.
+10 Iceland          Europe      2007    81.8    301931    36181.
+# ... with 132 more rows
+```
+]
+
+&lt;style&gt;
+.panel1-ex_6A-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_6A-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_6A-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+
+---
+
+# Selecionando colunas
+
+--
+
+count: false
+ 
+
+.panel1-ex_7-auto[
+
+```r
+*gap_07_p %&gt;% select(expVida, pibPercap)  #selecionando 2 colunas
+```
+]
+ 
+.panel2-ex_7-auto[
+
+```
+# A tibble: 142 x 2
+   expVida pibPercap
+     &lt;dbl&gt;     &lt;dbl&gt;
+ 1    43.8      975.
+ 2    76.4     5937.
+ 3    72.3     6223.
+ 4    42.7     4797.
+ 5    75.3    12779.
+ 6    81.2    34435.
+ 7    79.8    36126.
+ 8    75.6    29796.
+ 9    64.1     1391.
+10    79.4    33693.
+# ... with 132 more rows
+```
+]
+
+&lt;style&gt;
+.panel1-ex_7-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_7-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_7-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+layout: true
+
+# Criando colunas com mutate
+
+---
+
+count: false
+ 
+
+.panel1-ex_8-auto[
+
+```r
+*gap_07_p
+```
+]
+ 
+.panel2-ex_8-auto[
+
+```
+# A tibble: 142 x 6
+   pais        continente   ano expVida       pop pibPercap
+   &lt;fct&gt;       &lt;fct&gt;      &lt;int&gt;   &lt;dbl&gt;     &lt;int&gt;     &lt;dbl&gt;
+ 1 Afghanistan Asia        2007    43.8  31889923      975.
+ 2 Albania     Europe      2007    76.4   3600523     5937.
+ 3 Algeria     Africa      2007    72.3  33333216     6223.
+ 4 Angola      Africa      2007    42.7  12420476     4797.
+ 5 Argentina   Americas    2007    75.3  40301927    12779.
+ 6 Australia   Oceania     2007    81.2  20434176    34435.
+ 7 Austria     Europe      2007    79.8   8199783    36126.
+ 8 Bahrain     Asia        2007    75.6    708573    29796.
+ 9 Bangladesh  Asia        2007    64.1 150448339     1391.
+10 Belgium     Europe      2007    79.4  10392226    33693.
+# ... with 132 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-ex_8-auto[
+
+```r
+gap_07_p %&gt;%
+*        mutate(expVida_meses = expVida * 12)
+```
+]
+ 
+.panel2-ex_8-auto[
+
+```
+# A tibble: 142 x 7
+   pais        continente   ano expVida       pop pibPercap expVida_meses
+   &lt;fct&gt;       &lt;fct&gt;      &lt;int&gt;   &lt;dbl&gt;     &lt;int&gt;     &lt;dbl&gt;         &lt;dbl&gt;
+ 1 Afghanistan Asia        2007    43.8  31889923      975.          526.
+ 2 Albania     Europe      2007    76.4   3600523     5937.          917.
+ 3 Algeria     Africa      2007    72.3  33333216     6223.          868.
+ 4 Angola      Africa      2007    42.7  12420476     4797.          513.
+ 5 Argentina   Americas    2007    75.3  40301927    12779.          904.
+ 6 Australia   Oceania     2007    81.2  20434176    34435.          975.
+ 7 Austria     Europe      2007    79.8   8199783    36126.          958.
+ 8 Bahrain     Asia        2007    75.6    708573    29796.          908.
+ 9 Bangladesh  Asia        2007    64.1 150448339     1391.          769.
+10 Belgium     Europe      2007    79.4  10392226    33693.          953.
+# ... with 132 more rows
+```
+]
+
+&lt;style&gt;
+.panel1-ex_8-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_8-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_8-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+layout:true
+# Usando o ggplot2
+
+---
+
+## Criar um gráfico de dispersão do PIB vs. Expectativa de Vida
+
+--
+
+count: false
+ 
+
+.panel1-ex_9-auto[
+
+```r
+*ggplot(gap_07_p, aes(x = pibPercap, y = expVida))
+```
+]
+ 
+.panel2-ex_9-auto[
+&lt;img src="index_files/figure-html/ex_9_auto_01_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_9-auto[
+
+```r
+ggplot(gap_07_p, aes(x = pibPercap, y = expVida)) +
+* geom_point()
+```
+]
+ 
+.panel2-ex_9-auto[
+&lt;img src="index_files/figure-html/ex_9_auto_02_output-1.png" width="100%" /&gt;
+]
+
+&lt;style&gt;
+.panel1-ex_9-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_9-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_9-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+## Criar um gráfico de barras
+
+--
+
+count: false
+ 
+
+.panel1-ex_10-auto[
+
+```r
+*ggplot(gap_07_p, aes(x = continente))
+```
+]
+ 
+.panel2-ex_10-auto[
+&lt;img src="index_files/figure-html/ex_10_auto_01_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_10-auto[
+
+```r
+ggplot(gap_07_p, aes(x = continente)) +
+* geom_bar()
+```
+]
+ 
+.panel2-ex_10-auto[
+&lt;img src="index_files/figure-html/ex_10_auto_02_output-1.png" width="100%" /&gt;
+]
+
+&lt;style&gt;
+.panel1-ex_10-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_10-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_10-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+layout: true
+# Calculando a mediana da população com **summarize** 
+
+---
+
+count: false
+ 
+
+.panel1-ex_11-auto[
+
+```r
+*gap_07_med &lt;- gap_07_p
+```
+]
+ 
+.panel2-ex_11-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-ex_11-auto[
+
+```r
+gap_07_med &lt;- gap_07_p %&gt;%
+*            group_by(continente)
+```
+]
+ 
+.panel2-ex_11-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-ex_11-auto[
+
+```r
+gap_07_med &lt;- gap_07_p %&gt;%
+             group_by(continente) %&gt;%
+*            summarize(pop = median(pop))
+```
+]
+ 
+.panel2-ex_11-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-ex_11-auto[
+
+```r
+gap_07_med &lt;- gap_07_p %&gt;%
+             group_by(continente) %&gt;%
+             summarize(pop = median(pop))
+*gap_07_med
+```
+]
+ 
+.panel2-ex_11-auto[
+
+```
+# A tibble: 5 x 2
+  continente       pop
+  &lt;fct&gt;          &lt;dbl&gt;
+1 Africa     10093310.
+2 Americas    9319622 
+3 Asia       24821286 
+4 Europe      9493598 
+5 Oceania    12274974.
+```
+]
+
+&lt;style&gt;
+.panel1-ex_11-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_11-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_11-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+layout: true
+# Gráficos de Barra 
+
+---
+
+count: false
+ 
+
+.panel1-ex_12-auto[
+
+```r
+*ggplot(gap_07_med, aes(x = continente, y = pop))
+```
+]
+ 
+.panel2-ex_12-auto[
+&lt;img src="index_files/figure-html/ex_12_auto_01_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_12-auto[
+
+```r
+ggplot(gap_07_med, aes(x = continente, y = pop)) +
+* geom_bar(stat = "identity")
+```
+]
+ 
+.panel2-ex_12-auto[
+&lt;img src="index_files/figure-html/ex_12_auto_02_output-1.png" width="100%" /&gt;
+]
+
+&lt;style&gt;
+.panel1-ex_12-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_12-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_12-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+count: false
+ 
+
+.panel1-ex_13-auto[
+
+```r
+*ggplot(gap_07_med, aes(x = continente, y = pop))
+```
+]
+ 
+.panel2-ex_13-auto[
+&lt;img src="index_files/figure-html/ex_13_auto_01_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_13-auto[
+
+```r
+ggplot(gap_07_med, aes(x = continente, y = pop)) +
+* geom_bar(stat = "identity", width = 0.5)
+```
+]
+ 
+.panel2-ex_13-auto[
+&lt;img src="index_files/figure-html/ex_13_auto_02_output-1.png" width="100%" /&gt;
+]
+
+&lt;style&gt;
+.panel1-ex_13-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_13-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_13-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+count: false
+ 
+
+.panel1-ex_14-auto[
+
+```r
+*ggplot(gap_07_med, aes(x = continente, y = pop))
+```
+]
+ 
+.panel2-ex_14-auto[
+&lt;img src="index_files/figure-html/ex_14_auto_01_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_14-auto[
+
+```r
+ggplot(gap_07_med, aes(x = continente, y = pop)) +
+* geom_bar(stat = "identity", width = 0.5, color="blue", fill="white")
+```
+]
+ 
+.panel2-ex_14-auto[
+&lt;img src="index_files/figure-html/ex_14_auto_02_output-1.png" width="100%" /&gt;
+]
+
+&lt;style&gt;
+.panel1-ex_14-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_14-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_14-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+count: false
+ 
+
+.panel1-ex_15-auto[
+
+```r
+*ggplot(gap_07_med, aes(x = continente, y = pop))
+```
+]
+ 
+.panel2-ex_15-auto[
+&lt;img src="index_files/figure-html/ex_15_auto_01_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_15-auto[
+
+```r
+ggplot(gap_07_med, aes(x = continente, y = pop)) +
+* geom_bar(stat = "identity", width = 0.5, color="blue", fill="grey")
+```
+]
+ 
+.panel2-ex_15-auto[
+&lt;img src="index_files/figure-html/ex_15_auto_02_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_15-auto[
+
+```r
+ggplot(gap_07_med, aes(x = continente, y = pop)) +
+  geom_bar(stat = "identity", width = 0.5, color="blue", fill="grey")+
+* geom_text(aes(label=pop), vjust=-1.6, color="black", size=3)
+```
+]
+ 
+.panel2-ex_15-auto[
+&lt;img src="index_files/figure-html/ex_15_auto_03_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_15-auto[
+
+```r
+ggplot(gap_07_med, aes(x = continente, y = pop)) +
+  geom_bar(stat = "identity", width = 0.5, color="blue", fill="grey")+
+  geom_text(aes(label=pop), vjust=-1.6, color="black", size=3) +
+* scale_y_continuous(limits = c(0,3.0e+07))
+```
+]
+ 
+.panel2-ex_15-auto[
+&lt;img src="index_files/figure-html/ex_15_auto_04_output-1.png" width="100%" /&gt;
+]
+
+&lt;style&gt;
+.panel1-ex_15-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_15-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_15-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+layout: true
+# Filtrando o Brasil 
+
+---
+
+count: false
+ 
+
+.panel1-ex_16-auto[
+
+```r
+*gap_brasil &lt;- filter(gapminder, country == "Brazil")
+```
+]
+ 
+.panel2-ex_16-auto[
+
+]
+
+&lt;style&gt;
+.panel1-ex_16-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_16-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_16-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+
+count: false
+ 
+
+.panel1-ex_17-auto[
+
+```r
+*p &lt;- ggplot(gap_brasil, aes(x = year, y = gdpPercap))
+```
+]
+ 
+.panel2-ex_17-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-ex_17-auto[
+
+```r
+p &lt;- ggplot(gap_brasil, aes(x = year, y = gdpPercap))
+*p 
+```
+]
+ 
+.panel2-ex_17-auto[
+&lt;img src="index_files/figure-html/ex_17_auto_02_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_17-auto[
+
+```r
+p &lt;- ggplot(gap_brasil, aes(x = year, y = gdpPercap))
+p +
+* geom_point()
+```
+]
+ 
+.panel2-ex_17-auto[
+&lt;img src="index_files/figure-html/ex_17_auto_03_output-1.png" width="100%" /&gt;
+]
+
+&lt;style&gt;
+.panel1-ex_17-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_17-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_17-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+ 
+---
+
+count: false
+ 
+
+.panel1-ex_18-auto[
+
+```r
+*p 
+```
+]
+ 
+.panel2-ex_18-auto[
+&lt;img src="index_files/figure-html/ex_18_auto_01_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_18-auto[
+
+```r
+p +
+* geom_line()
+```
+]
+ 
+.panel2-ex_18-auto[
+&lt;img src="index_files/figure-html/ex_18_auto_02_output-1.png" width="100%" /&gt;
+]
+
+&lt;style&gt;
+.panel1-ex_18-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_18-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_18-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+ 
+---
+
+count: false
+ 
+
+.panel1-ex_19-auto[
+
+```r
+*p 
+```
+]
+ 
+.panel2-ex_19-auto[
+&lt;img src="index_files/figure-html/ex_19_auto_01_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_19-auto[
+
+```r
+p +
+* geom_point()
+```
+]
+ 
+.panel2-ex_19-auto[
+&lt;img src="index_files/figure-html/ex_19_auto_02_output-1.png" width="100%" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-ex_19-auto[
+
+```r
+p +
+  geom_point() +
+* geom_line()
+```
+]
+ 
+.panel2-ex_19-auto[
+&lt;img src="index_files/figure-html/ex_19_auto_03_output-1.png" width="100%" /&gt;
+]
+
+&lt;style&gt;
+.panel1-ex_19-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-ex_19-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-ex_19-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+layout:false
+class: inverse, middle, center
+# FIM
+
+&lt;!-- adjust font size in this css code chunk, currently 90 --&gt;
+
+&lt;style type="text/css"&gt;
+.remark-code{line-height: 1.5; font-size: 90%}
+
+@media print {
+  .has-continuation {
+    display: block;
+  }
+}
+
+code.r.hljs.remark-code{
+  position: relative;
+  overflow-x: hidden;
+}
+
+
+code.r.hljs.remark-code:hover{
+  overflow-x:visible;
+  width: 500px;
+  border-style: solid;
+}
+&lt;/style&gt;
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"ratio": "16:9",
+"highlightStyle": "foundation",
+"highlightLines": true,
+"countIncrementalSlides": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
