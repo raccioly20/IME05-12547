@@ -1,0 +1,317 @@
+---
+title: "Regressão Linear"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    code_download: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 8, 
+                      fig.height= 7,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula07_1/")
+```
+
+
+## Carregando bibliotecas
+
+```{r}
+library(tidyverse)
+```
+
+
+
+
+## Dados de propaganda 
+
+O conjunto de dados contém estatísticas sobre as vendas de um produto em 200 diferentes mercados, juntamente com orçamentos publicitários em cada um desses mercados, para diferentes canais de mídia: TV, rádio e jornal.
+As vendas estão em milhares de unidades e o orçamento está em milhares de dólares.
+
+
+```{r carrega-dados}
+library(readxl)
+library(here)
+arquivo <- here("Propaganda.xlsx")
+arquivo
+propaganda <- read_excel(arquivo)
+summary(propaganda)
+```
+
+## Renomeando 
+
+
+```{r renomeando}
+propaganda <- propaganda %>% rename(Jornal = Newspaper, Vendas = Sales)
+
+```
+
+## Sumario
+
+```{r sumario}
+summary(propaganda)
+nrow(propaganda)
+```
+
+## Linhas inicias
+
+```{r head}
+library(gt)
+gt(head(propaganda, 10))
+```
+
+
+## Criando amostra de treino e teste
+
+```{r treino_teste, message=FALSE}
+library(caret)
+set.seed(21)
+y <- propaganda$Vendas
+indice_teste <- createDataPartition(y, times = 1, p = 0.40, list = FALSE)
+
+conj_treino <- propaganda %>% slice(-indice_teste)
+conj_teste <- propaganda %>% slice(indice_teste)
+
+str(conj_treino)
+str(conj_teste)
+gt(head(conj_treino, 10))
+```
+
+
+
+## Primeira visualização dos dados
+
+Aqui estou usando uma função do pacote caret que de uma maneira simples apresenta a relação entre a variável resposta e suas possíveis variáveis explicativas
+
+```{r caret, fig.height=4, fig.width=7}
+featurePlot(x = conj_treino[ , c("TV", "Radio", "Jornal")], y = conj_treino$Vendas)
+```
+
+## Usando o ggplot
+
+```{r ggplot, fig.height=4, fig.width=7}
+gt(head(conj_treino, 10))
+c_treino_pivot <- conj_treino %>% pivot_longer(!Vendas, names_to="Tipo", values_to="Orçamento" ) 
+gt(head(c_treino_pivot, 10))
+conj_treino %>% pivot_longer(!Vendas, names_to="Tipo", values_to="Orçamento" ) %>%
+            ggplot() + 
+            geom_point(aes(x=Orçamento, y=Vendas)) +
+            facet_wrap( ~ Tipo, scales = "free_x") +
+            labs(x = "Orçamento (1000 US$)", 
+                 y = "Vendas (em 1000 unidades vendidas)", 
+                 title = "Vendas vs Propaganda"
+                 ) 
+```
+
+\newpage
+
+## Matriz de dispersão
+
+```{r splom, fig.height=6.5, figure.width=7, message=FALSE}
+library(psych)
+pairs.panels(conj_treino, 
+             method = "pearson", # metodo de correlação
+             hist.col = "#00AFBB",
+             density = TRUE,  # mostra graficos de densidade
+             ellipses = FALSE # mostra elipses de correlação
+             )
+
+```
+
+
+\newpage
+
+## 1o Mod Regressão
+
+```{r 1a_regressão, message=FALSE}
+mod1 <- lm( Vendas ~ TV, data = conj_treino)
+names(mod1)
+coeflinear <- mod1$coefficients[1]
+coefang <- mod1$coefficients[2]
+summary(mod1)
+ggplot(conj_treino, aes(x=TV, y=Vendas)) +
+    geom_point() +
+    geom_abline(slope = coefang,intercept = coeflinear, color="blue" ) + 
+    geom_hline(yintercept=coeflinear, linetype="dashed", color = "red")
+
+# ggsave("Propaganda_TV.png", width = 6.5, height = 6.5)
+
+```
+
+## Extraindo informações do 1o ajuste
+
+```{r 1areg_info}
+summary(mod1)$sigma
+summary(mod1)$r.squared
+```
+
+
+
+## Intervalo de Confiança
+
+
+```{r IC}
+summary(mod1)
+confint(mod1)
+```
+
+
+## Previsões
+
+```{r previsoes}
+#?predict
+predict(mod1, data.frame(TV=c(50, 150, 250)), interval = "prediction")
+```
+
+
+## Calculando o erro padrão do resíduo com amostra de teste
+
+
+```{r avaliando_TV}
+sqrt(mean((conj_teste$Vendas - predict(mod1, conj_teste)) ^ 2)) 
+```
+
+## Análise do modelo
+
+```{r residuos1, message=FALSE, fig.height=6.5, fig.width=9}
+library(performance)
+check_model(mod1)
+```
+
+
+## 2o Modelo de Regressão
+
+```{r 2modelo-regressão, fig.height=4, fig.width=4}
+mod2 <- lm( Vendas ~ Radio, data = conj_treino)
+coeflinear <- mod2$coefficients[1]
+coefang <- mod2$coefficients[2]
+summary(mod2)
+ggplot(propaganda, aes(x=Radio, y=Vendas)) +
+    geom_point() +
+    geom_abline(slope = coefang,intercept = coeflinear, color="blue" ) + 
+    geom_hline(yintercept=coeflinear, linetype="dashed", color = "red")
+```
+
+
+## Calculando o erro padrão do resíduo com amostra de teste
+
+
+```{r avaliando_Radio}
+sqrt(mean((conj_teste$Vendas - predict(mod2, conj_teste)) ^ 2)) 
+```
+
+## Análise de Resíduos
+
+```{r residuos2, message=FALSE, fig.height=6.5, fig.width=9}
+check_model(mod2)
+```
+
+\newpage
+
+## 3o Modelo de Regressão
+
+```{r 3omodelo-regressao, fig.height=4, fig.width=4}
+mod3 <- lm( Vendas ~ Jornal, data = conj_treino)
+coeflinear <- mod3$coefficients[1]
+coefang <- mod3$coefficients[2]
+summary(mod3)
+ggplot(propaganda, aes(x=Jornal, y=Vendas)) +
+    geom_point() +
+    geom_abline(slope = coefang,intercept = coeflinear, color="blue" ) + 
+    geom_hline(yintercept=coeflinear, linetype="dashed", color = "red")
+```
+
+
+## Calculando o erro padrão do resíduo com amostra de teste
+
+
+```{r avaliando_mod3}
+sqrt(mean((conj_teste$Vendas - predict(mod3, conj_teste)) ^ 2)) 
+```
+
+## Análise de Resíduos
+
+```{r residuos3, message=FALSE, fig.height=6.5, fig.width=9}
+check_model(mod3)
+```
+
+
+\newpage
+
+
+## 1a Regressão Multipla
+
+```{r regressao-multipla}
+mod4 <- lm( Vendas ~ TV + Radio + Jornal, data = conj_treino)
+summary(mod4)
+```
+
+
+
+## 2a Regressao Multipla  
+```{r regmult-sem-jornal}
+mod5 <- lm( Vendas ~ TV + Radio, data = conj_treino)
+summary(mod5)
+
+```
+
+
+## Confirmando o teste t com o teste F (ANOVA)
+
+```{r}
+anova(mod5, mod4)
+```
+
+
+
+## Calculando o erro padrão do resíduo com amostra de teste
+
+
+```{r avaliando_mod5}
+sqrt(mean((conj_teste$Vendas - predict(mod5, conj_teste)) ^ 2)) 
+```
+
+
+## Comparando com a melhor regressão simples
+
+```{r simples_multipla}
+## Modelo com somente TV
+summary(mod1)$sigma
+summary(mod1)$r.squared
+sqrt(mean((conj_teste$Vendas - predict(mod1, conj_teste)) ^ 2))
+## Modelo com TV e Jornal
+summary(mod5)$sigma
+summary(mod5)$adj.r.squared
+sqrt(mean((conj_teste$Vendas - predict(mod5, conj_teste)) ^ 2))
+```
+
+
+
+## Análise do Modelo
+
+```{r residuos, message=FALSE, fig.height=10, fig.width=9}
+check_model(mod5)
+```
+
+
+## Tentando corrigir o problema
+
+```{r transf_resposta, fig.height=10, fig.width=10}
+mod6 <- lm( log(Vendas) ~ TV + Radio, data = conj_treino)
+summary(mod6)
+check_model(mod6)
+```
+
+
+## Dado que parece outlier e é um valor influente
+
+
+```{r}
+conj_treino[83,]
+```
+
