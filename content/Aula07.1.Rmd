@@ -139,8 +139,13 @@ ggplot(conj_treino, aes(x=TV, y=Vendas)) +
     geom_abline(slope = coefang,intercept = coeflinear, color="blue" ) + 
     geom_hline(yintercept=coeflinear, linetype="dashed", color = "red")
 
-# ggsave("Propaganda_TV.png", width = 6.5, height = 6.5)
+```
 
+## Outra forma de representação do 1o Modelo 
+
+```{r 1areg, message=FALSE}
+library(car)
+scatterplot(Vendas ~ TV, data = conj_treino, smooth=F, id.n=1)
 ```
 
 ## Extraindo informações do 1o ajuste
@@ -178,9 +183,8 @@ sqrt(mean((conj_teste$Vendas - predict(mod1, conj_teste)) ^ 2))
 
 ## Análise do modelo
 
-```{r residuos1, message=FALSE, fig.height=6.5, fig.width=9}
-library(performance)
-check_model(mod1)
+```{r residuos1a, message=FALSE, fig.height=6.5, fig.width=9}
+plot(mod1)
 ```
 
 
@@ -208,7 +212,7 @@ sqrt(mean((conj_teste$Vendas - predict(mod2, conj_teste)) ^ 2))
 ## Análise de Resíduos
 
 ```{r residuos2, message=FALSE, fig.height=6.5, fig.width=9}
-check_model(mod2)
+plot(mod2)
 ```
 
 \newpage
@@ -237,7 +241,7 @@ sqrt(mean((conj_teste$Vendas - predict(mod3, conj_teste)) ^ 2))
 ## Análise de Resíduos
 
 ```{r residuos3, message=FALSE, fig.height=6.5, fig.width=9}
-check_model(mod3)
+plot(mod3)
 ```
 
 
@@ -295,7 +299,7 @@ sqrt(mean((conj_teste$Vendas - predict(mod5, conj_teste)) ^ 2))
 ## Análise do Modelo
 
 ```{r residuos, message=FALSE, fig.height=10, fig.width=9}
-check_model(mod5)
+plot(mod5)
 ```
 
 
@@ -304,7 +308,7 @@ check_model(mod5)
 ```{r transf_resposta, fig.height=10, fig.width=10}
 mod6 <- lm( log(Vendas) ~ TV + Radio, data = conj_treino)
 summary(mod6)
-check_model(mod6)
+plot(mod6)
 ```
 
 
