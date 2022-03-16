@@ -1,0 +1,255 @@
+---
+title: "Regularização de Modelos"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+ html_document:
+    toc: yes
+    code_download: yes
+---
+
+## Regularização de modelos
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 9, 
+                      fig.height= 7,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula07_4/")
+```
+
+## Carregando Bibliotecas
+
+```{r bibliotecas, warning=FALSE, message=FALSE}
+library(MASS)
+library(tidyverse)
+library(glmnet)
+data(Boston)
+```
+
+## Carregando os dados
+
+Vamos utilizar neste exemplo os dados contidos na biblioteca MASS. A base de dados Boston tem `r nrow(Boston)` de valores preços medianos de casas na região de Boston com 13 outras variáveis explicativas (potencialmente).  Vamos explorar os dados e ajustar modelos com penalização o Ridge e o LASSO e depois vamos comparar com os mínimos quadrados.  
+
+```{r Dados}
+head(Boston)
+summary(Boston)
+```
+
+Observamos acima que todas as variáveis são quantitativas e que não há necessidade de transformações.
+
+## Significado das variáveis
+
+```{r Boston}
+# Boston Database
+# 
+#1) crim - taxa de criminalidade per capita por cidade.
+# 
+#2) zn - proporção de terrenos residenciais para lotes acima de 25,000 sq.ft.
+# 
+#3) indus - proporção de negócios não comerciais por acres e por cidade.
+# 
+#4) chas - variável dummy do Rio Charles(= 1 se próximo do rio; 0 de outra forma).
+# 
+#5) nox - concentração de óxido de nitrogênio (partes por 10 milhões).
+# 
+#6) rm - número médio de quartos por habitação
+# 
+#7) age - proporção da unidade ocupadas pelos proprietários construídas antes 1940.
+# 
+#8) dis - média ponderada das distâncias dos 5 pontos de emprego em Boston.
+# 
+#9) rad - indice de acessibilidade das avenidas radiais.
+# 
+#10) tax - valor cheio da taxa de propriedade por $10,000.
+# 
+#11) ptratio - razão aluno-professor por cidade.
+# 
+#12) black - 1000(Bk−0.63)21000(Bk−0.63)2 proporção de negros por cidade.
+# 
+#13) lstat - percentual de baixo status da população.
+# 
+#14) medv - valor mediano das cas ocupadas pelos proprietário em $1000s. (Var. Resposta)
+```
+
+
+## Métodos de Regularização
+
+O pacote glmnet não usa a linguagem de formula, em particular nós devemos passar $x$ como uma matriz e $y$ como um vetor, pois não se usa a sintaxe $y \sim x$.
+Com isso será necessário ajustar x e y. A função model.matrix() é particularmente útil para criar x; não só produz uma matriz correspondente as variáveis explicativas, **mas também transforma automaticamente quaisquer variáveis qualitativas em variáveis dummy. Esta última propriedade é importante porque o glmnet() só pode tomar insumos numéricos e quantitativos.**
+
+```{r preparando_dados}
+x <- model.matrix(medv ~ . , data = Boston)[, -1]
+head(x)
+y <- Boston$medv
+```
+
+## Regressão Ridge
+
+Primeiro vamos ajustar um modelo de regressão Ridge. Isso é conseguido chamando `glmnet()` com `alpha=0`, se `alpha=1` então  `glmnet()` ajusta um lasso.(veja o arquivo de ajuda). 
+
+```{r Ridge}
+## Estabelecendo um grid de valores para lambda
+grid <- 10^seq(10, -2, length = 100)
+ajusreg.ridge <- glmnet(x, y, alpha=0, lambda = grid)
+
+```
+
+Por padrão, a função `glmnet()` executa a regressão ridge automaticamente
+selecionando a faixa de valores de $\lambda$. No entanto, aqui nós escolhemos implementar usando uma grade de valores que variam de $\lambda = 10^{10}$ a $\lambda = 10^{-2}$, cobrindo toda a gama de cenários do modelo nulo contendo apenas o coeficiente linear até o ajuste dos mínimos quadrados. 
+
+Também podemos calcular o modelo para um valor particular de $\lambda$ que não é um dos valores de grade. Observe que, por padrão, a função `glmnet()` padroniza as
+variáveis para que elas estejam na mesma escala. **Esta padronização é muito importante no caso da regressão Ridge, pois ela é afetada pela mudança de escala das variáveis explicativas.**  
+
+Associado a cada valor de $\lambda$ existe um vetor de coeficientes de regressão de ridge, que é armazenado em uma matriz que pode ser acessada por 'coef()'. Neste caso, é uma matriz $14 \times 100$, com 14 linhas (uma para cada preditor, mais uma para o coeficiente linear) e 100 colunas (uma para cada valor de $\lambda$).
+
+
+
+```{r}
+dim(coef(ajusreg.ridge))
+plot(ajusreg.ridge, xvar="lambda", label=TRUE) # Representando os coeficientes
+
+```
+
+Quando $\lambda$ é grande o esperado é que os coeficentes sejam pequenos e quando $\lambda$ é pequeno os coeficientes assumem valores maiores. 
+
+```{r}
+ajusreg.ridge$lambda[1] # Mostra primeiro valor de lambda
+coef(ajusreg.ridge)[,1] # Mostra os coeficientes associados com o primeiro valor
+ajusreg.ridge$lambda[100] # Mostra centésimo valor de lambda
+coef(ajusreg.ridge)[,100] # Mostra os coeficientes associados com o centésimo valor
+```
+
+Nós podemos usar o k-fold cross validation para identificar o melhor valor de $\lambda$ 
+
+A biblioteca glmnet já tem internamente uma função para uso do crosss validation. O default são 10 envelopes de dados `nfold=10`.
+
+```{r}
+set.seed(21)
+ridge_cv <- cv.glmnet(x,y, alpha=0) ## por padrão k=10
+plot(ridge_cv)
+m_lamb <- ridge_cv$lambda.min  # Seleciona o lambda que minimiza o MSE (EQM) de treino
+m_lamb
+log(m_lamb)
+coef(ridge_cv)
+```
+
+
+## Treino e Teste
+
+Em seguida, ajustamos um modelo de regressão ridge no conjunto de treinamento, e avaliamos seu MSE no conjunto de teste, usando $\lambda$ = m_lamb. Observe o uso da função 'predict()': desta vez temos previsões para um conjunto de teste, com o argumento `newx`.
+
+
+```{r treino_teste}
+library(caret)
+set.seed(21)
+y <- Boston$medv
+indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
+
+conj_treino <- Boston %>% slice(-indice_teste)
+conj_teste <- Boston %>% slice(indice_teste)
+str(conj_treino)
+str(conj_teste)
+
+x_treino <- model.matrix(medv ~ . , data = conj_treino)[, -1]
+y_treino <- conj_treino$medv
+
+
+x_teste <- model.matrix(medv ~ . , data = conj_teste)[, -1]
+y_teste = conj_teste$medv
+
+```
+
+
+## Avaliando
+
+Aqui fazem um k-fold cross validation no conjunto de treino, obtendo o melhor valor de $\lambda$ e depois testamos o modelo no conjunto de teste e calculamos a raiz do EQM (MSE) 
+
+```{r avaliando}
+ridge_cv2 <- cv.glmnet(x_treino,y_treino, alpha=0)
+m_lamb <- ridge_cv2$lambda.min  # Seleciona o lambda que minimiza o MSE de treino
+m_lamb
+ajusreg.ridge2 <- glmnet(x_treino, y_treino, alpha=0, lambda = m_lamb)
+coef(ajusreg.ridge2)
+y_prev <- predict(ajusreg.ridge2, s = m_lamb, newx = x_teste)
+# Metricas de desempenho
+sqrt(mean((y_prev - y_teste)^2))
+```
+
+
+
+
+## LASSO
+
+Primeiro ajustamos com todos os dados como no caso do Ridge
+
+```{r LASSO}
+ajusreg.lasso <- glmnet(x,y, alpha = 1)
+plot(ajusreg.lasso,xvar="lambda",label=TRUE)
+lasso_cv <- cv.glmnet(x,y, alpha = 1)
+plot(lasso_cv)
+coef(lasso_cv)
+```
+
+
+## Avaliando 2
+
+Agora separamos os dadosem treino e teste e avaliamos o lasso
+
+
+```{r lasso2}
+lasso_cv2 <- cv.glmnet(x_treino, y_treino, alpha=1)
+m_lamb <- lasso_cv2$lambda.min  # Seleciona o lambda que minimiza o MSE de treino
+log(m_lamb)
+ajusreg.lasso2 <- glmnet(x_treino, y_treino, alpha=1, lambda = m_lamb)
+coef(ajusreg.lasso2)
+y_prev <- predict(ajusreg.lasso2, s = m_lamb, newx = x_teste)
+# Metricas de desempenho
+sqrt(mean((y_prev - y_teste)^2))
+```
+
+
+## Comparando com a seleção de modelos usando o Cp
+
+
+```{r outro}
+library(leaps)
+ajusreg.comp <- regsubsets(medv ~ ., data=conj_treino, nvmax=13)
+sumario.reg <- summary(ajusreg.comp)
+## Os modelos vão ser escolhidos com base no menor Cp
+plot(sumario.reg$cp,xlab="Número de Variáveis",ylab="Cp")
+which.min(sumario.reg$cp)
+points(11,sumario.reg$cp[11],pch=20,col="red")
+```
+
+## Ajustando no lm() e vendo o erro no conjunto de teste
+
+Observando so resultados de erro vemos que tanto a regressão Ridge como o LASSO apresentaram valores de erro maiores que o modelo definido através da melhor seleção de modelos (best subset regression). Aqui usamos o Cp de Mallows como critério de deleção de variáveis.
+
+```{r erro_teste}
+coef(ajusreg.comp,11) 
+outro_mod <- lm(medv ~ crim + zn + chas + nox + rm + dis + rad + tax + ptratio + black + lstat, data=conj_treino)
+summary(outro_mod)
+sqrt(mean((conj_teste$medv - predict(outro_mod, conj_teste)) ^ 2)) 
+```
+
+
+## E o BIC?
+
+E se escolhessemos o BIC como critério de seleção de variáveis explicativas? Neste caso os resultados foram iguais ao Cp. Entretanto, dá para perceber que o BIC apresentou uma certa estabilidade entre 7 e 9 variáveis. Se quisermos ter um modelo mais enxuto poderiamos optar por 7 variáveis.    
+
+```{r BIC}
+ajusreg.comp1 <- regsubsets(medv ~ ., data=conj_treino, nvmax=13)
+sumario.reg1 <- summary(ajusreg.comp1)
+## Os modelos vão ser escolhidos com base no menor BIC
+plot(sumario.reg1$bic,xlab="Número de Variáveis",ylab="BIC")
+which.min(sumario.reg1$bic)
+points(7,sumario.reg1$bic[7],pch=20,col="red")
+coef(ajusreg.comp1,7) 
+outro_mod1 <- lm(medv ~ chas + nox + rm + dis + ptratio + black + lstat, data=conj_treino)
+summary(outro_mod1)
+sqrt(mean((conj_teste$medv - predict(outro_mod1, conj_teste)) ^ 2))
+```
+
