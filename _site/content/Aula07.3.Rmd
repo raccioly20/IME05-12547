@@ -70,11 +70,28 @@ nrow(Boston)
 # 14) medv - valor mediano das casas ocupadas pelos proprietário em $1000s. (Var. Resposta)
 ```
 
+
+## Conjunto de teste e treino
+
+```{r treino_teste}
+library(caret)
+set.seed(21)
+y <- Boston$medv
+indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
+
+conj_treino <- Boston %>% slice(-indice_teste)
+conj_teste <- Boston %>% slice(indice_teste)
+
+str(conj_treino)
+str(conj_teste)
+gt::gt(head(conj_treino, 10))
+```
+
 ## Matriz de correlação
 
 ```{r corrplot1, fig.height=4.5, figure.width=8, message=FALSE}
 library(corrplot)
-mat_corr <- cor(Boston)
+mat_corr <- cor(conj_treino)
 corrplot(mat_corr)
 ```
 
@@ -84,7 +101,7 @@ corrplot(mat_corr)
 
 ```{r splom2}
 library(psych)
-pairs.panels(Boston,
+pairs.panels(conj_treino,
              method = "pearson", # metodo de correlação
              hist.col = "#00AFBB",
              density = TRUE,  # mostra graficos de densidade
@@ -98,7 +115,7 @@ pairs.panels(Boston,
 
 ```{r melhor_modelo}
 ## Best Subset sem definir o número máx de subsets a ser avaliado
-ajusreg.comp <- regsubsets(medv ~ ., data=Boston)
+ajusreg.comp <- regsubsets(medv ~ ., data=conj_treino)
 summary(ajusreg.comp)
 ## Não testou todas as combinações possíveis
 ```
@@ -106,7 +123,7 @@ summary(ajusreg.comp)
 ## nvmax=13
 
 ```{r modelo_completo}
-ajusreg.comp <- regsubsets(medv ~ ., data=Boston, nvmax=13)
+ajusreg.comp <- regsubsets(medv ~ ., data=conj_treino, nvmax=13)
 sumario.reg <- summary(ajusreg.comp)
 sumario.reg
 names(sumario.reg)
@@ -114,7 +131,7 @@ names(sumario.reg)
 
 ## Avaliando os modelos
 
-```{r avaliando, fig.height=4.5, figure.width=6.5}
+```{r avaliando}
 ## Os modelos vão ser escolhidos com base no menor Cp
 plot(sumario.reg$cp,xlab="Número de Variáveis",ylab="Cp")
 which.min(sumario.reg$cp)
@@ -132,8 +149,8 @@ coef(ajusreg.comp,11)
 ## Forward Stepwise (passo a passo à frente)
 
 
-```{r FR, fig.height=4.5, figure.width=6.5}
-ajusreg.fwd <- regsubsets(medv ~ . , data=Boston,nvmax=13, method="forward")
+```{r FR}
+ajusreg.fwd <- regsubsets(medv ~ . , data=conj_treino,nvmax=13, method="forward")
 sumario.reg.fwd <- summary(ajusreg.fwd)
 sumario.reg.fwd 
 which.min(sumario.reg.fwd$cp)
@@ -153,7 +170,7 @@ coef(ajusreg.fwd,11)
 
 
 ```{r BR, fig.height=4.5, figure.width=6.5}
-ajusreg.bwd <- regsubsets(medv ~ . , data=Boston,nvmax=13, method="backward")
+ajusreg.bwd <- regsubsets(medv ~ . , data=conj_treino,nvmax=13, method="backward")
 sumario.reg.bwd <- summary(ajusreg.bwd)
 sumario.reg.bwd
 which.min(sumario.reg.bwd$cp)
@@ -167,35 +184,6 @@ points(11,sumario.reg.bwd$cp[11],pch=20,col="red")
 ```{r detalhes3}
 coef(ajusreg.bwd,11)  
 ```
-
-## Conjunto de teste e treino
-
-```{r treino_teste}
-library(caret)
-set.seed(21)
-y <- Boston$medv
-indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
-
-conj_treino <- Boston %>% slice(-indice_teste)
-conj_teste <- Boston %>% slice(indice_teste)
-
-str(conj_treino)
-str(conj_teste)
-knitr::kable(
-  head(conj_treino, 10), booktabs = TRUE,
-  caption = '10 primeras linhas do conjunto de treino.'
-)
-```
-
-## Matriz de correlação
-
-```{r corrplot, fig.height=4.5, figure.width=6.5, message=FALSE}
-library(corrplot)
-mat_corr <- cor(conj_treino)
-corrplot(mat_corr)
-```
-
-
 
 ## Comportamento dos erros de treino e teste
 
@@ -217,7 +205,7 @@ legend("topright",legend=c("Treino","Teste"),col=c("blue","black"),pch=19)
 
 ## Testando outra estatística de seleção de modelos - BIC
 
-```{r BIC, fig.height=4.5, figure.width=6.5}
+```{r BIC}
 ajusreg.fwd1 <- regsubsets(medv ~ . , data=conj_treino,nvmax=13, method="forward")
 sumario.reg.fwd1 <- summary(ajusreg.fwd1)
 names(sumario.reg.fwd1)
@@ -232,7 +220,7 @@ coef(ajusreg.fwd1,7)
 
 ## Usando o Cp novamente
 
-```{r cp_denovo, fig.height=4.5, figure.width=6.5}
+```{r cp_denovo}
 which.min(sumario.reg.fwd1$cp)
 plot(sumario.reg.fwd1$cp,xlab="Número de Variáveis",ylab="Cp")
 points(11,sumario.reg.fwd1$cp[11],pch=20,col="red")
@@ -248,6 +236,15 @@ mod_cp <- lm(medv ~ crim + zn + chas + nox + rm + dis + rad + tax + ptratio + bl
 summary(mod_cp)
 ```
 
+## Eliminando a variável não significativa
+
+```{r eliminando}
+mod_cp2 <- lm(medv ~ zn + chas + nox + rm + dis + rad + tax + ptratio + black + lstat, data=conj_treino)
+summary(mod_cp2)
+```
+
+
+
 ## Avaliando Colinearidade
 
 Uma investigação minuciosa da multicollinearidade envolverá a análise do valor do $R^2$ que resulta da regressão de cada uma das variáveis explicativas contra todas as outras. A relação entre as variáveis explicativas pode ser julgada examinando uma quantidade chamada fator de inflacionário da variância (FIV) ou Variance Inflation Factor (VIF). Seja $Rj~^{2}$ o quadrado do coeficiente de correlação múltipla que resulta quando a variável explicativa $Xj~$ é ajustada contra todas as outras variáveis explicativas. Então o vif para $Xj~$ é $VIFj = 1 / (1-Rj~^{2})$
@@ -256,11 +253,11 @@ Uma investigação minuciosa da multicollinearidade envolverá a análise do val
 
 ```{r car, message=FALSE}
 library(car)
-vif(mod_cp)
-## Vamos eliminar tax e ver o que acontece
-mod_cp2 <- lm(medv ~ crim + zn + chas + nox + rm + dis + rad + ptratio + black + lstat, data=conj_treino)
-summary(mod_cp2)
 vif(mod_cp2)
+## Vamos eliminar tax e ver o que acontece
+mod_cp3 <- lm(medv ~ zn + chas + nox + rm + dis + rad + ptratio + black + lstat, data=conj_treino)
+summary(mod_cp3)
+vif(mod_cp3)
 ```
 
 
@@ -268,10 +265,9 @@ vif(mod_cp2)
 
 ```{r C_teste}
 # Modelo com base no Cp
-mod_cp2 <- lm(medv ~ crim + zn + chas + nox + rm + dis + rad + ptratio + black + lstat, data=conj_treino)
-summary(mod_cp2)$sigma
-summary(mod_cp2)$adj.r.squared
-sqrt(mean((conj_teste$medv - predict(mod_cp2, conj_teste)) ^ 2))
+summary(mod_cp3)$sigma
+summary(mod_cp3)$adj.r.squared
+sqrt(mean((conj_teste$medv - predict(mod_cp3, conj_teste)) ^ 2))
 
 # Modelo com base no BIC
 mod_bic <- lm(medv ~ chas + nox + rm + dis + ptratio + black + lstat, data=conj_treino) 

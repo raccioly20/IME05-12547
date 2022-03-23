@@ -74,6 +74,20 @@ Observamos acima que todas as variáveis são quantitativas e que não há neces
 #14) medv - valor mediano das cas ocupadas pelos proprietário em $1000s. (Var. Resposta)
 ```
 
+## Conjunto de treino e de teste
+
+```{r treino_teste}
+library(caret)
+set.seed(21)
+y <- Boston$medv
+indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
+
+conj_treino <- Boston %>% slice(-indice_teste)
+conj_teste <- Boston %>% slice(indice_teste)
+str(conj_treino)
+str(conj_teste)
+
+```
 
 ## Métodos de Regularização
 
@@ -81,9 +95,11 @@ O pacote glmnet não usa a linguagem de formula, em particular nós devemos pass
 Com isso será necessário ajustar x e y. A função model.matrix() é particularmente útil para criar x; não só produz uma matriz correspondente as variáveis explicativas, **mas também transforma automaticamente quaisquer variáveis qualitativas em variáveis dummy. Esta última propriedade é importante porque o glmnet() só pode tomar insumos numéricos e quantitativos.**
 
 ```{r preparando_dados}
-x <- model.matrix(medv ~ . , data = Boston)[, -1]
-head(x)
-y <- Boston$medv
+x_treino <- model.matrix(medv ~ . , data = conj_treino)[, -1]
+y_treino <- conj_treino$medv
+
+x_teste <- model.matrix(medv ~ . , data = conj_teste)[, -1]
+y_teste = conj_teste$medv
 ```
 
 ## Regressão Ridge
@@ -93,7 +109,7 @@ Primeiro vamos ajustar um modelo de regressão Ridge. Isso é conseguido chamand
 ```{r Ridge}
 ## Estabelecendo um grid de valores para lambda
 grid <- 10^seq(10, -2, length = 100)
-ajusreg.ridge <- glmnet(x, y, alpha=0, lambda = grid)
+ajusreg.ridge <- glmnet(x_treino, y_treino, alpha=0, lambda = grid)
 
 ```
 
@@ -107,7 +123,7 @@ Associado a cada valor de $\lambda$ existe um vetor de coeficientes de regressã
 
 
 
-```{r}
+```{r r1}
 dim(coef(ajusreg.ridge))
 plot(ajusreg.ridge, xvar="lambda", label=TRUE) # Representando os coeficientes
 
@@ -115,12 +131,21 @@ plot(ajusreg.ridge, xvar="lambda", label=TRUE) # Representando os coeficientes
 
 Quando $\lambda$ é grande o esperado é que os coeficentes sejam pequenos e quando $\lambda$ é pequeno os coeficientes assumem valores maiores. 
 
-```{r}
+```{r r2}
 ajusreg.ridge$lambda[1] # Mostra primeiro valor de lambda
 coef(ajusreg.ridge)[,1] # Mostra os coeficientes associados com o primeiro valor
 ajusreg.ridge$lambda[100] # Mostra centésimo valor de lambda
 coef(ajusreg.ridge)[,100] # Mostra os coeficientes associados com o centésimo valor
 ```
+
+
+```{r r3}
+library(plotmo)
+plot_glmnet(ajusreg.ridge)
+```
+
+
+## Cross-Validation no Ridge
 
 Nós podemos usar o k-fold cross validation para identificar o melhor valor de $\lambda$ 
 
@@ -128,57 +153,25 @@ A biblioteca glmnet já tem internamente uma função para uso do crosss validat
 
 ```{r}
 set.seed(21)
-ridge_cv <- cv.glmnet(x,y, alpha=0) ## por padrão k=10
+ridge_cv <- cv.glmnet(x_treino,y_treino, alpha=0) ## por padrão k=10
 plot(ridge_cv)
 m_lamb <- ridge_cv$lambda.min  # Seleciona o lambda que minimiza o MSE (EQM) de treino
 m_lamb
 log(m_lamb)
-coef(ridge_cv)
+coef(ridge_cv, s=m_lamb)
 ```
 
+## Avaliando com conjunto de teste
 
-## Treino e Teste
+Em seguida avaliamos seu MSE no conjunto de teste, usando $\lambda$ = m_lamb. Observe o uso da função 'predict()': desta vez temos previsões para um conjunto de teste, com o argumento `newx`.
 
-Em seguida, ajustamos um modelo de regressão ridge no conjunto de treinamento, e avaliamos seu MSE no conjunto de teste, usando $\lambda$ = m_lamb. Observe o uso da função 'predict()': desta vez temos previsões para um conjunto de teste, com o argumento `newx`.
-
-
-```{r treino_teste}
-library(caret)
-set.seed(21)
-y <- Boston$medv
-indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
-
-conj_treino <- Boston %>% slice(-indice_teste)
-conj_teste <- Boston %>% slice(indice_teste)
-str(conj_treino)
-str(conj_teste)
-
-x_treino <- model.matrix(medv ~ . , data = conj_treino)[, -1]
-y_treino <- conj_treino$medv
-
-
-x_teste <- model.matrix(medv ~ . , data = conj_teste)[, -1]
-y_teste = conj_teste$medv
-
-```
-
-
-## Avaliando
-
-Aqui fazem um k-fold cross validation no conjunto de treino, obtendo o melhor valor de $\lambda$ e depois testamos o modelo no conjunto de teste e calculamos a raiz do EQM (MSE) 
 
 ```{r avaliando}
-ridge_cv2 <- cv.glmnet(x_treino,y_treino, alpha=0)
-m_lamb <- ridge_cv2$lambda.min  # Seleciona o lambda que minimiza o MSE de treino
-m_lamb
 ajusreg.ridge2 <- glmnet(x_treino, y_treino, alpha=0, lambda = m_lamb)
-coef(ajusreg.ridge2)
 y_prev <- predict(ajusreg.ridge2, s = m_lamb, newx = x_teste)
 # Metricas de desempenho
 sqrt(mean((y_prev - y_teste)^2))
 ```
-
-
 
 
 ## LASSO
@@ -186,26 +179,22 @@ sqrt(mean((y_prev - y_teste)^2))
 Primeiro ajustamos com todos os dados como no caso do Ridge
 
 ```{r LASSO}
-ajusreg.lasso <- glmnet(x,y, alpha = 1)
-plot(ajusreg.lasso,xvar="lambda",label=TRUE)
-lasso_cv <- cv.glmnet(x,y, alpha = 1)
+ajusreg.lasso <- glmnet(x_treino,y_treino, alpha = 1)
+plot_glmnet(ajusreg.lasso)
+lasso_cv <- cv.glmnet(x_treino,y_treino, alpha = 1)
 plot(lasso_cv)
-coef(lasso_cv)
+m_lamb1 <- lasso_cv$lambda.min  # Seleciona o lambda que minimiza o MSE de treino
+m_lamb1
+log(m_lamb1)
+coef(lasso_cv, s=m_lamb1)
 ```
 
 
-## Avaliando 2
-
-Agora separamos os dadosem treino e teste e avaliamos o lasso
-
+## Avaliando com conjunto de teste
 
 ```{r lasso2}
-lasso_cv2 <- cv.glmnet(x_treino, y_treino, alpha=1)
-m_lamb <- lasso_cv2$lambda.min  # Seleciona o lambda que minimiza o MSE de treino
-log(m_lamb)
-ajusreg.lasso2 <- glmnet(x_treino, y_treino, alpha=1, lambda = m_lamb)
-coef(ajusreg.lasso2)
-y_prev <- predict(ajusreg.lasso2, s = m_lamb, newx = x_teste)
+ajusreg.lasso2 <- glmnet(x_treino, y_treino, alpha=1, lambda = m_lamb1)
+y_prev <- predict(ajusreg.lasso2, s = m_lamb1, newx = x_teste)
 # Metricas de desempenho
 sqrt(mean((y_prev - y_teste)^2))
 ```
