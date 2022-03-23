@@ -181,6 +181,12 @@ Primeiro ajustamos com todos os dados como no caso do Ridge
 ```{r LASSO}
 ajusreg.lasso <- glmnet(x_treino,y_treino, alpha = 1)
 plot_glmnet(ajusreg.lasso)
+```
+
+
+## Validação Cruzada no LASSO
+
+```{r Lasso2}
 lasso_cv <- cv.glmnet(x_treino,y_treino, alpha = 1)
 plot(lasso_cv)
 m_lamb1 <- lasso_cv$lambda.min  # Seleciona o lambda que minimiza o MSE de treino
@@ -188,6 +194,7 @@ m_lamb1
 log(m_lamb1)
 coef(lasso_cv, s=m_lamb1)
 ```
+
 
 
 ## Avaliando com conjunto de teste
