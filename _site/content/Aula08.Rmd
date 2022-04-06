@@ -71,7 +71,7 @@ x <- alturas$altura
 
 ```{r amostras-treino-teste}
 set.seed(2021)
-indice_teste <- createDataPartition(y, times = 1, p = 0.5, list = FALSE)
+indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
 conj_teste <- alturas[indice_teste, ]
 conj_treino <- alturas[-indice_teste, ]
 head(conj_teste)
@@ -81,6 +81,7 @@ head(conj_treino)
 str(conj_treino)
 summary(conj_treino)
 ```
+
 
 ## Chutar a resposta!!!!!
 
@@ -175,8 +176,8 @@ confusionMatrix(data = y_chapeu, reference = conj_teste$sexo)
 ## Voltando a chutar
 ```{r volta_chute}
 p <- 0.9
-y_chapeu <- sample(c("Masculino", "Feminino"), 
-                   length(indice_teste), replace = TRUE, prob=c(p, 1-p)) %>%                            factor(levels = levels(conj_teste$sexo))
+y_chapeu <- sample(c("Masculino", "Feminino"), length(indice_teste), 
+                   replace = TRUE, prob=c(p, 1-p)) %>% factor(levels = levels(conj_teste$sexo))
 mean(y_chapeu == conj_teste$sexo)
 ```
 
