@@ -66,7 +66,7 @@ Antes de iniciarmos é fundamental fazermos a normalização (padronização) do
 
 ```{r normalizar}
 credito_n <- credito
-credito_n[,-1] <- scale(credito_n[,-1])
+credito_n[,3:4] <- scale(credito_n[,3:4])
 ```
 
 
