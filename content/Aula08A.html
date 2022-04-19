@@ -570,7 +570,8 @@ desvio padrão 1</strong></p>
 <pre class="r"><code># Vamos usar a regra da raiz quadrada do tamnho da amostra
 sqrt(nrow(conj_treino)) ## ~90</code></pre>
 <pre><code>## [1] 89.43713</code></pre>
-<pre class="r"><code>t_knn1 &lt;- knn3(inadimplente ~ balanco + receita + estudante, data = conj_treino, k = 90)
+<pre class="r"><code>set.seed(21)
+t_knn1 &lt;- knn3(inadimplente ~ balanco + receita + estudante, data = conj_treino, k = 90)
 t_knn1</code></pre>
 <pre><code>## 90-nearest neighbor model
 ## Training set outcome distribution:
@@ -595,26 +596,26 @@ confusionMatrix(y_chapeu_knn1, conj_teste$inadimplente, positive=&quot;Sim&quot;
 ## 
 ##           Reference
 ## Prediction  Nao  Sim
-##        Nao 1931   50
-##        Sim    3   17
+##        Nao 1930   51
+##        Sim    4   16
 ##                                           
-##                Accuracy : 0.9735          
-##                  95% CI : (0.9655, 0.9801)
+##                Accuracy : 0.9725          
+##                  95% CI : (0.9644, 0.9792)
 ##     No Information Rate : 0.9665          
-##     P-Value [Acc &gt; NIR] : 0.04298         
+##     P-Value [Acc &gt; NIR] : 0.07329         
 ##                                           
-##                   Kappa : 0.3813          
+##                   Kappa : 0.3579          
 ##                                           
-##  Mcnemar&#39;s Test P-Value : 2.64e-10        
+##  Mcnemar&#39;s Test P-Value : 5.552e-10       
 ##                                           
-##             Sensitivity : 0.253731        
-##             Specificity : 0.998449        
-##          Pos Pred Value : 0.850000        
-##          Neg Pred Value : 0.974760        
+##             Sensitivity : 0.238806        
+##             Specificity : 0.997932        
+##          Pos Pred Value : 0.800000        
+##          Neg Pred Value : 0.974255        
 ##              Prevalence : 0.033483        
-##          Detection Rate : 0.008496        
+##          Detection Rate : 0.007996        
 ##    Detection Prevalence : 0.009995        
-##       Balanced Accuracy : 0.626090        
+##       Balanced Accuracy : 0.618369        
 ##                                           
 ##        &#39;Positive&#39; Class : Sim             
 ## </code></pre>

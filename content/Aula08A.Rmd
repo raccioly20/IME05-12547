@@ -152,6 +152,7 @@ ggplot(data = credito, aes(x=balanco,  y = receita, col = inadimplente)) + geom_
 ```{r 1modelo}
 # Vamos usar a regra da raiz quadrada do tamnho da amostra
 sqrt(nrow(conj_treino)) ## ~90
+set.seed(21)
 t_knn1 <- knn3(inadimplente ~ balanco + receita + estudante, data = conj_treino, k = 90)
 t_knn1
 ```
