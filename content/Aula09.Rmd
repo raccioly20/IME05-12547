@@ -1,0 +1,316 @@
+---
+title: "Regressão Logística"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 9, 
+                      fig.height= 7,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula09/")
+```
+
+## Carregando Bibliotecas
+
+
+```{r bibliotecas}
+library(tidyverse)
+library(ISLR)
+data(Default)
+summary(Default)
+str(Default)
+head(Default)
+```
+
+## Manipulando os dados
+
+
+```{r inadimplente}
+credito <- tibble(Default)
+summary(credito)
+# renomeando colunas
+credito <- credito %>% 
+                rename( inadimplente = default, estudante = student, balanco = balance,
+                receita = income)
+credito <- credito %>% mutate( inadimplente =  case_when(
+                           inadimplente == "No"  ~ "Nao",
+                           inadimplente == "Yes" ~ "Sim"
+                          )) %>% mutate(inadimplente = factor(inadimplente))
+credito <- credito %>% mutate( estudante =  case_when(
+                           estudante == "No"  ~ 0,
+                           estudante == "Yes" ~ 1
+                          )) 
+
+str(credito)
+summary(credito)
+
+```
+
+
+## Treino e Teste
+
+```{r conjuntos-treino-teste}
+library(caret)
+set.seed(21)
+y <- credito$inadimplente
+indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
+
+conj_treino <- credito %>% slice(-indice_teste)
+conj_teste <- credito %>% slice(indice_teste)
+
+summary(conj_treino)
+summary(conj_teste)
+
+```
+
+
+## Matriz de dispersão
+
+```{r splom}
+library(psych)
+pairs.panels(conj_treino, 
+             method = "pearson", # metodo de correlação
+             hist.col = "#00AFBB",
+             density = TRUE,  # mostra graficos de densidade
+             ellipses = FALSE # mostra elipses de correlação
+             )
+
+```
+
+
+## Avaliando o comportamento das variáveis em função do status (inadimplente / estudante)
+
+
+```{r box-plot}
+ggplot(conj_treino, aes(x=inadimplente, y=balanco)) +
+  geom_boxplot()
+ggplot(conj_treino, aes(x=inadimplente, y=receita)) +
+  geom_boxplot()
+ggplot(conj_treino, aes(x=as.factor(estudante), y=balanco)) +
+  geom_boxplot()
+ggplot(conj_treino, aes(x=as.factor(estudante), y=receita)) +
+  geom_boxplot()
+
+
+```
+
+
+## Explorando um pouco mais Balanço e Receita
+
+```{r histogramas}
+ggplot(conj_treino, aes(x=balanco)) +
+  geom_histogram(bins = round(1+3.322*log10(nrow(conj_treino)),0))
+ggplot(conj_treino, aes(x=receita)) +
+    geom_histogram(bins = round(1+3.322*log10(nrow(conj_treino)),0))
+```
+
+
+## Balanço vs Receita
+
+
+```{r dispersao}
+ggplot(data = conj_treino, aes(x=balanco,  y = receita, col = inadimplente)) +
+  geom_point() 
+```
+
+
+## Regressão Linear?
+
+```{r reg-linear}
+## Primeiro precisa transformar qualitativa em numérica
+inadimpl <- as.numeric(conj_treino$inadimplente) - 1
+modelo_linear <- lm(inadimpl ~ balanco, data = conj_treino)
+plot(inadimpl ~ balanco, data = conj_treino, 
+     col = "darkorange", pch = "|", ylim = c(-0.2, 1),
+     main = "Regressão Linear - Classificação")
+abline(h = 0, lty = 3)
+abline(h = 1, lty = 3)
+abline(h = 0.5, lty = 2)
+abline(modelo_linear, lwd = 3, col = "dodgerblue")
+```
+
+## Outras avaliações
+
+```{r 1avaliacao}
+# proporção de inadimplentes
+conj_treino %>% select(inadimplente, balanco) %>% summarize(prop = mean(inadimplente == "Sim")) 
+# media do balanço dos inadimplentes 
+conj_treino %>% filter(inadimplente == "Sim") %>% summarize(valor= mean(balanco))   
+quantis <- quantile(conj_treino$balanco, probs = c(.1,.25, .50, .75, .9, .95, 0.97, 0.99))
+quantis
+conj_treino %>% 
+            mutate(grupo_balanco = case_when(
+               balanco<=quantis[1] ~ quantis[1],
+               balanco>quantis[1] & balanco<=quantis[2] ~ quantis[2],
+               balanco>quantis[2] & balanco<=quantis[3]  ~ quantis[3],
+               balanco>quantis[3] & balanco<=quantis[4]  ~ quantis[4],
+               balanco>quantis[4] & balanco<=quantis[5]  ~ quantis[5],
+               balanco>quantis[5] & balanco<=quantis[6]  ~ quantis[6],
+               balanco>quantis[6] & balanco<=quantis[7]  ~ quantis[7],
+               balanco>quantis[7] ~ quantis[8])) %>%
+           group_by(grupo_balanco) %>%
+           summarize(prop = mean(inadimplente == "Sim")) %>%
+           ggplot(aes(grupo_balanco, prop)) +
+           geom_point() +
+           geom_line()
+```
+
+
+## 1a Regressão logística: só balanço
+
+```{r mod1}
+mod1 <- glm(inadimplente ~ balanco,data=conj_treino,family=binomial)
+summary(mod1)
+coef(mod1)
+summary(mod1)$coef
+```
+
+## Avaliando o modelo
+
+```{r conj_teste}
+p_chapeu <- predict(mod1, newdata = conj_teste, type = "response")
+y_chapeu <- ifelse(p_chapeu > 0.5, "Sim", "Nao") %>% factor(levels = levels(conj_teste$inadimplente))
+confusionMatrix(y_chapeu, conj_teste$inadimplente, positive="Sim") 
+```
+
+## Veja as probabilidade de inadimplencia para balanços de 1000, 2000 e 3000
+
+```{r probabilidades}
+predict(mod1, newdata = data.frame(balanco = c(1000,2000,3000)), type="response")
+```
+
+
+
+## Curva S
+
+```{r Curva_S}
+inadimpl <- as.numeric(conj_treino$inadimplente) - 1
+plot(inadimpl ~ balanco, data = conj_treino, 
+     col = "darkorange", pch = "|", ylim = c(0, 1),
+     main = "Regressão Logistica - Classificacão")
+abline(h = 0, lty = 3)
+abline(h = 1, lty = 3)
+abline(h = 0.5, lty = 2)
+curve(predict(mod1, data.frame(balanco = x),
+        type = "response"), add = TRUE, lwd = 3, col = "dodgerblue")
+abline(v = -coef(mod1)[1] / coef(mod1)[2], lwd = 2)
+
+```
+
+## Valor de balanço com probabilidade de 50%
+-$\beta_0$/$\beta_1$
+```{r}
+-coef(mod1)[1] / coef(mod1)[2]
+```
+
+
+
+## 2a Regressão logística: todas as variáveis 
+
+```{r mod2}
+mod2 <- glm(inadimplente ~ balanco + receita + estudante,data=conj_treino,family=binomial)
+summary(mod2)
+coef(mod2)
+summary(mod2)$coef
+```
+
+## É possível se ver que receita não é significativa
+
+## 3a Regressão Logística (sem receita)
+
+```{r mod3}
+mod3 <- glm(inadimplente ~ balanco + estudante,data=conj_treino,family=binomial)
+summary(mod3)
+coef(mod3)
+summary(mod3)$coef
+```
+
+## Avaliando o modelo novamente
+
+```{r conj_teste2}
+p_chapeu <- predict(mod3, newdata = conj_teste, type = "response")
+y_chapeu <- ifelse(p_chapeu > 0.5, "Sim", "Nao") %>% factor(levels = levels(conj_teste$inadimplente))
+confusionMatrix(y_chapeu, conj_teste$inadimplente, positive="Sim") 
+```
+
+
+## Mudando a probabilidade (limite) para aumentar a sensibilidade
+
+```{r novo_limite}
+p_chapeu <- predict(mod3, newdata = conj_teste, type = "response")
+y_chapeu <- ifelse(p_chapeu > 0.1, "Sim", "Nao") %>% 
+             factor(levels = levels(conj_teste$inadimplente))
+confusionMatrix(y_chapeu, conj_teste$inadimplente, positive="Sim")
+```
+
+
+
+
+## Curva ROC modelo só com balanço
+
+```{r ROC}
+library(pROC)
+p_chapeu_log <- predict(mod1, newdata = conj_teste, type = "response")
+head(p_chapeu_log)
+roc_log <- roc(conj_teste$inadimplente ~ p_chapeu_log, plot = TRUE, print.auc=FALSE, legacy.axes=TRUE)
+
+# Area debaixo da curva
+as.numeric(roc_log$auc)
+```
+
+
+## Curva ROC 2: Modelo com balanço + estudante
+
+```{r ROC2}
+p_chapeu_log <- predict(mod3, newdata = conj_teste, type = "response")
+head(p_chapeu_log)
+roc_log2 <- roc(conj_teste$inadimplente ~ p_chapeu_log, plot = TRUE, print.auc=FALSE, legacy.axes=TRUE)
+
+# Area debaixo da curva
+as.numeric(roc_log2$auc)
+```
+
+## Duas ROCs juntas
+
+```{r ROCs}
+plot(roc_log)
+plot(roc_log2, add=TRUE, col="blue")
+legend("bottomright", legend=c("Mod 1", "Mod2"),
+       col=c(par("fg"), "blue"), lwd=2)
+```
+
+
+## Curva ROC 3 com o KNN
+
+```{r ROC3}
+# Ajustando KNN 
+set.seed(21)
+ctrl <- trainControl(method = "cv")
+treina_knn <- train(inadimplente ~ scale(balanco) + scale(estudante), method = "knn", trControl= ctrl, tuneGrid = data.frame(k = seq(5,140, by=4)), data = conj_treino)
+# treina_knn
+plot(treina_knn)
+prev_knn <- predict(treina_knn, conj_teste,type = "prob")
+
+## ROC
+roc_log2 <- roc(conj_teste$inadimplente ~ p_chapeu_log, plot = TRUE, print.auc=FALSE, col= "black", legacy.axes=TRUE) 
+roc_knn1 <- roc(conj_teste$inadimplente ~ prev_knn[,2], plot = TRUE, print.auc=FALSE, col="green", legacy.axes=TRUE, add=TRUE)
+
+legend("bottomright",legend=c("Reg. Log", "KNN"), 
+       col=c("black","green"),lwd=4)
+
+# Area abaixo da curva
+# Regressão Logística
+as.numeric(roc_log2$auc)
+## KNN
+as.numeric(roc_knn1$auc)
+
+```
+
+

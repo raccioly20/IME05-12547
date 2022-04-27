@@ -1,0 +1,118 @@
+---
+title: "Regressão Logística - SMOTE"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 9, 
+                      fig.height= 7,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula09A/")
+```
+
+## Carregando Bibliotecas
+
+
+```{r bibliotecas, message=FALSE}
+library(tidyverse)
+library(ISLR)
+data(Default)
+summary(Default)
+str(Default)
+head(Default)
+```
+
+## Manipulando os dados
+
+
+```{r inadimplente}
+credito <- tibble(Default)
+summary(credito)
+# renomeando colunas
+credito <- credito %>% 
+                rename( inadimplente = default, estudante = student, balanco = balance,
+                receita = income)
+credito <- credito %>% mutate( inadimplente =  case_when(
+                           inadimplente == "No"  ~ "Nao",
+                           inadimplente == "Yes" ~ "Sim"
+                          )) %>% mutate(inadimplente = factor(inadimplente))
+credito <- credito %>% mutate( estudante =  case_when(
+                           estudante == "No"  ~ 0,
+                           estudante == "Yes" ~ 1
+                          ))
+
+str(credito)
+summary(credito)
+
+```
+
+
+## Treino e Teste
+
+```{r conjuntos-treino-teste}
+library(caret)
+set.seed(21)
+y <- credito$inadimplente
+indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
+
+conj_treino <- credito %>% slice(-indice_teste)
+conj_teste <- credito %>% slice(indice_teste)
+
+summary(conj_treino)
+summary(conj_teste)
+
+```
+
+
+## SMOTE
+
+```{r SMOTE}
+library(smotefamily)
+set.seed(123)
+teste <- SMOTE(conj_treino[,-1], target = conj_treino$inadimplente, K=5)
+conj_treinoS <- teste$data
+conj_treinoS$class <- as.factor(conj_treinoS$class)
+conj_treinoS <- conj_treinoS %>% rename( inadimplente = class)
+prop.table(table(conj_treinoS$inadimplente))
+summary(conj_treinoS)
+```
+
+## 1a Regressão logística
+
+```{r mod1}
+mod1 <- glm(inadimplente ~ balanco + receita + estudante,data=conj_treinoS,family=binomial)
+summary(mod1)
+coef(mod1)
+summary(mod1)$coef
+```
+
+## Avaliando o modelo novamente
+
+```{r conj_teste2}
+prop.table(table(conj_teste$inadimplente))
+p_chapeu <- predict(mod1, newdata = conj_teste, type = "response")
+y_chapeu <- ifelse(p_chapeu > 0.5, "Sim", "Nao") %>% factor(levels = levels(conj_teste$inadimplente))
+confusionMatrix(y_chapeu, conj_teste$inadimplente, positive="Sim") 
+```
+
+
+
+## Curva ROC
+
+```{r ROC, fig.width=9}
+library(pROC)
+p_chapeu_log <- predict(mod1, newdata = conj_teste, type = "response")
+head(p_chapeu_log)
+roc_log <- roc(conj_teste$inadimplente ~ p_chapeu_log, plot = TRUE, print.auc=TRUE,
+                 legacy.axes=TRUE) 
+as.numeric(roc_log$auc)
+```
+
+

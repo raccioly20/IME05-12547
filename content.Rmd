@@ -15,3 +15,5 @@ output:
 * [Aula 7](content/Aula07.4.html)
 * [Aula 8](content/Aula08.html)
 * [Aula 9](content/Aula08A.html)
+* [Aula 10](content/Aula09.html)
+* [Aula 11](content/Aula09A.html)
