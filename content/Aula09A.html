@@ -209,6 +209,94 @@ window.buildTabsets = function(tocID) {
 };
 
 </script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia, pre.foldable');
+  rCodeBlocks.each(function() {
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    var showThis = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (showThis ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm code-folding-btn pull-right float-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-bs-toggle', 'collapse') // BS5
+        .attr('data-target', '#' + id)
+        .attr('data-bs-target', '#' + id)   // BS5
+        .attr('aria-expanded', showThis)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // show the div if necessary
+    if (showThis) div.collapse('show');
+
+    // update state of button on show/hide
+    //   * Change text
+    //   * add a class for intermediate states styling
+    div.on('hide.bs.collapse', function () {
+      showCodeText.text('Code');
+      showCodeButton.addClass('btn-collapsing');
+    });
+    div.on('hidden.bs.collapse', function () {
+      showCodeButton.removeClass('btn-collapsing');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+      showCodeButton.addClass('btn-expanding');
+    });
+    div.on('shown.bs.collapse', function () {
+      showCodeButton.removeClass('btn-expanding');
+    });
+
+  });
+
+}
+</script>
+<script>
+window.initializeSourceEmbed = function(filename) {
+  $("#rmd-download-source").click(function() {
+    var src = $("#rmd-source-code").html();
+    var a = document.createElement('a');
+    a.href = "data:text/x-r-markdown;base64," + src;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  });
+};
+</script>
 <style type="text/css">.hljs-literal {
 color: #990073;
 }
@@ -252,6 +340,11 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
 
 
 
@@ -345,6 +438,9 @@ pre code {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -360,6 +456,13 @@ pre code {
 
 
 <div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
 
 
 
@@ -589,6 +692,7 @@ head(p_chapeu_log)</code></pre>
 <pre><code>## [1] 0.941186</code></pre>
 </div>
 
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlJlZ3Jlc3PDo28gTG9nw61zdGljYSAtIFNNT1RFIg0KYXV0aG9yOiAiUmljYXJkbyBBY2Npb2x5Ig0KZGF0ZTogImByIFN5cy5EYXRlKClgIg0Kb3V0cHV0Og0KIGh0bWxfZG9jdW1lbnQ6DQogICAgdG9jOiB5ZXMNCiAgICBjb2RlX2Rvd25sb2FkOiB5ZXMNCi0tLQ0KDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldChmaWcud2lkdGggPSA5LCANCiAgICAgICAgICAgICAgICAgICAgICBmaWcuaGVpZ2h0PSA3LCAgDQogICAgICAgICAgICAgICAgICAgICAgZmlnLnJldGluYSA9IDMsDQogICAgICAgICAgICAgICAgICAgICAgbWVzc2FnZSA9IEZBTFNFLCANCiAgICAgICAgICAgICAgICAgICAgICB3YXJuaW5nID0gRkFMU0UsDQogICAgICAgICAgICAgICAgICAgICAgZGV2PWMoInBuZyIpLCANCiAgICAgICAgICAgICAgICAgICAgICBmaWcucGF0aD0iaW1hZ2Vucy9BdWxhMDlBLyIpDQpgYGANCg0KIyMgQ2FycmVnYW5kbyBCaWJsaW90ZWNhcw0KDQoNCmBgYHtyIGJpYmxpb3RlY2FzLCBtZXNzYWdlPUZBTFNFfQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KElTTFIpDQpkYXRhKERlZmF1bHQpDQpzdW1tYXJ5KERlZmF1bHQpDQpzdHIoRGVmYXVsdCkNCmhlYWQoRGVmYXVsdCkNCmBgYA0KDQojIyBNYW5pcHVsYW5kbyBvcyBkYWRvcw0KDQoNCmBgYHtyIGluYWRpbXBsZW50ZX0NCmNyZWRpdG8gPC0gdGliYmxlKERlZmF1bHQpDQpzdW1tYXJ5KGNyZWRpdG8pDQojIHJlbm9tZWFuZG8gY29sdW5hcw0KY3JlZGl0byA8LSBjcmVkaXRvICU+JSANCiAgICAgICAgICAgICAgICByZW5hbWUoIGluYWRpbXBsZW50ZSA9IGRlZmF1bHQsIGVzdHVkYW50ZSA9IHN0dWRlbnQsIGJhbGFuY28gPSBiYWxhbmNlLA0KICAgICAgICAgICAgICAgIHJlY2VpdGEgPSBpbmNvbWUpDQpjcmVkaXRvIDwtIGNyZWRpdG8gJT4lIG11dGF0ZSggaW5hZGltcGxlbnRlID0gIGNhc2Vfd2hlbigNCiAgICAgICAgICAgICAgICAgICAgICAgICAgIGluYWRpbXBsZW50ZSA9PSAiTm8iICB+ICJOYW8iLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgaW5hZGltcGxlbnRlID09ICJZZXMiIH4gIlNpbSINCiAgICAgICAgICAgICAgICAgICAgICAgICAgKSkgJT4lIG11dGF0ZShpbmFkaW1wbGVudGUgPSBmYWN0b3IoaW5hZGltcGxlbnRlKSkNCmNyZWRpdG8gPC0gY3JlZGl0byAlPiUgbXV0YXRlKCBlc3R1ZGFudGUgPSAgY2FzZV93aGVuKA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgZXN0dWRhbnRlID09ICJObyIgIH4gMCwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgIGVzdHVkYW50ZSA9PSAiWWVzIiB+IDENCiAgICAgICAgICAgICAgICAgICAgICAgICAgKSkNCg0Kc3RyKGNyZWRpdG8pDQpzdW1tYXJ5KGNyZWRpdG8pDQoNCmBgYA0KDQoNCiMjIFRyZWlubyBlIFRlc3RlDQoNCmBgYHtyIGNvbmp1bnRvcy10cmVpbm8tdGVzdGV9DQpsaWJyYXJ5KGNhcmV0KQ0Kc2V0LnNlZWQoMjEpDQp5IDwtIGNyZWRpdG8kaW5hZGltcGxlbnRlDQppbmRpY2VfdGVzdGUgPC0gY3JlYXRlRGF0YVBhcnRpdGlvbih5LCB0aW1lcyA9IDEsIHAgPSAwLjIsIGxpc3QgPSBGQUxTRSkNCg0KY29ual90cmVpbm8gPC0gY3JlZGl0byAlPiUgc2xpY2UoLWluZGljZV90ZXN0ZSkNCmNvbmpfdGVzdGUgPC0gY3JlZGl0byAlPiUgc2xpY2UoaW5kaWNlX3Rlc3RlKQ0KDQpzdW1tYXJ5KGNvbmpfdHJlaW5vKQ0Kc3VtbWFyeShjb25qX3Rlc3RlKQ0KDQpgYGANCg0KDQojIyBTTU9URQ0KDQpgYGB7ciBTTU9URX0NCmxpYnJhcnkoc21vdGVmYW1pbHkpDQpzZXQuc2VlZCgxMjMpDQp0ZXN0ZSA8LSBTTU9URShjb25qX3RyZWlub1ssLTFdLCB0YXJnZXQgPSBjb25qX3RyZWlubyRpbmFkaW1wbGVudGUsIEs9NSkNCmNvbmpfdHJlaW5vUyA8LSB0ZXN0ZSRkYXRhDQpjb25qX3RyZWlub1MkY2xhc3MgPC0gYXMuZmFjdG9yKGNvbmpfdHJlaW5vUyRjbGFzcykNCmNvbmpfdHJlaW5vUyA8LSBjb25qX3RyZWlub1MgJT4lIHJlbmFtZSggaW5hZGltcGxlbnRlID0gY2xhc3MpDQpwcm9wLnRhYmxlKHRhYmxlKGNvbmpfdHJlaW5vUyRpbmFkaW1wbGVudGUpKQ0Kc3VtbWFyeShjb25qX3RyZWlub1MpDQpgYGANCg0KIyMgMWEgUmVncmVzc8OjbyBsb2fDrXN0aWNhDQoNCmBgYHtyIG1vZDF9DQptb2QxIDwtIGdsbShpbmFkaW1wbGVudGUgfiBiYWxhbmNvICsgcmVjZWl0YSArIGVzdHVkYW50ZSxkYXRhPWNvbmpfdHJlaW5vUyxmYW1pbHk9Ymlub21pYWwpDQpzdW1tYXJ5KG1vZDEpDQpjb2VmKG1vZDEpDQpzdW1tYXJ5KG1vZDEpJGNvZWYNCmBgYA0KDQojIyBBdmFsaWFuZG8gbyBtb2RlbG8gbm92YW1lbnRlDQoNCmBgYHtyIGNvbmpfdGVzdGUyfQ0KcHJvcC50YWJsZSh0YWJsZShjb25qX3Rlc3RlJGluYWRpbXBsZW50ZSkpDQpwX2NoYXBldSA8LSBwcmVkaWN0KG1vZDEsIG5ld2RhdGEgPSBjb25qX3Rlc3RlLCB0eXBlID0gInJlc3BvbnNlIikNCnlfY2hhcGV1IDwtIGlmZWxzZShwX2NoYXBldSA+IDAuNSwgIlNpbSIsICJOYW8iKSAlPiUgZmFjdG9yKGxldmVscyA9IGxldmVscyhjb25qX3Rlc3RlJGluYWRpbXBsZW50ZSkpDQpjb25mdXNpb25NYXRyaXgoeV9jaGFwZXUsIGNvbmpfdGVzdGUkaW5hZGltcGxlbnRlLCBwb3NpdGl2ZT0iU2ltIikgDQpgYGANCg0KDQoNCiMjIEN1cnZhIFJPQw0KDQpgYGB7ciBST0MsIGZpZy53aWR0aD05fQ0KbGlicmFyeShwUk9DKQ0KcF9jaGFwZXVfbG9nIDwtIHByZWRpY3QobW9kMSwgbmV3ZGF0YSA9IGNvbmpfdGVzdGUsIHR5cGUgPSAicmVzcG9uc2UiKQ0KaGVhZChwX2NoYXBldV9sb2cpDQpyb2NfbG9nIDwtIHJvYyhjb25qX3Rlc3RlJGluYWRpbXBsZW50ZSB+IHBfY2hhcGV1X2xvZywgcGxvdCA9IFRSVUUsIHByaW50LmF1Yz1UUlVFLA0KICAgICAgICAgICAgICAgICBsZWdhY3kuYXhlcz1UUlVFKSANCmFzLm51bWVyaWMocm9jX2xvZyRhdWMpDQpgYGANCg0KDQo=</div>
 
 
 
@@ -622,6 +726,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Aula09A.Rmd");
+});
+</script>
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

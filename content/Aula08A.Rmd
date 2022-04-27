@@ -3,8 +3,9 @@ title: "KNN"
 author: "Ricardo Accioly"
 date: "`r Sys.Date()`"
 output:
-   html_document:
+ html_document:
     toc: yes
+    code_download: yes
 ---
 
 ## KNN

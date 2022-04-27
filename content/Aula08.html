@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ricardo Accioly" />
 
-<meta name="date" content="2022-04-06" />
+<meta name="date" content="2022-04-27" />
 
 <title>Classificação - Primeiros Passos</title>
 
@@ -209,6 +209,94 @@ window.buildTabsets = function(tocID) {
 };
 
 </script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia, pre.foldable');
+  rCodeBlocks.each(function() {
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    var showThis = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (showThis ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm code-folding-btn pull-right float-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-bs-toggle', 'collapse') // BS5
+        .attr('data-target', '#' + id)
+        .attr('data-bs-target', '#' + id)   // BS5
+        .attr('aria-expanded', showThis)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // show the div if necessary
+    if (showThis) div.collapse('show');
+
+    // update state of button on show/hide
+    //   * Change text
+    //   * add a class for intermediate states styling
+    div.on('hide.bs.collapse', function () {
+      showCodeText.text('Code');
+      showCodeButton.addClass('btn-collapsing');
+    });
+    div.on('hidden.bs.collapse', function () {
+      showCodeButton.removeClass('btn-collapsing');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+      showCodeButton.addClass('btn-expanding');
+    });
+    div.on('shown.bs.collapse', function () {
+      showCodeButton.removeClass('btn-expanding');
+    });
+
+  });
+
+}
+</script>
+<script>
+window.initializeSourceEmbed = function(filename) {
+  $("#rmd-download-source").click(function() {
+    var src = $("#rmd-source-code").html();
+    var a = document.createElement('a');
+    a.href = "data:text/x-r-markdown;base64," + src;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  });
+};
+</script>
 <style type="text/css">.hljs-literal {
 color: #990073;
 }
@@ -252,6 +340,11 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
 
 
 
@@ -345,6 +438,9 @@ pre code {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -361,11 +457,18 @@ pre code {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Classificação - Primeiros Passos</h1>
 <h4 class="author">Ricardo Accioly</h4>
-<h4 class="date">2022-04-06</h4>
+<h4 class="date">2022-04-27</h4>
 
 </div>
 
@@ -785,6 +888,7 @@ bind_rows(chutando, altura_ptdecorte) %&gt;%
 </div>
 </div>
 
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNsYXNzaWZpY2HDp8OjbyAtIFByaW1laXJvcyBQYXNzb3MiDQphdXRob3I6ICJSaWNhcmRvIEFjY2lvbHkiDQpkYXRlOiAiYHIgU3lzLkRhdGUoKWAiDQpvdXRwdXQ6DQogaHRtbF9kb2N1bWVudDoNCiAgICB0b2M6IHllcw0KICAgIGNvZGVfZG93bmxvYWQ6IHllcw0KLS0tDQoNCiMgUHJpbWVpcm9zIFBhc3Nvcw0KDQpCYXNlYWRvIG5vIGxpdnJvIEludHJvZHVjdGlvbiB0byBEYXRhIFNjaWVuY2U6IERhdGEgQW5hbHlzaXMgYW5kIFByZWRpY3Rpb24gQWxnb3JpdGhtcyB3aXRoIFIsIFJhZmFlbCBBLiBJcml6YXJyeS4gKGh0dHBzOi8vcmFmYWxhYi5naXRodWIuaW8vZHNib29rLykNCg0KDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldChmaWcud2lkdGggPSA5LCANCiAgICAgICAgICAgICAgICAgICAgICBmaWcuaGVpZ2h0PSA3LCAgDQogICAgICAgICAgICAgICAgICAgICAgZmlnLnJldGluYSA9IDMsDQogICAgICAgICAgICAgICAgICAgICAgbWVzc2FnZSA9IEZBTFNFLCANCiAgICAgICAgICAgICAgICAgICAgICB3YXJuaW5nID0gRkFMU0UsDQogICAgICAgICAgICAgICAgICAgICAgZGV2PWMoInBuZyIpLCANCiAgICAgICAgICAgICAgICAgICAgICBmaWcucGF0aD0iaW1hZ2Vucy9BdWxhMDgvIikNCmBgYA0KDQoNCiMjIENhcnJlZ2FuZG8gQmlibGlvdGVjYXMNCg0KDQpgYGB7ciBiaWJsaW90ZWNhcywgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShjYXJldCkNCmxpYnJhcnkoZHNsYWJzKQ0KZGF0YShoZWlnaHRzKQ0KYGBgDQoNCiMjIFRyYWR1emluZG8gDQoNCmBgYHtyIGFqdXN0ZXMtZGFkb3N9DQpoZWFkKGhlaWdodHMpDQpzdHIoaGVpZ2h0cykNCmFsdHVyYXMgPC0gaGVpZ2h0cyAlPiUNCiAgIyB0cmFkdXogZGFkb3MgcGFyYSBvIHBvcnR1Z3XDqnMgZSB0cmFuc2Zvcm1hIHBvbGVnYWRhIHBhcmEgbWV0cm8NCiAgbXV0YXRlKA0KICAgICAgICAgIHNleCA9IGNhc2Vfd2hlbigNCiAgICAgICAgICAgICAgICAgICAgICAgICAgIHNleCA9PSAiTWFsZSIgfiAiTWFzY3VsaW5vIiwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgIHNleCA9PSAiRmVtYWxlIiB+ICJGZW1pbmlubyINCiAgICAgICAgICAgICAgICAgICAgICAgICAgKSwgDQogICAgICAgICAgYWx0dXJhID0gaGVpZ2h0ICogMi41NCAvIDEwMCApICU+JQ0KICByZW5hbWUoIHNleG8gPSBzZXgpICU+JSANCiAgc2VsZWN0KHNleG8gLCBhbHR1cmEpDQpoZWFkKGFsdHVyYXMpDQpzdHIoYWx0dXJhcykNCmBgYA0KDQojIyBBbHRlcmFuZG8NCg0KYGBge3IgZmF0b3J9DQphbHR1cmFzIDwtIGRhdGEuZnJhbWUoc2V4byA9IGZhY3RvcihhbHR1cmFzJHNleG8pLCBhbHR1cmEgPSBhbHR1cmFzJGFsdHVyYSkNCnN0cihhbHR1cmFzKQ0KaGVhZChhbHR1cmFzKQ0KYGBgDQoNCiMjIERlZmluaW5kbyB4IGUgeSANCg0KYGBge3J9DQp5IDwtIGFsdHVyYXMkc2V4bw0KeCA8LSBhbHR1cmFzJGFsdHVyYQ0KYGBgDQoNCiMjIFRyZWlubyBlIFRlc3RlDQoNCmBgYHtyIGFtb3N0cmFzLXRyZWluby10ZXN0ZX0NCnNldC5zZWVkKDIwMjEpDQppbmRpY2VfdGVzdGUgPC0gY3JlYXRlRGF0YVBhcnRpdGlvbih5LCB0aW1lcyA9IDEsIHAgPSAwLjIsIGxpc3QgPSBGQUxTRSkNCmNvbmpfdGVzdGUgPC0gYWx0dXJhc1tpbmRpY2VfdGVzdGUsIF0NCmNvbmpfdHJlaW5vIDwtIGFsdHVyYXNbLWluZGljZV90ZXN0ZSwgXQ0KaGVhZChjb25qX3Rlc3RlKQ0Kc3RyKGNvbmpfdGVzdGUpDQpzdW1tYXJ5KGNvbmpfdGVzdGUpDQpoZWFkKGNvbmpfdHJlaW5vKQ0Kc3RyKGNvbmpfdHJlaW5vKQ0Kc3VtbWFyeShjb25qX3RyZWlubykNCmBgYA0KDQoNCiMjIENodXRhciBhIHJlc3Bvc3RhISEhISENCg0KDQpgYGB7ciBjaHV0ZX0NCnlfY2hhcGV1IDwtIHNhbXBsZShjKCJNYXNjdWxpbm8iLCAiRmVtaW5pbm8iKSwgbGVuZ3RoKGluZGljZV90ZXN0ZSksIHJlcGxhY2UgPSBUUlVFKSAlPiUgDQogIGZhY3RvcihsZXZlbHMgPSBsZXZlbHMoY29ual90ZXN0ZSRzZXhvKSkNCmBgYA0KDQojIyBDYWxjdWxhIHByZWNpc8Ojbw0KDQpgYGB7ciBwcmVjaXNhb30NCm1lYW4oeV9jaGFwZXUgPT0gY29ual90ZXN0ZSRzZXhvKQ0KDQpgYGANCg0KIyMgTWVsaG9yYW5kbyANCg0KYGBge3IgbWVsaG9yYS1jaHV0ZX0NCmFsdHVyYXMgJT4lIGdyb3VwX2J5KHNleG8pICU+JSBzdW1tYXJpemUobWVhbihhbHR1cmEpLCBzZChhbHR1cmEpKQ0KbWVkaWFfSG9tZW0gPC0gbWVhbihhbHR1cmFzW2FsdHVyYXMkc2V4bz09Ik1hc2N1bGlubyIsXSRhbHR1cmEpDQpkZXN2X3BhZF9Ib21lbSA8LSBzZChhbHR1cmFzW2FsdHVyYXMkc2V4bz09Ik1hc2N1bGlubyIsXSRhbHR1cmEpDQptZWRpYV9Ib21lbQ0KZGVzdl9wYWRfSG9tZW0NCm1lZGlhX0hvbWVtIC0gMipkZXN2X3BhZF9Ib21lbQ0KeV9jaGFwZXUgPC0gaWZlbHNlKHggPiBtZWRpYV9Ib21lbSAtIDIqZGVzdl9wYWRfSG9tZW0gLCAiTWFzY3VsaW5vIiwgIkZlbWluaW5vIikgJT4lIGZhY3RvcihsZXZlbHMgPSBsZXZlbHMoY29ual90ZXN0ZSRzZXhvKSkNCm1lYW4oeSA9PSB5X2NoYXBldSkNCmBgYA0KDQojIyBRdWFsIG8gbWVsaG9yIHBvbnRvIGRlIGNvcnRlPw0KDQpgYGB7ciBtZWxob3JhbmRvLXBvbnRvZGVjb3J0ZX0NCnBvbnRvZGVjb3J0ZSA8LSBzZXEoMS41NCwgMS43OCwgYnkgPSAwLjAxKQ0KcHJlY2lzYW8gPC0gbWFwX2RibChwb250b2RlY29ydGUsIGZ1bmN0aW9uKHgpew0KICB5X2NoYXBldSA8LSBpZmVsc2UoY29ual90cmVpbm8kYWx0dXJhID4geCwgIk1hc2N1bGlubyIsICJGZW1pbmlubyIpICU+JSANCiAgICBmYWN0b3IobGV2ZWxzID0gbGV2ZWxzKGNvbmpfdGVzdGUkc2V4bykpDQogIG1lYW4oeV9jaGFwZXUgPT0gY29ual90cmVpbm8kc2V4bykNCn0pDQptYXgocHJlY2lzYW8pDQptZWxob3JfcG9udG8gPC0gcG9udG9kZWNvcnRlW3doaWNoLm1heChwcmVjaXNhbyldDQptZWxob3JfcG9udG8NCnBsb3QocG9udG9kZWNvcnRlLCBwcmVjaXNhbykgDQphYmxpbmUodj1tZWxob3JfcG9udG8pDQp5X2NoYXBldSA8LSBpZmVsc2UoY29ual90ZXN0ZSRhbHR1cmEgPiBtZWxob3JfcG9udG8sICJNYXNjdWxpbm8iLCAiRmVtaW5pbm8iKSAlPiUgDQogIGZhY3RvcihsZXZlbHMgPSBsZXZlbHMoY29ual90ZXN0ZSRzZXhvKSkNCnlfY2hhcGV1IDwtIGZhY3Rvcih5X2NoYXBldSkNCm1lYW4oeV9jaGFwZXUgPT0gY29ual90ZXN0ZSRzZXhvKQ0KDQpgYGANCg0KIyMgTWVsaG9yYW5kbyBvIGdyw6FmaWNvDQoNCmBgYHtyIGdyYWZpY299DQpsaWJyYXJ5KGdncGxvdDIpDQpkYWRvcyA8LSBkYXRhLmZyYW1lKHBvbnRvZGVjb3J0ZSwgcHJlY2lzYW8pDQpnZ3Bsb3QoZGF0YT1kYWRvcywgYWVzKHg9cG9udG9kZWNvcnRlLCB5PXByZWNpc2FvKSkgKyBnZW9tX3BvaW50KCkgKw0KICAgICAgIGdlb21fdmxpbmUoeGludGVyY2VwdCA9IG1lbGhvcl9wb250bywgbGluZXR5cGU9ImRhc2hlZCIsIGNvbG9yPSJyZWQiKQ0KYGBgDQoNCiMjIE1hdHJpeiBkZSBDb25mdXPDo28NCg0KYGBge3IgbWF0cml6X2NvbmZ9DQp0YWJsZShwcmV2aXN0byA9IHlfY2hhcGV1LCByZWFsID0gY29ual90ZXN0ZSRzZXhvKQ0KY29ual90ZXN0ZSAlPiUgDQogIG11dGF0ZSh5X2NoYXBldSA9IHlfY2hhcGV1KSAlPiUNCiAgZ3JvdXBfYnkoc2V4bykgJT4lIA0KICBzdW1tYXJpemUocHJlY2lzYW8gPSBtZWFuKHlfY2hhcGV1ID09IHNleG8pKQ0KY29uZnVzaW9uTWF0cml4KGRhdGEgPSB5X2NoYXBldSwgcmVmZXJlbmNlID0gY29ual90ZXN0ZSRzZXhvKQ0KYGBgDQoNCiMjIE1heGltaXphbmRvIGEgZXN0YXTDrXN0aWNhIEYxDQoNCmBgYHtyIG1heC1mMX0NCnBvbnRvZGVjb3J0ZSA8LSBzZXEoMS41NCwgMS43OCwgYnkgPSAwLjAxKQ0KRl8xIDwtIG1hcF9kYmwocG9udG9kZWNvcnRlLCBmdW5jdGlvbih4KXsNCiAgeV9jaGFwZXUgPC0gaWZlbHNlKGNvbmpfdHJlaW5vJGFsdHVyYSA+IHgsICJNYXNjdWxpbm8iLCAiRmVtaW5pbm8iKSAlPiUgDQogICAgZmFjdG9yKGxldmVscyA9IGxldmVscyhjb25qX3Rlc3RlJHNleG8pKQ0KICBGX21lYXMoZGF0YSA9IHlfY2hhcGV1LCByZWZlcmVuY2UgPSBmYWN0b3IoY29ual90cmVpbm8kc2V4bykpDQp9KQ0KbWF4KEZfMSkNCm1lbGhvcl9wb250byA8LSBwb250b2RlY29ydGVbd2hpY2gubWF4KEZfMSldDQptZWxob3JfcG9udG8NCmRhZG9zIDwtIGRhdGEuZnJhbWUocG9udG9kZWNvcnRlLCBGXzEpDQpnZ3Bsb3QoZGF0YT1kYWRvcywgYWVzKHg9cG9udG9kZWNvcnRlLCB5PUZfMSkpICsgZ2VvbV9wb2ludCgpICsNCiAgICAgICBnZW9tX3ZsaW5lKHhpbnRlcmNlcHQgPSBtZWxob3JfcG9udG8sIGxpbmV0eXBlPSJkYXNoZWQiLCBjb2xvcj0icmVkIikNCnlfY2hhcGV1IDwtIGlmZWxzZShjb25qX3Rlc3RlJGFsdHVyYSA+IG1lbGhvcl9wb250bywgIk1hc2N1bGlubyIsICJGZW1pbmlubyIpICU+JSANCiAgZmFjdG9yKGxldmVscyA9IGxldmVscyhjb25qX3Rlc3RlJHNleG8pKQ0KY29uZnVzaW9uTWF0cml4KGRhdGEgPSB5X2NoYXBldSwgcmVmZXJlbmNlID0gY29ual90ZXN0ZSRzZXhvKQ0KYGBgDQoNCg0KIyMgVm9sdGFuZG8gYSBjaHV0YXINCmBgYHtyIHZvbHRhX2NodXRlfQ0KcCA8LSAwLjkNCnlfY2hhcGV1IDwtIHNhbXBsZShjKCJNYXNjdWxpbm8iLCAiRmVtaW5pbm8iKSwgbGVuZ3RoKGluZGljZV90ZXN0ZSksIA0KICAgICAgICAgICAgICAgICAgIHJlcGxhY2UgPSBUUlVFLCBwcm9iPWMocCwgMS1wKSkgJT4lIGZhY3RvcihsZXZlbHMgPSBsZXZlbHMoY29ual90ZXN0ZSRzZXhvKSkNCm1lYW4oeV9jaGFwZXUgPT0gY29ual90ZXN0ZSRzZXhvKQ0KYGBgDQoNCg0KIyMgQ3VydmEgUk9DDQoNCmBgYHtyIHJvYzF9DQogICAgIGdncGxvdCgpICsNCiAgICAgZ2VvbV9hYmxpbmUoaW50ZXJjZXB0ID0gMCwgc2xvcGUgPSAxLikgKyANCiAgICAgbGFicyh4ID0gIlRheGEgUG9zaXRpdmEgRmFsc2EgKDEgLSBFc3BlY2lmaWNpZGFkZSkiLCANCiAgICAgICAgICB5ID0gIlRheGEgUG9zaXRpdmEgVmVyZGFkZWlyYSAoU2Vuc2liaWxpZGFkZSkiLCANCiAgICAgICAgICB0aXRsZSA9ICJDdXJ2YSBST0MiKSArDQogICAgIHNjYWxlX3hfY29udGludW91cyhsaW1pdHMgPSBjKDAsIDEuMCkpICsgDQogICAgIHNjYWxlX3lfY29udGludW91cyhsaW1pdHMgPSBjKDAsIDEuMCkpDQpgYGANCg0KDQojIyBUZXN0YW5kbyBwcm9iYWJpbGlkYWRlcw0KDQpgYGB7ciBjaHV0ZV9kaWZfcHJvYnN9DQpwcm9icyA8LSBzZXEoMCwgMSwgbGVuZ3RoLm91dCA9IDEwKQ0KY2h1dGFuZG8gPC0gbWFwX2RmKHByb2JzLCBmdW5jdGlvbihwKXsNCiAgICAgeV9jaGFwZXUgPC0gDQogICAgICAgICAgc2FtcGxlKGMoIk1hc2N1bGlubyIsICJGZW1pbmlubyIpLCBsZW5ndGgoaW5kaWNlX3Rlc3RlKSwgcmVwbGFjZSA9IFRSVUUsICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByb2I9YyhwLCAxLXApKSAlPiUgIGZhY3RvcihsZXZlbHMgPSBsZXZlbHMoY29ual90ZXN0ZSRzZXhvKSkNCiAgICAgIGxpc3QobWV0b2RvID0gIkNodXRhbmRvIiwNCiAgICAgICAgICAgVFBGID0gMSAtIHNwZWNpZmljaXR5KHlfY2hhcGV1LCBjb25qX3Rlc3RlJHNleG8pLA0KICAgICAgICAgICBUUFYgPSBzZW5zaXRpdml0eSh5X2NoYXBldSwgY29ual90ZXN0ZSRzZXhvKSkgDQp9KQ0KICAgICBjaHV0YW5kbyAlPiUNCiAgICAgZ2dwbG90KGFlcyhUUEYsIFRQVikpICsNCiAgICAgZ2VvbV9saW5lKCkgKw0KICAgICBnZW9tX3BvaW50KCkgKw0KICAgICBnZW9tX2FibGluZShpbnRlcmNlcHQgPSAwLCBzbG9wZSA9IDEuKSArIA0KICAgICBsYWJzKHggPSAiVGF4YSBQb3NpdGl2YSBGYWxzYSAoMSAtIEVzcGVjaWZpY2lkYWRlKSIsIA0KICAgICAgICAgIHkgPSAiVGF4YSBQb3NpdGl2YSBWZXJkYWRlaXJhIChTZW5zaWJpbGlkYWRlKSIsIA0KICAgICAgICAgIHRpdGxlID0gIkN1cnZhIFJPQyBNw6l0b2RvIENodXRhbmRvIikgKw0KICAgICBzY2FsZV94X2NvbnRpbnVvdXMobGltaXRzID0gYygwLCAxLjApKSArIA0KICAgICBzY2FsZV95X2NvbnRpbnVvdXMobGltaXRzID0gYygwLCAxLjApKQ0KYGBgDQoNCg0KIyMgQ29tcGFyYW5kbyBvcyBkb2lzIG3DqXRvZG9zDQoNCg0KYGBge3Igcm9jMiwgZmlnLndpZHRoPTh9DQpwb250b2RlY29ydGUgPC0gc2VxKDEuMjcgLCAxLjkyLCBieSA9IDAuMDEpDQphbHR1cmFfcHRkZWNvcnRlIDwtIG1hcF9kZihwb250b2RlY29ydGUsIGZ1bmN0aW9uKHgpew0KICAgICB5X2NoYXBldSA8LSBpZmVsc2UoY29ual90ZXN0ZSRhbHR1cmEgPiB4LCAiTWFzY3VsaW5vIiwgIkZlbWluaW5vIikgJT4lIA0KICAgICAgICAgICAgICAgICBmYWN0b3IobGV2ZWxzID0gbGV2ZWxzKGNvbmpfdGVzdGUkc2V4bykpDQogICAgIGxpc3QobWV0b2RvID0gIkNvcnRlIHBvciBBbHR1cmEiLA0KICAgICAgICBUUEYgPSAxIC0gc3BlY2lmaWNpdHkoeV9jaGFwZXUsIGNvbmpfdGVzdGUkc2V4byksDQogICAgICAgIFRQViA9IHNlbnNpdGl2aXR5KHlfY2hhcGV1LCBjb25qX3Rlc3RlJHNleG8pKSANCn0pDQpiaW5kX3Jvd3MoY2h1dGFuZG8sIGFsdHVyYV9wdGRlY29ydGUpICU+JQ0KICAgICBnZ3Bsb3QoYWVzKFRQRiwgVFBWLCBjb2xvciA9IG1ldG9kbykpICsNCiAgICAgZ2VvbV9saW5lKCkgKw0KICAgICBnZW9tX3BvaW50KCkgKw0KICAgICBnZW9tX2FibGluZShpbnRlcmNlcHQgPSAwLCBzbG9wZSA9IDEuKSArIA0KICAgICBsYWJzKHggPSAiVGF4YSBQb3NpdGl2YSBGYWxzYSAoVFBGKSIsIA0KICAgICAgICAgIHkgPSAiVGF4YSBQb3NpdGl2YSBWZXJkYWRlaXJhKFRQVikiLCANCiAgICAgICAgICB0aXRsZSA9ICJDdXJ2YSBST0MiKSArDQogICAgIHNjYWxlX3hfY29udGludW91cyhsaW1pdHMgPSBjKDAsIDEuMCkpICsgDQogICAgIHNjYWxlX3lfY29udGludW91cyhsaW1pdHMgPSBjKDAsIDEuMCkpDQoNCmBgYA0KDQojIyBQb250b3MgZGEgY3VydmEgUk9DDQoNCmBgYHtyIHJvYzN9DQptYXBfZGYocG9udG9kZWNvcnRlLCBmdW5jdGlvbih4KXsNCiAgICAgeV9jaGFwZXUgPC0gaWZlbHNlKGNvbmpfdGVzdGUkYWx0dXJhID4geCwgIk1hc2N1bGlubyIsICJGZW1pbmlubyIpICU+JSANCiAgICAgICAgICAgICAgICAgIGZhY3RvcihsZXZlbHMgPSBjKCJNYXNjdWxpbm8iLCAiRmVtaW5pbm8iKSkNCiAgICAgbGlzdChtZXRvZG8gPSAiQ29ydGUgcG9yIEFsdHVyYSIsDQogICAgICAgICAgY29ydGUgPSByb3VuZCh4LCAyKSwgDQogICAgICAgICAgVFBGID0gMSAtIHNwZWNpZmljaXR5KHlfY2hhcGV1LCBjb25qX3Rlc3RlJHNleG8pLA0KICAgICAgICAgIFRQViA9IHNlbnNpdGl2aXR5KHlfY2hhcGV1LCBjb25qX3Rlc3RlJHNleG8pKSANCn0pICU+JQ0KICAgICBnZ3Bsb3QoYWVzKFRQRiwgVFBWLCBsYWJlbCA9IGNvcnRlKSkgKw0KICAgICBnZW9tX2xpbmUoKSArDQogICAgIGdlb21fcG9pbnQoKSArDQogICAgIGdlb21fdGV4dChudWRnZV95ID0gLSAwLjA1LCBzaXplID0gMywgY2hlY2tfb3ZlcmxhcCA9IFRSVUUpICsNCiAgICAgc2NhbGVfeF9jb250aW51b3VzKGxpbWl0cyA9IGMoMCwgMS4wKSkgKyANCiAgICAgc2NhbGVfeV9jb250aW51b3VzKGxpbWl0cyA9IGMoMCwgMS4wKSkNCmBgYA0KDQoNCiMjIEN1cnZhIFByZWNpc8Ojby1SZWNhbGwNCg0KYGBge3IgcHJlY2lzYW8tcmVjYWxsLCBmaWcud2lkdGg9OH0NCmNodXRhbmRvIDwtIG1hcF9kZihwcm9icywgZnVuY3Rpb24ocCl7DQogICAgICAgICAgICB5X2NoYXBldSA8LSBzYW1wbGUoYygiTWFzY3VsaW5vIiwgIkZlbWluaW5vIiksIGxlbmd0aChpbmRpY2VfdGVzdGUpLCANCiAgICAgICAgICAgIHJlcGxhY2UgPSBUUlVFLCBwcm9iPWMocCwgMS1wKSkgJT4lIA0KICAgICAgICAgICAgZmFjdG9yKGxldmVscyA9IGMoIk1hc2N1bGlubyIsICJGZW1pbmlubyIpKQ0KICAgICBsaXN0KG1ldG9kbyA9ICJDaHV0YW5kbyIsDQogICAgICAgICAgIHJlY2FsbCA9IHNlbnNpdGl2aXR5KHlfY2hhcGV1LCBjb25qX3Rlc3RlJHNleG8pLA0KICAgICAgICAgICBwcmVjaXNhbyA9IHBvc1ByZWRWYWx1ZSh5X2NoYXBldSwgY29ual90ZXN0ZSRzZXhvKSkNCn0pDQphbHR1cmFfcHRkZWNvcnRlIDwtIG1hcF9kZihwb250b2RlY29ydGUsIGZ1bmN0aW9uKHgpew0KICAgICB5X2NoYXBldSA8LSBpZmVsc2UoY29ual90ZXN0ZSRhbHR1cmEgPiB4LCAiTWFzY3VsaW5vIiwgIkZlbWluaW5vIikgJT4lIA0KICAgICAgICAgIGZhY3RvcihsZXZlbHMgPSBjKCJNYXNjdWxpbm8iLCAiRmVtaW5pbm8iKSkNCiAgICAgIGxpc3QobWV0b2RvID0gIkNvcnRlIHBvciBBbHR1cmEiLA0KICAgICAgICAgICByZWNhbGwgPSBzZW5zaXRpdml0eSh5X2NoYXBldSwgY29ual90ZXN0ZSRzZXhvKSwNCiAgICAgICAgICAgcHJlY2lzYW8gPSBwb3NQcmVkVmFsdWUoeV9jaGFwZXUsIGNvbmpfdGVzdGUkc2V4bykpDQp9KQ0KYmluZF9yb3dzKGNodXRhbmRvLCBhbHR1cmFfcHRkZWNvcnRlKSAlPiUNCiAgICAgZ2dwbG90KGFlcyhyZWNhbGwsIHByZWNpc2FvLCBjb2xvciA9IG1ldG9kbykpICsNCiAgICAgZ2VvbV9saW5lKCkgKw0KICAgICBnZW9tX3BvaW50KCkgKw0KICAgICBsYWJzKHggPSAiUmVjYWxsIG91IFRheGEgUG9zaXRpdmEgVmVyZGVpcmEgKFRQVikiLCANCiAgICAgICAgICB5ID0gIlByZWNpc8OjbyBvdSBWYWxvciBQcmVkaXRpdm8gUG9zaXRpdm8gKFZQUCkiLCANCiAgICAgICAgICB0aXRsZSA9ICJDdXJ2YSBQcmVjaXPDo28gLSBSZWNhbGwiKSArDQogICAgIHNjYWxlX3hfY29udGludW91cyhsaW1pdHMgPSBjKDAsIDEuMCkpICsgDQogICAgIHNjYWxlX3lfY29udGludW91cyhsaW1pdHMgPSBjKDAsIDEuMCkpDQpgYGANCg0KDQoNCg0K</div>
 
 
 
@@ -818,6 +922,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("Aula08.Rmd");
+});
+</script>
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
