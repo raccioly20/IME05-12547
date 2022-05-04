@@ -1,0 +1,237 @@
+---
+title: "LDA e QDA"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    code_download: yes
+---
+
+## LDA e QDA
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 9, 
+                      fig.height= 7,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula10/")
+```
+
+## Carregando Bibliotecas
+
+
+```{r bibliotecas, message=FALSE}
+library(tidyverse)
+library(ISLR)
+data(Default)
+summary(Default)
+str(Default)
+head(Default)
+```
+
+## Manipulando os dados
+
+
+```{r inadimplente}
+credito <- tibble(Default)
+summary(credito)
+# renomeando colunas
+credito <- credito %>% 
+                rename( inadimplente = default, estudante = student, balanco = balance,
+                receita = income)
+credito <- credito %>% mutate( inadimplente =  case_when(
+                           inadimplente == "No"  ~ "Nao",
+                           inadimplente == "Yes" ~ "Sim"
+                          )) %>% mutate(inadimplente = factor(inadimplente))
+credito <- credito %>% mutate( estudante =  case_when(
+                           estudante == "No"  ~ 0,
+                           estudante == "Yes" ~ 1
+                          )) 
+
+str(credito)
+summary(credito)
+
+```
+
+
+## Treino e Teste
+
+```{r conjuntos-treino-teste, message=FALSE}
+library(caret)
+set.seed(21)
+y <- credito$inadimplente
+indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
+
+conj_treino <- credito %>% slice(-indice_teste)
+conj_teste <- credito %>% slice(indice_teste)
+
+summary(conj_treino)
+summary(conj_teste)
+
+```
+
+
+## Balanço e receita
+
+```{r balanco-receita}
+featurePlot(x = conj_treino[, c("balanco", "receita")], 
+            y = conj_treino$inadimplente,
+            plot = "density", 
+            scales = list(x = list(relation = "free"), 
+                          y = list(relation = "free")), 
+            adjust = 1.5, 
+            pch = "|", 
+            layout = c(2, 1), 
+            auto.key = list(columns = 2))
+
+
+```
+
+
+
+
+## Bayes Ingênuo (Naive Bayes)
+
+
+```{r Bayes}
+params <- conj_treino %>% 
+     group_by(inadimplente) %>% 
+     summarize(media = mean(balanco), desvpad = sd(balanco))
+params
+
+pi <- conj_treino %>% summarize(pi=mean(inadimplente=="Sim")) %>% pull(pi)
+pi
+
+x <- conj_teste$balanco
+
+f0 <- dnorm(x, params$media[1], params$desvpad[1])
+f1 <- dnorm(x, params$media[2], params$desvpad[2])
+
+p_chapeu_bayes <- f1*pi / (f1*pi + f0*(1 - pi))
+y_chapeu_bayes <- ifelse(p_chapeu_bayes > 0.5, "Sim", "Nao")
+
+confusionMatrix(factor(y_chapeu_bayes), conj_teste$inadimplente,  positive="Sim")
+
+```
+
+
+## Calcula Erro
+
+```{r erro_class}
+calc_erro_class <- function(real, previsto) {
+  mean(real != previsto)
+}
+# Este valor é igual a 1 - Accuracy da matriz de confusão
+calc_erro_class(conj_teste$inadimplente, y_chapeu_bayes)
+```
+
+
+## Alterando o valor da priori
+
+
+```{r ajustando}
+
+p_chapeu_bayes <- f1*0.15 / (f1*0.15 + f0*(1 - 0.15))
+y_chapeu_bayes <- ifelse(p_chapeu_bayes > 0.5, "Sim", "Nao")
+
+
+confusionMatrix(factor(y_chapeu_bayes), conj_teste$inadimplente,  positive="Sim")
+
+# Este valor é igual a 1 - Accuracy da matriz de confusão
+calc_erro_class(conj_teste$inadimplente, y_chapeu_bayes)
+```
+
+
+## LDA
+
+```{r LDA}
+library(MASS)
+
+treina_lda <- lda(inadimplente ~ balanco + estudante, data = conj_treino)
+treina_lda
+plot(treina_lda)
+names(predict(treina_lda, conj_treino))
+y_chapeu <- predict(treina_lda, conj_teste)$class %>% 
+             factor(levels = levels(conj_teste$inadimplente))
+confusionMatrix(data = y_chapeu, reference = conj_teste$inadimplente,  positive="Sim")
+
+
+# Este valor é igual a 1 - Accuracy da matriz de confusão
+calc_erro_class(conj_teste$inadimplente, y_chapeu)
+```
+
+## LDA - ajustes
+
+
+```{r LDA2}
+p_chapeu <- predict(treina_lda, conj_teste)$posterior
+head(p_chapeu)
+y_chapeu <- ifelse(p_chapeu[, 2] > 0.11, "Sim", "Nao") %>% 
+             factor(levels = levels(conj_teste$inadimplente))
+confusionMatrix(data = y_chapeu, reference = conj_teste$inadimplente,  positive="Sim") 
+
+
+# Este valor é igual a 1 - Accuracy da matriz de confusão
+calc_erro_class(conj_teste$inadimplente, y_chapeu)
+```
+
+
+
+## QDA
+
+```{r QDA}
+treina_qda <- qda(inadimplente ~ balanco + estudante, data = conj_treino)
+treina_qda
+y_chapeu <- predict(treina_qda, conj_teste)$class %>% 
+             factor(levels = levels(conj_teste$inadimplente))
+confusionMatrix(data = y_chapeu, reference = conj_teste$inadimplente,  positive="Sim") 
+```
+
+## QDA ajustes
+
+```{r QDA2}
+p_chapeu <- predict(treina_qda, conj_teste)$posterior
+head(p_chapeu)
+y_chapeu <- ifelse(p_chapeu[, 2] > 0.11, "Sim", "Nao") %>% 
+             factor(levels = levels(conj_teste$inadimplente))
+confusionMatrix(data = y_chapeu, reference = conj_teste$inadimplente,  positive="Sim") 
+```
+
+
+## Curva ROC
+
+```{r ROC, fig.width=9}
+library(pROC)
+
+# KNN
+set.seed(21)
+ctrl <- trainControl(method = "cv")
+treina_knn <- train(inadimplente ~ balanco + estudante, method = "knn", trControl= ctrl, preProcess=c("center", "scale"), tuneGrid = data.frame(k = seq(21,140, by=4)), data = conj_treino)
+prev_knn <- predict(treina_knn, conj_teste,type = "prob")
+
+# Reg Log
+mod2 <- glm(inadimplente ~ balanco + estudante,data=conj_treino,family=binomial)
+p_chapeu_log <- predict(mod2, newdata = conj_teste, type = "response")
+
+# LDA e QDA
+p_chapeu_lda <- predict(treina_lda, conj_teste)$posterior
+p_chapeu_qda <- predict(treina_qda, conj_teste)$posterior
+
+roc_log <- roc(conj_teste$inadimplente ~ p_chapeu_log, plot = TRUE, print.auc=FALSE,
+                 col="black", legacy.axes=TRUE)
+roc_lda <- roc(conj_teste$inadimplente ~ p_chapeu_lda[,2], plot = TRUE, print.auc=FALSE, col="green", legacy.axes=TRUE, add=TRUE)
+roc_qda <- roc(conj_teste$inadimplente ~ p_chapeu_qda[,2], plot = TRUE, print.auc=FALSE, col="blue", legacy.axes=TRUE, add=TRUE)
+roc_knn1 <- roc(conj_teste$inadimplente ~ prev_knn[,2], plot = TRUE, print.auc=FALSE, col="red", legacy.axes=TRUE, add=TRUE)
+
+legend("bottomright",legend=c("Reg Log","LDA","QDA", "KNN"), 
+       col=c("black", "green","blue", "red"),lwd=4)
+as.numeric(roc_log$auc)
+as.numeric(roc_lda$auc)
+as.numeric(roc_qda$auc)
+as.numeric(roc_knn1$auc)
+```
+
+
