@@ -1,0 +1,71 @@
+---
+title: "Carregando dados, Manipulando e Visualizando"
+author: "Ricardo Accioly"
+date: ' `r Sys.Date()` '
+output:
+  html_document:
+    toc: yes
+    code_download: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.retina = 3, fig.height=8, fig.width=10, dev=c("png"), fig.path="imagens/Aula01A/")
+
+```
+
+
+## Entrada de dados no R
+
+## Lendo dados de arquivos xlsx
+
+```{r csv}
+library(readxl)
+dados_seg <- read_xlsx("C:/Users/ricar/OneDrive/Documents/GitHub/IME05-12547/indicadoressegurancapublicauf.xlsx", col_names = TRUE, sheet = "Ocorrências")
+```
+
+## Lendo dados de através de uma url 
+
+```{r}
+library(readxl)
+library(httr)
+url <- "http://dados.mj.gov.br/dataset/210b9ae2-21fc-4986-89c6-2006eb4db247/resource/feeae05e-faba-406c-8a4a-512aec91a9d1/download/indicadoressegurancapublicauf.xlsx"
+GET(url, write_disk(tf <- tempfile(fileext = ".xlsx")))
+segur <- read_xlsx(tf, sheet = "Ocorrências")
+str(segur)
+head(segur)
+```
+
+
+
+## Bibliotecas
+
+Vamos carregar as bibliotecas que serão usadas na manipulação e visualização de dados. 
+
+O pacote tidyverse carrega diversos pacotes muito uteis na manipulação e visualização de dados 
+
+
+```{r carregando_bibliotecas, echo=TRUE, message=TRUE}
+library("tidyverse")
+```
+
+```{r manipulando1}
+glimpse(dados_seg)
+unique(dados_seg$UF)
+dados_segRJ <- dados_seg %>% filter(UF=="Rio de Janeiro")
+summary(dados_segRJ)
+```
+
+
+```{r manipulando2}
+unique(dados_segRJ$`Tipo Crime`)
+dados_segRJ$`Tipo Crime` <- as.factor(dados_segRJ$`Tipo Crime`)
+dados_segRJ %>% filter(`Tipo Crime`=="Homicídio doloso" ) %>% ggplot(aes(x=as.factor(Ano), y=Ocorrências)) + geom_boxplot()
+dados_segRJ %>% filter(`Tipo Crime`=="Roubo de veículo" ) %>% ggplot(aes(x=as.factor(Ano), y=Ocorrências)) + geom_boxplot()
+```
+
+
+```{r manipulando3}
+sintese_RJ <- dados_segRJ %>% group_by(Ano,`Tipo Crime`) %>% summarise(total = sum(Ocorrências))
+sintese_RJ %>% ggplot(aes(x=Ano, y=total, color=`Tipo Crime`)) + geom_point() + geom_line()
+```
+

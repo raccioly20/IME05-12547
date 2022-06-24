@@ -146,6 +146,13 @@ knitr::kable(
 Vamos criar uma coluna que nos dará a duração da perfuração dos poços.
 
 ```{r criando_coluna}
+pocos_03$INICIO[1]
+pocos_03$TERMINO[1]
+pocos_03$TERMINO[1] - pocos_03$INICIO[1]
+difftime(pocos_03$TERMINO[1], pocos_03$INICIO[1], units = "days")
+tempo <- difftime(pocos_03$TERMINO[1], pocos_03$INICIO[1], units = "days")
+str(tempo)
+(pocos_03$INICIO[1] %--% pocos_03$TERMINO[1])/ddays(1)
 pocos_03 <- pocos_03 %>% mutate(TPERF = (INICIO %--% TERMINO)/ddays(1))
 summary(pocos_03)
 ```
