@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.retina = 3, fig.height=4, fig.width=6, de
 
 ```{r csv}
 library(readr)
-url <- "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos-acervo-de-dados-tecnicos/tabela-de-pocos.csv"
+url <- "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos-acervo-de-dados-tecnicos/tabela-pocos.csv"
 ## O read_delim permite que seja definido o tipo de delimitador dos dados
 pocos <- read_delim(url, delim = ";", locale= locale(decimal_mark = ","), col_names = TRUE)
 head(pocos)

@@ -5,7 +5,6 @@ output:
     df_print: paged
 ---
 
-* [Aula 0](content/slides01/index.html)
 * [Aula 1](content/Aula01.html)  
 * [Aula 2](content/Aula02.html)  
 * [Aula 3](content/slides02/index.html)
