@@ -1,0 +1,200 @@
+---
+title: "Eixos - Escalas - Cores"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    code_download: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 7, 
+                      fig.height= 5,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula06/")
+```
+
+## Carregando bibliotecas
+
+
+```{r bibliotecas, message=FALSE}
+library(tidyverse)
+library(gapminder)
+```
+
+
+\newpage
+
+## Filtrando dados e fazendo grafico de dispersão padrão
+
+
+```{r graf-dispersao-pad, echo=TRUE}
+gap_07 <- filter(gapminder, year == 2007)
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point()
+```
+
+
+\newpage
+
+## Transformando o eixo x para escala logarítimica
+
+```{r escala-log}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  scale_x_continuous(trans = "log10")
+```
+
+
+\newpage
+
+## Outra forma de transformação do eixo x
+
+```{r outra-escala}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  scale_x_log10()
+```
+
+
+\newpage
+
+## Definindo limites para o eixo y
+
+```{r limites-eixoy}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  scale_x_log10() +
+  scale_y_continuous(limits = c(0, 95))
+```
+
+
+\newpage
+
+## Grafico com cores normais
+```{r cores-normais, fig.width=9}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point() +
+  scale_x_log10()
+```
+
+
+\newpage
+
+## Grafico usando uma paleta de cores diferente
+```{r cores-outras, fig.width=9}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point() +
+  scale_x_log10() +
+  scale_color_brewer(palette = "Dark2")
+```
+
+
+\newpage
+
+## Usando codigos manuais para as cores
+
+```{r codigos-cores, fig.width=9}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point() +
+  scale_x_log10() +
+  scale_color_manual(values = c("#FF0000", "#00A08A", "#F2AD00",
+                                "#F98400", "#5BBCD6"))
+
+```
+
+
+\newpage
+
+## Definindo as cores e tamanho dos pontos
+
+```{r cores-tamanho}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(color = "darkblue", size = 3) +
+  scale_x_log10()
+```
+
+
+\newpage
+
+## Customizando títulos, rótulos de eixo e legendas
+
+```{r legenda_baixo}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point(size = 2) +
+  scale_x_log10() +
+  theme_light() +
+  theme(legend.position = "bottom")
+```
+
+
+\newpage
+
+## Sem legenda
+
+```{r sem-legenda}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point(size = 2) +
+  scale_x_log10() +
+  theme_light() +
+  theme(legend.position = "none")
+```
+
+
+\newpage
+
+## Legenda dentro do gráfico
+
+```{r legenda-dentro}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point(size = 2) +
+  scale_x_log10() +
+  theme_light() +
+  theme(legend.position = c(0.1, 0.85))
+```
+
+
+\newpage
+
+## Salvando o gráfico
+
+```{r salvando-grafico}
+graf1 <- ggplot(gap_07, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point(size = 2) +
+  scale_x_log10() +
+  theme_light() +
+  theme(legend.position = c(0.1, 0.85))
+
+graf1
+
+ggsave("Exp_vida_pib_2007_1.png", plot=graf1, width = 7, height = 7)
+```
+
+
+\newpage
+
+## Aumentando o tamanho do texto e mudando para portugues
+
+```{r mudando-texto, fig.width=9}
+graf2 <- ggplot(gap_07, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point(size = 2) +
+  scale_x_log10() +
+  theme_light() +
+  theme(legend.position = c(0.1, 0.85),
+        legend.key = element_blank(),
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 14)) +
+  labs(x = "PIB Per capita (US$)", 
+       y = "Expectativa de Vida (anos)", 
+       title = "Expectativa de Vida vs PIB em 2007",
+       color = "Continente")
+
+graf2
+
+ggsave("Exp_vida_pib_2007_2.png", plot = graf2, width = 7, height = 7)
+```
+

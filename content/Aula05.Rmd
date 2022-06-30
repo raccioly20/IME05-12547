@@ -1,0 +1,178 @@
+---
+title: "Suavização"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    code_download: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 7, 
+                      fig.height= 5,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula05/")
+```
+
+## Bibliotecas
+
+
+```{r bibliotecas, message=FALSE}
+library("ggplot2")
+library("gapminder")
+library("dplyr")
+```
+
+
+\newpage
+
+## Suavização
+(locally estimated scatterplot smoothing/Local Polynomial Regression Fitting)
+
+```{r suavização}
+gap_07 <- filter(gapminder, year == 2007)
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  geom_smooth()
+```
+
+
+\newpage
+
+## Fazendo o suavizador mais nervoso
+
+```{r nervoso, message=FALSE}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  geom_smooth(span = 0.2)
+```
+
+
+\newpage
+
+## Fazendo o suavizador menos nervoso
+
+```{r mais-suave, message=FALSE}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  geom_smooth(span = 0.9)
+```
+
+
+\newpage
+
+## Removendo intervalos de confiança
+
+```{r sem-IC, message=FALSE}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+```
+
+
+\newpage
+
+## Usando IC de 90%
+
+```{r IC90, message=FALSE}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  geom_smooth(level = 0.90)
+```
+
+
+\newpage
+
+## Usando um modelo linear ao invés do loess 
+
+
+```{r linear, message=FALSE}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+
+\newpage
+
+## Usando basic splines para melhorar o ajuste
+
+```{r splines, message=FALSE}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, df = 3))
+```
+
+
+\newpage
+
+## Usando o gam (general addtive models) com regressão spline
+
+```{r gam, message=FALSE}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  geom_smooth(method = "gam", formula = y ~ s(x))
+```
+
+
+\newpage
+
+## Começando a construir um gráfico do tipo facet com suavizações 
+
+```{r primeiro-graf-dispersão}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point()
+
+```
+
+
+\newpage
+
+## Dividindo por continente
+
+```{r facet-continente}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  facet_wrap(~ continent)
+```
+
+
+\newpage
+
+## Adicionando suavizadores
+
+```{r facet-suavizadores, message=FALSE, warning=FALSE}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  facet_wrap(~ continent) +
+  geom_smooth()
+```
+
+
+\newpage
+
+## Colorindo por continente
+
+```{r facet-suav-cores, message=FALSE, warning=FALSE, fig.width=9}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point() +
+  facet_wrap(~ continent) +
+  geom_smooth()
+```
+
+
+\newpage
+
+## Colorindo somente a curva 
+
+```{r facet-suav-cores2, message=FALSE, warning=FALSE, fig.width=9}
+ggplot(gap_07, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  facet_wrap(~ continent) +
+  geom_smooth(aes(color = continent))
+```
+
