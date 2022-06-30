@@ -1,0 +1,119 @@
+---
+title: "Explorando Dados"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    code_download: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 9, 
+                      fig.height= 7,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula06A/")
+```
+
+## Carregando bibliotecas
+
+
+```{r bibliotecas, message=FALSE}
+library(tidyverse)
+data(iris)
+```
+
+
+\newpage
+
+## O que temos aqui?
+
+
+```{r 1, echo=TRUE}
+head(iris)
+iris %>% count(Species)
+```
+
+
+\newpage
+
+## Quais são as médias?
+
+```{r 2}
+iris %>% 
+  group_by(Species) %>% 
+  summarize(across(where(is.numeric), mean, na.rm = TRUE))
+```
+
+
+\newpage
+
+## Vamos ver se temos alguma relação entre as variáveis
+
+```{r 3}
+iris %>% 
+  group_by(Species) %>% ggplot(aes(x=Sepal.Width, y=Sepal.Length, 
+                                   color=Species)) + geom_point()
+```
+
+\newpage
+
+## Vamos ver se temos alguma relação entre as variáveis 2
+
+```{r 3a}
+iris %>% 
+  group_by(Species) %>% 
+  ggplot(aes(x=Sepal.Width, y=Sepal.Length, color=Species)) +
+  geom_point() + geom_smooth(method = "lm", se=FALSE)
+```
+
+
+\newpage
+
+## Vamos ver se temos alguma relação entre as variáveis 3
+
+```{r 4}
+iris %>% 
+  group_by(Species) %>% ggplot(aes(x=Petal.Width, y=Petal.Length, 
+                                   color=Species)) + geom_point()
+```
+
+\newpage
+
+## Vamos ver se temos alguma relação entre as variáveis 4
+
+```{r 4a}
+iris %>% 
+  group_by(Species) %>% 
+  ggplot(aes(x=Petal.Width, y=Petal.Length, color=Species)) +
+  geom_point() + geom_smooth(method = "lm")
+```
+
+
+\newpage
+
+## Vamos ver como se distribui o Petal.Width
+
+```{r 5}
+iris %>% 
+  group_by(Species) %>% ggplot(aes(x=Petal.Width, 
+                                   fill=Species)) + 
+                                   geom_histogram()
+```
+
+
+\newpage
+
+## Vamos ver como se distribui o Petal.Length
+
+```{r 6}
+iris %>% 
+  group_by(Species) %>% 
+  ggplot(aes(x=Petal.Length, fill=Species)) + 
+  geom_histogram()
+```
+
+
