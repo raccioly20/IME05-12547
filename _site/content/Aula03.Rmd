@@ -1,0 +1,135 @@
+---
+title: "Visualizando as distribuições"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    code_download: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 7, 
+                      fig.height= 5,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula03/")
+```
+
+## Carregando as bibliotecas
+
+
+Vamos trabalhar de novo com os dados do gapminder para fazer algumas visualizações de dados que são muito úteis no dia a dia. 
+
+Este material foi adaptado do curso Data Visualization in R with ggplot2 de Kara Woo
+
+```{r bibliotecas, message=FALSE}
+library("ggplot2")
+library("dplyr")
+library("gapminder")
+```
+
+
+\newpage
+
+## Selecionando dados
+
+```{r criando_subgrupo}
+gap_07 <- filter(gapminder, year == 2007)
+```
+
+## Vendo a distribuição
+
+```{r histograma}
+ggplot(gap_07, aes(x = gdpPercap)) +
+  geom_histogram()
+```
+
+
+\newpage 
+
+## Criando um histograma usando a regra de Sturges
+
+A regra de Sturges indica `r round(1+3.322*log10(nrow(gap_07)),0)` faixas enquanto que o padrão do ggplot2 é 30.  
+
+```{r Sturges}
+ggplot(gap_07, aes(x = gdpPercap)) +
+  geom_histogram(bins = round(1+3.322*log10(nrow(gap_07)),0))
+```
+
+
+\newpage 
+
+## Criando um gráfico de densidade
+
+```{r densidade}
+ggplot(gap_07, aes(x = gdpPercap)) +
+  geom_density()
+```
+
+
+\newpage
+
+## Criando um box-plot
+
+```{r box-plot}
+ggplot(gap_07, aes(x = continent, y = lifeExp)) +
+  geom_boxplot()
+
+```
+
+
+\newpage
+
+## Criando um box-plot com visão dos dados
+
+
+```{r jitter}
+ggplot(gap_07, aes(x = continent, y = lifeExp)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.5, alpha = 0.2)
+```
+
+\newpage
+
+## Matriz de Correlações
+
+```{r correlações}
+library(corrplot)
+gap_07_s <- gap_07 %>% select(lifeExp, pop, gdpPercap)
+mat_corr <- cor(gap_07_s)
+corrplot(mat_corr, method = "number", col = "black", cl.pos = "n")
+corrplot(mat_corr, method = "number")
+corrplot(mat_corr)
+```
+
+\newpage
+
+## SPLOM
+
+```{r splom}
+library(psych)
+pairs.panels(gap_07_s)
+```
+
+
+\newpage
+
+```{r splom2}
+library(GGally)
+ggpairs(gap_07_s)
+```
+
+
+\newpage
+
+## Descrevendo a distribuição
+
+```{r}
+library(datawizard)
+describe_distribution(gap_07_s)
+```
+
+

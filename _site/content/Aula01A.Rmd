@@ -21,6 +21,8 @@ knitr::opts_chunk$set(echo = TRUE, fig.retina = 3, fig.height=8, fig.width=10, d
 ```{r csv}
 library(readxl)
 dados_seg <- read_xlsx("C:/Users/ricar/OneDrive/Documents/GitHub/IME05-12547/indicadoressegurancapublicauf.xlsx", col_names = TRUE, sheet = "Ocorrências")
+head(dados_seg)
+str(dados_seg)
 ```
 
 ## Lendo dados de através de uma url 
