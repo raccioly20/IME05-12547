@@ -1,0 +1,179 @@
+---
+title: "Regressão Linear"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    code_download: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 10, 
+                      fig.height= 8,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula07_1/")
+```
+
+
+## Carregando bibliotecas
+
+```{r}
+library(tidyverse)
+```
+
+
+
+
+## Dados de propaganda 
+
+O conjunto de dados contém estatísticas sobre as vendas de um produto em 200 diferentes mercados, juntamente com orçamentos publicitários em cada um desses mercados, para diferentes canais de mídia: TV, rádio e jornal.
+As vendas estão em milhares de unidades e o orçamento está em milhares de dólares.
+
+
+```{r carrega-dados}
+library(readxl)
+library(here)
+arquivo <- here("Propaganda.xlsx")
+arquivo
+propaganda <- read_excel(arquivo)
+summary(propaganda)
+```
+
+## Renomeando 
+
+
+```{r renomeando}
+propaganda <- propaganda %>% rename(Jornal = Newspaper, Vendas = Sales)
+
+```
+
+## Sumario
+
+```{r sumario}
+summary(propaganda)
+nrow(propaganda)
+```
+
+## Linhas inicias
+
+```{r head}
+library(gt)
+gt(head(propaganda, 10))
+```
+
+
+## Criando amostra de treino e teste
+
+```{r treino_teste, message=FALSE}
+library(caret)
+set.seed(21)
+y <- propaganda$Vendas
+indice_teste <- createDataPartition(y, times = 1, p = 0.40, list = FALSE)
+
+conj_treino <- propaganda %>% slice(-indice_teste)
+conj_teste <- propaganda %>% slice(indice_teste)
+
+str(conj_treino)
+str(conj_teste)
+gt(head(conj_treino, 10))
+```
+
+
+\newpage
+
+## Regressão Simples
+
+```{r 1a_regressão, message=FALSE}
+mod1 <- lm( Vendas ~ TV, data = conj_treino)
+mod2 <- lm( Vendas ~ Radio, data = conj_treino)
+mod3 <- lm( Vendas ~ Jornal, data = conj_treino)
+```
+
+\newpage
+
+
+## 1a Regressão Multipla
+
+```{r regressao-multipla}
+mod4 <- lm( Vendas ~ TV + Radio + Jornal, data = conj_treino)
+summary(mod4)
+```
+
+
+
+## 2a Regressao Multipla  
+```{r regmult-sem-jornal}
+mod5 <- lm( Vendas ~ TV + Radio, data = conj_treino)
+summary(mod5)
+
+```
+
+
+## Confirmando o teste t com o teste F (ANOVA)
+
+```{r}
+anova(mod5, mod4)
+```
+
+
+
+## Calculando o erro padrão do resíduo com amostra de teste
+
+
+```{r avaliando_mod5}
+sqrt(mean((conj_teste$Vendas - predict(mod5, conj_teste)) ^ 2)) 
+```
+
+
+## Comparando com a melhor regressão simples
+
+```{r simples_multipla}
+## Modelo com somente TV
+summary(mod1)$sigma
+summary(mod1)$r.squared
+sqrt(mean((conj_teste$Vendas - predict(mod1, conj_teste)) ^ 2))
+## Modelo com TV e Jornal
+summary(mod5)$sigma
+summary(mod5)$adj.r.squared
+sqrt(mean((conj_teste$Vendas - predict(mod5, conj_teste)) ^ 2))
+```
+
+
+
+## Análise do Modelo
+
+```{r residuos, message=FALSE}
+library(performance)
+check_model(mod5)
+```
+
+
+## Análise do Modelo com car
+
+```{r car1, message=FALSE}
+library(car)
+vif(mod5)
+```
+
+
+## Tentando corrigir o problema
+
+```{r transf_resposta}
+mod6 <- lm( log(Vendas) ~ TV + Radio, data = conj_treino)
+summary(mod6)
+check_model(mod6)
+```
+
+
+
+## Dado que parece outlier e é um valor influente
+
+
+```{r}
+conj_treino[83,]
+```
+

@@ -10,7 +10,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.width = 8, 
-                      fig.height= 7,  
+                      fig.height= 5,  
                       fig.retina = 3,
                       message = FALSE, 
                       warning = FALSE,
@@ -88,13 +88,13 @@ gt(head(conj_treino, 10))
 
 Aqui estou usando uma função do pacote caret que de uma maneira simples apresenta a relação entre a variável resposta e suas possíveis variáveis explicativas
 
-```{r caret, fig.height=4, fig.width=7}
+```{r caret}
 featurePlot(x = conj_treino[ , c("TV", "Radio", "Jornal")], y = conj_treino$Vendas)
 ```
 
 ## Usando o ggplot
 
-```{r ggplot, fig.height=4, fig.width=7}
+```{r ggplot}
 gt(head(conj_treino, 10))
 c_treino_pivot <- conj_treino %>% pivot_longer(!Vendas, names_to="Tipo", values_to="Orçamento" ) 
 gt(head(c_treino_pivot, 10))
@@ -112,7 +112,7 @@ conj_treino %>% pivot_longer(!Vendas, names_to="Tipo", values_to="Orçamento" ) 
 
 ## Matriz de dispersão
 
-```{r splom, fig.height=6.5, figure.width=7, message=FALSE}
+```{r splom, message=FALSE}
 library(psych)
 pairs.panels(conj_treino, 
              method = "pearson", # metodo de correlação
@@ -166,6 +166,13 @@ confint(mod1)
 ```
 
 
+## Anova
+
+```{r anova}
+anova(mod1)
+```
+
+
 ## Previsões
 
 ```{r previsoes}
@@ -183,13 +190,13 @@ sqrt(mean((conj_teste$Vendas - predict(mod1, conj_teste)) ^ 2))
 
 ## Análise do modelo
 
-```{r residuos1a, message=FALSE, fig.height=6.5, fig.width=9}
+```{r residuos1a, message=FALSE}
 plot(mod1)
 ```
 
 ## Análise do modelo 2
 
-```{r residuos1b, message=FALSE, fig.height=7, fig.width=9}
+```{r residuos1b, message=FALSE, fig.height= 7}
 library(performance)
 check_model(mod1)
 ```
@@ -197,7 +204,7 @@ check_model(mod1)
 
 ## 2o Modelo de Regressão
 
-```{r 2modelo-regressão, fig.height=4, fig.width=4}
+```{r 2modelo-regressão, fig.height= 5}
 mod2 <- lm( Vendas ~ Radio, data = conj_treino)
 coeflinear <- mod2$coefficients[1]
 coefang <- mod2$coefficients[2]
@@ -206,6 +213,12 @@ ggplot(propaganda, aes(x=Radio, y=Vendas)) +
     geom_point() +
     geom_abline(slope = coefang,intercept = coeflinear, color="blue" ) + 
     geom_hline(yintercept=coeflinear, linetype="dashed", color = "red")
+```
+
+## Outra forma de representação do 2o Modelo 
+
+```{r 2areg, message=FALSE}
+scatterplot(Vendas ~ Radio, data = conj_treino, smooth=F, id.n=1)
 ```
 
 
@@ -218,7 +231,7 @@ sqrt(mean((conj_teste$Vendas - predict(mod2, conj_teste)) ^ 2))
 
 ## Análise de Resíduos
 
-```{r residuos2, message=FALSE, fig.height=7, fig.width=9}
+```{r residuos2, message=FALSE, fig.height=7}
 check_model(mod2)
 ```
 
@@ -226,7 +239,7 @@ check_model(mod2)
 
 ## 3o Modelo de Regressão
 
-```{r 3omodelo-regressao, fig.height=4, fig.width=4}
+```{r 3omodelo-regressao, fig.height= 5}
 mod3 <- lm( Vendas ~ Jornal, data = conj_treino)
 coeflinear <- mod3$coefficients[1]
 coefang <- mod3$coefficients[2]
@@ -235,6 +248,13 @@ ggplot(propaganda, aes(x=Jornal, y=Vendas)) +
     geom_point() +
     geom_abline(slope = coefang,intercept = coeflinear, color="blue" ) + 
     geom_hline(yintercept=coeflinear, linetype="dashed", color = "red")
+```
+
+
+## Outra forma de representação do 3o Modelo 
+
+```{r 3areg, message=FALSE}
+scatterplot(Vendas ~ Jornal, data = conj_treino, smooth=F, id.n=1)
 ```
 
 
@@ -247,82 +267,8 @@ sqrt(mean((conj_teste$Vendas - predict(mod3, conj_teste)) ^ 2))
 
 ## Análise de Resíduos
 
-```{r residuos3, message=FALSE, fig.height=6.5, fig.width=9}
+```{r residuos3, message=FALSE, fig.height=7}
 check_model(mod3)
 ```
 
-
-\newpage
-
-
-## 1a Regressão Multipla
-
-```{r regressao-multipla}
-mod4 <- lm( Vendas ~ TV + Radio + Jornal, data = conj_treino)
-summary(mod4)
-```
-
-
-
-## 2a Regressao Multipla  
-```{r regmult-sem-jornal}
-mod5 <- lm( Vendas ~ TV + Radio, data = conj_treino)
-summary(mod5)
-
-```
-
-
-## Confirmando o teste t com o teste F (ANOVA)
-
-```{r}
-anova(mod5, mod4)
-```
-
-
-
-## Calculando o erro padrão do resíduo com amostra de teste
-
-
-```{r avaliando_mod5}
-sqrt(mean((conj_teste$Vendas - predict(mod5, conj_teste)) ^ 2)) 
-```
-
-
-## Comparando com a melhor regressão simples
-
-```{r simples_multipla}
-## Modelo com somente TV
-summary(mod1)$sigma
-summary(mod1)$r.squared
-sqrt(mean((conj_teste$Vendas - predict(mod1, conj_teste)) ^ 2))
-## Modelo com TV e Jornal
-summary(mod5)$sigma
-summary(mod5)$adj.r.squared
-sqrt(mean((conj_teste$Vendas - predict(mod5, conj_teste)) ^ 2))
-```
-
-
-
-## Análise do Modelo
-
-```{r residuos, message=FALSE, fig.height=10, fig.width=9}
-check_model(mod5)
-```
-
-
-## Tentando corrigir o problema
-
-```{r transf_resposta, fig.height=10, fig.width=10}
-mod6 <- lm( log(Vendas) ~ TV + Radio, data = conj_treino)
-summary(mod6)
-check_model(mod6)
-```
-
-
-## Dado que parece outlier e é um valor influente
-
-
-```{r}
-conj_treino[83,]
-```
 
