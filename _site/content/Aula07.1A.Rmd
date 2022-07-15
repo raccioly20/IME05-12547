@@ -99,6 +99,8 @@ mod3 <- lm( Vendas ~ Jornal, data = conj_treino)
 ## 1a Regressão Multipla
 
 ```{r regressao-multipla}
+library(car)
+scatterplotMatrix(conj_treino)
 mod4 <- lm( Vendas ~ TV + Radio + Jornal, data = conj_treino)
 summary(mod4)
 ```
@@ -144,11 +146,28 @@ sqrt(mean((conj_teste$Vendas - predict(mod5, conj_teste)) ^ 2))
 
 
 
-## Análise do Modelo
+## Análise do Modelo 1 
 
 ```{r residuos, message=FALSE}
 library(performance)
 check_model(mod5)
+```
+
+
+## Análise do Modelo 2 
+
+```{r residuos2, message=FALSE}
+plot(mod5)
+```
+
+## Análise do Modelo 3 
+
+Para o gráfico de resíduos versus valores ajustados, podemos usar um teste chamado teste de Tukey de não aditividade (Tukey, 1949), ele é obtido adicionando os quadrados dos valores ajustados ao modelo e reajustando. O valor p para o teste de Tukey é obtido comparando a estatística de teste para a distribuição padrão-normal. O teste confirma a visível impressão de curvatura no gráfico residual, reforçando ainda mais a conclusão que o modelo não é adequado.
+
+
+```{r residuos3, message=FALSE}
+library(car)
+residualPlots(mod5)
 ```
 
 
@@ -163,17 +182,22 @@ vif(mod5)
 ## Tentando corrigir o problema
 
 ```{r transf_resposta}
+summary(p1 <- powerTransform(Vendas ~ TV + Radio, data=conj_treino))
+summary(p2 <- powerTransform(cbind(TV, Radio) ~1 , data=conj_treino))
 mod6 <- lm( log(Vendas) ~ TV + Radio, data = conj_treino)
 summary(mod6)
-check_model(mod6)
+residualPlots(mod6)
 ```
 
 
 
 ## Dado que parece outlier e é um valor influente
 
+A função OutlierTest () no pacote do car localiza o maior resíduo studentizado em valor absoluto e calcula o teste t com correção de Bonferroni.
+O testes de Outlier utiliza uma distribuição t para testar se o maior valor do residuo studentizado do modelo é estatisticamente diferente das outras observações. Um valor p significativo indica um outlier extremo que merece um exame mais aprofundado.
 
 ```{r}
+outlierTest(mod6)
 conj_treino[83,]
 ```
 
