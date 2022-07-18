@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ricardo Accioly" />
 
-<meta name="date" content="2022-06-24" />
+<meta name="date" content="2022-07-18" />
 
 <title>Carregando dados, Manipulando e Visualizando</title>
 
@@ -471,42 +471,42 @@ pre code {
 <h1 class="title toc-ignore">Carregando dados, Manipulando e
 Visualizando</h1>
 <h4 class="author">Ricardo Accioly</h4>
-<h4 class="date">2022-06-24</h4>
+<h4 class="date">2022-07-18</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#entrada-de-dados-no-r">Entrada de dados no R</a></li>
-<li><a href="#lendo-dados-de-arquivos-csv">Lendo dados de arquivos
+<li><a href="#entrada-de-dados-no-r" id="toc-entrada-de-dados-no-r">Entrada de dados no R</a></li>
+<li><a href="#lendo-dados-de-arquivos-csv" id="toc-lendo-dados-de-arquivos-csv">Lendo dados de arquivos
 csv</a></li>
-<li><a href="#bibliotecas">Bibliotecas</a></li>
-<li><a href="#dados-de-poços">Dados de poços</a></li>
-<li><a href="#manipulação-de-dados">Manipulação de dados</a></li>
-<li><a href="#corrigindo-tipo-de-dados">Corrigindo tipo de
-dados</a></li>
-<li><a href="#filtrando-dados">Filtrando dados</a>
+<li><a href="#bibliotecas" id="toc-bibliotecas">Bibliotecas</a></li>
+<li><a href="#dados-de-poços" id="toc-dados-de-poços">Dados de
+poços</a></li>
+<li><a href="#manipulação-de-dados" id="toc-manipulação-de-dados">Manipulação de dados</a></li>
+<li><a href="#corrigindo-tipo-de-dados" id="toc-corrigindo-tipo-de-dados">Corrigindo tipo de dados</a></li>
+<li><a href="#filtrando-dados" id="toc-filtrando-dados">Filtrando
+dados</a>
 <ul>
-<li><a href="#avaliando-os-dados">Avaliando os dados</a></li>
-<li><a href="#filtrando-poços-de-desenvolvimento">Filtrando poços de
+<li><a href="#avaliando-os-dados" id="toc-avaliando-os-dados">Avaliando
+os dados</a></li>
+<li><a href="#filtrando-poços-de-desenvolvimento" id="toc-filtrando-poços-de-desenvolvimento">Filtrando poços de
 desenvolvimento</a></li>
 </ul></li>
-<li><a href="#criando-uma-coluna-com-mutate">Criando uma coluna com
-mutate</a>
+<li><a href="#criando-uma-coluna-com-mutate" id="toc-criando-uma-coluna-com-mutate">Criando uma coluna com mutate</a>
 <ul>
-<li><a href="#eliminando-colunas-com-tempos-negativos">Eliminando
-colunas com tempos negativos</a></li>
+<li><a href="#eliminando-colunas-com-tempos-negativos" id="toc-eliminando-colunas-com-tempos-negativos">Eliminando colunas com
+tempos negativos</a></li>
 </ul></li>
-<li><a href="#visualizando-os-dados-de-peregrino">Visualizando os dados
-de PEREGRINO</a>
+<li><a href="#visualizando-os-dados-de-peregrino" id="toc-visualizando-os-dados-de-peregrino">Visualizando os dados de
+PEREGRINO</a>
 <ul>
-<li><a href="#box-plot">Box-Plot</a></li>
-<li><a href="#histograma">Histograma</a></li>
-<li><a href="#criando-um-histograma-usando-a-regra-de-sturges">Criando
-um histograma usando a regra de Sturges</a></li>
-<li><a href="#gráfico-de-dispersão">Gráfico de Dispersão</a></li>
-<li><a href="#alterando-nome-das-colunas">Alterando nome das
-colunas</a></li>
+<li><a href="#box-plot" id="toc-box-plot">Box-Plot</a></li>
+<li><a href="#histograma" id="toc-histograma">Histograma</a></li>
+<li><a href="#criando-um-histograma-usando-a-regra-de-sturges" id="toc-criando-um-histograma-usando-a-regra-de-sturges">Criando um
+histograma usando a regra de Sturges</a></li>
+<li><a href="#gráfico-de-dispersão" id="toc-gráfico-de-dispersão">Gráfico de Dispersão</a></li>
+<li><a href="#alterando-nome-das-colunas" id="toc-alterando-nome-das-colunas">Alterando nome das colunas</a></li>
 </ul></li>
 </ul>
 </div>
@@ -520,7 +520,7 @@ colunas</a></li>
 url &lt;- &quot;https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos-acervo-de-dados-tecnicos/tabela-pocos.csv&quot;
 ## O read_delim permite que seja definido o tipo de delimitador dos dados
 pocos &lt;- read_delim(url, delim = &quot;;&quot;, locale= locale(decimal_mark = &quot;,&quot;), col_names = TRUE)</code></pre>
-<pre><code>## Rows: 30241 Columns: 60
+<pre><code>## Rows: 30255 Columns: 60
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;;&quot;
 ## chr (51): POCO, CADASTRO, OPERADOR, POCO_OPERADOR, ESTADO, BACIA, BLOCO, SIG...
@@ -533,12 +533,12 @@ pocos &lt;- read_delim(url, delim = &quot;;&quot;, locale= locale(decimal_mark =
 <pre><code>## # A tibble: 6 × 60
 ##   POCO        CADASTRO OPERADOR POCO_OPERADOR ESTADO BACIA BLOCO SIG_CAMPO CAMPO
 ##   &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;
-## 1 7-ET-1690D… 7210002… Petrobr… 7ET1690DRN    RN     Poti… ET    &quot;ET   &quot;   ESTR…
-## 2 7-ET-1686D… 7210002… Petrobr… 7ET1686DRN    RN     Poti… ET    &quot;ET   &quot;   ESTR…
-## 3 7-ET-1684-… 7210002… Petrobr… 7ET1684RN     RN     Poti… ET    &quot;ET   &quot;   ESTR…
-## 4 7-ET-1681D… 7210002… Petrobr… 7ET1681DRN    RN     Poti… ET    &quot;ET   &quot;   ESTR…
-## 5 7-ET-1679D… 7210002… Petrobr… 7ET1679DRN    RN     Poti… ET    &quot;ET   &quot;   ESTR…
-## 6 7-ET-1677-… 7210002… Petrobr… 7ET1677RN     RN     Poti… ET    &quot;ET   &quot;   ESTR…
+## 1 7-PC-9-RN   7210004… 3R Macau 7PC  0009  RN RN     Poti… PC    &quot;PC   &quot;   PORT…
+## 2 7-CO-11D-R… 7428102… Petrobr… 7CO  0011D R… RJ     Camp… CO    &quot;CO   &quot;   CORV…
+## 3 7-BA-344-BA 2024005… Petrobr… 7BA  0344  BA BA     Recô… BA    &quot;BA   &quot;   BURA…
+## 4 7-ET-541-RN 7210004… Petrobr… 7ET  0541  RN RN     Poti… ET    &quot;ET   &quot;   ESTR…
+## 5 4-FSL-6-ES  3427000… Petrobr… 4FSL 0006  ES ES     Espí… FSL   &quot;FSL  &quot;   FAZE…
+## 6 7-CAM-652-… 7210004… Petrobr… 7CAM 0652  RN RN     Poti… CAM   &quot;CAM  &quot;   CANT…
 ## # … with 51 more variables: TERRA_MAR &lt;chr&gt;, POCO_POS_ANP &lt;chr&gt;, TIPO &lt;chr&gt;,
 ## #   CATEGORIA &lt;chr&gt;, RECLASSIFICACAO &lt;chr&gt;, SITUACAO &lt;chr&gt;, INICIO &lt;chr&gt;,
 ## #   TERMINO &lt;chr&gt;, CONCLUSAO &lt;chr&gt;, TITULARIDADE &lt;chr&gt;, LATITUDE_BASE_4C &lt;chr&gt;,
@@ -563,12 +563,12 @@ manipulação e visualização de dados</p>
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <p>Vamos primeiro conhecer o que tem na base de dados pocos. A base de
-dados possui 30241 linhas</p>
+dados possui 30255 linhas</p>
 <pre class="r"><code>class(pocos)  # Tipo de base de dados</code></pre>
 <pre><code>## [1] &quot;spec_tbl_df&quot; &quot;tbl_df&quot;      &quot;tbl&quot;         &quot;data.frame&quot;</code></pre>
 <pre class="r"><code>summary(pocos) # Sumario da base de dados</code></pre>
 <pre><code>##      POCO             CADASTRO           OPERADOR         POCO_OPERADOR     
-##  Length:30241       Length:30241       Length:30241       Length:30241      
+##  Length:30255       Length:30255       Length:30255       Length:30255      
 ##  Class :character   Class :character   Class :character   Class :character  
 ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
 ##                                                                             
@@ -576,7 +576,7 @@ dados possui 30241 linhas</p>
 ##                                                                             
 ##                                                                             
 ##     ESTADO             BACIA              BLOCO            SIG_CAMPO        
-##  Length:30241       Length:30241       Length:30241       Length:30241      
+##  Length:30255       Length:30255       Length:30255       Length:30255      
 ##  Class :character   Class :character   Class :character   Class :character  
 ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
 ##                                                                             
@@ -584,7 +584,7 @@ dados possui 30241 linhas</p>
 ##                                                                             
 ##                                                                             
 ##     CAMPO            TERRA_MAR         POCO_POS_ANP           TIPO          
-##  Length:30241       Length:30241       Length:30241       Length:30241      
+##  Length:30255       Length:30255       Length:30255       Length:30255      
 ##  Class :character   Class :character   Class :character   Class :character  
 ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
 ##                                                                             
@@ -592,7 +592,7 @@ dados possui 30241 linhas</p>
 ##                                                                             
 ##                                                                             
 ##   CATEGORIA         RECLASSIFICACAO      SITUACAO            INICIO         
-##  Length:30241       Length:30241       Length:30241       Length:30241      
+##  Length:30255       Length:30255       Length:30255       Length:30255      
 ##  Class :character   Class :character   Class :character   Class :character  
 ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
 ##                                                                             
@@ -600,7 +600,7 @@ dados possui 30241 linhas</p>
 ##                                                                             
 ##                                                                             
 ##    TERMINO           CONCLUSAO         TITULARIDADE       LATITUDE_BASE_4C  
-##  Length:30241       Length:30241       Length:30241       Length:30241      
+##  Length:30255       Length:30255       Length:30255       Length:30255      
 ##  Class :character   Class :character   Class :character   Class :character  
 ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
 ##                                                                             
@@ -608,47 +608,47 @@ dados possui 30241 linhas</p>
 ##                                                                             
 ##                                                                             
 ##  LONGITUDE_BASE_4C  LATITUDE_BASE_DD  LONGITUDE_BASE_DD DATUM_HORIZONTAL  
-##  Length:30241       Min.   :-32.927   Min.   :-73.38    Length:30241      
-##  Class :character   1st Qu.:-12.692   1st Qu.:-39.61    Class :character  
+##  Length:30255       Min.   :-32.927   Min.   :-73.38    Length:30255      
+##  Class :character   1st Qu.:-12.691   1st Qu.:-39.61    Class :character  
 ##  Mode  :character   Median :-10.710   Median :-37.83    Mode  :character  
-##                     Mean   :-11.481   Mean   :-38.83                      
+##                     Mean   :-11.480   Mean   :-38.83                      
 ##                     3rd Qu.: -5.327   3rd Qu.:-36.98                      
 ##                     Max.   :  4.528   Max.   :-34.83                      
 ##                                                                           
 ##  TIPO_DE_COORDENADA_DE_BASE   DIRECAO          PROFUNDIDADE_VERTICAL_M
-##  Length:30241               Length:30241       Min.   :-59053.0       
-##  Class :character           Class :character   1st Qu.:  -771.8       
+##  Length:30255               Length:30255       Min.   :-62550.0       
+##  Class :character           Class :character   1st Qu.:  -772.4       
 ##  Mode  :character           Mode  :character   Median :     0.0       
-##                                                Mean   :  -251.9       
-##                                                3rd Qu.:   142.8       
+##                                                Mean   :  -254.4       
+##                                                3rd Qu.:   138.0       
 ##                                                Max.   :528084.0       
-##                                                NA&#39;s   :19343          
+##                                                NA&#39;s   :19336          
 ##  PROFUNDIDADE_SONDADOR_M PROFUNDIDADE_MEDIDA_M REFERENCIA_DE_PROFUNDIDADE
-##  Min.   :    0           Min.   :    0.0       Length:30241              
-##  1st Qu.:  485           1st Qu.:  347.0       Class :character          
-##  Median :  997           Median :  869.5       Mode  :character          
-##  Mean   : 1500           Mean   : 1566.6                                 
-##  3rd Qu.: 2228           3rd Qu.: 2625.5                                 
-##  Max.   :17630           Max.   :17640.0                                 
-##  NA&#39;s   :1046            NA&#39;s   :17794                                   
-##  MESA_ROTATIVA     COTA_ALTIMETRICA_M LAMINA_D_AGUA_M  DATUM_VERTICAL    
-##  Min.   :   0.00   Min.   :   0.00    Min.   :   0.0   Length:30241      
-##  1st Qu.:  19.00   1st Qu.:   0.00    1st Qu.:   0.0   Class :character  
-##  Median :  32.37   Median :  12.29    Median :   0.0   Mode  :character  
-##  Mean   :  57.23   Mean   :  38.31    Mean   : 280.9                     
-##  3rd Qu.:  75.60   3rd Qu.:  56.92    3rd Qu.: 116.0                     
-##  Max.   :1890.00   Max.   :6672.00    Max.   :3094.0                     
-##                    NA&#39;s   :17230      NA&#39;s   :14764                      
+##  Min.   :    0           Min.   :    0.0       Length:30255              
+##  1st Qu.:  485           1st Qu.:  347.5       Class :character          
+##  Median :  999           Median :  870.2       Mode  :character          
+##  Mean   : 1507           Mean   : 1583.9                                 
+##  3rd Qu.: 2230           3rd Qu.: 2644.0                                 
+##  Max.   :62750           Max.   :62800.0                                 
+##  NA&#39;s   :1043            NA&#39;s   :17787                                   
+##  MESA_ROTATIVA     COTA_ALTIMETRICA_M LAMINA_D_AGUA_M   DATUM_VERTICAL    
+##  Min.   :   0.00   Min.   :    0.00   Min.   :    0.0   Length:30255      
+##  1st Qu.:  19.00   1st Qu.:    0.00   1st Qu.:    0.0   Class :character  
+##  Median :  32.40   Median :   12.30   Median :    0.0   Mode  :character  
+##  Mean   :  57.34   Mean   :   41.00   Mean   :  284.2                     
+##  3rd Qu.:  75.68   3rd Qu.:   56.99   3rd Qu.:  116.0                     
+##  Max.   :2220.00   Max.   :30940.00   Max.   :30940.0                     
+##                    NA&#39;s   :17225      NA&#39;s   :14761                       
 ##  UNIDADE_ESTRATIGRAFICA GEOLOGIA_GRUPO_FINAL GEOLOGIA_FORMACAO_FINAL
-##  Mode:logical           Length:30241         Length:30241           
-##  NA&#39;s:30241             Class :character     Class :character       
+##  Mode:logical           Length:30255         Length:30255           
+##  NA&#39;s:30255             Class :character     Class :character       
 ##                         Mode  :character     Mode  :character       
 ##                                                                     
 ##                                                                     
 ##                                                                     
 ##                                                                     
 ##  GEOLOGIA_MEMBRO_FINAL     CDPE               AGP                 PC           
-##  Length:30241          Length:30241       Length:30241       Length:30241      
+##  Length:30255          Length:30255       Length:30255       Length:30255      
 ##  Class :character      Class :character   Class :character   Class :character  
 ##  Mode  :character      Mode  :character   Mode  :character   Mode  :character  
 ##                                                                                
@@ -656,7 +656,7 @@ dados possui 30241 linhas</p>
 ##                                                                                
 ##                                                                                
 ##      PAG            PERFIS_CONVENCIONAIS DURANTE_PERFURACAO PERFIS_DIGITAIS   
-##  Length:30241       Length:30241         Length:30241       Length:30241      
+##  Length:30255       Length:30255         Length:30255       Length:30255      
 ##  Class :character   Class :character     Class :character   Class :character  
 ##  Mode  :character   Mode  :character     Mode  :character   Mode  :character  
 ##                                                                               
@@ -664,7 +664,7 @@ dados possui 30241 linhas</p>
 ##                                                                               
 ##                                                                               
 ##  PERFIS_PROCESSADOS PERFIS_ESPECIAIS   AMOSTRA_LATERAL      SISMICA         
-##  Length:30241       Length:30241       Length:30241       Length:30241      
+##  Length:30255       Length:30255       Length:30255       Length:30255      
 ##  Class :character   Class :character   Class :character   Class :character  
 ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
 ##                                                                             
@@ -672,7 +672,7 @@ dados possui 30241 linhas</p>
 ##                                                                             
 ##                                                                             
 ##  TABELA_TEMPO_PROFUNDIDADE DADOS_DIRECIONAIS  TESTE_A_CABO      
-##  Length:30241              Length:30241       Length:30241      
+##  Length:30255              Length:30255       Length:30255      
 ##  Class :character          Class :character   Class :character  
 ##  Mode  :character          Mode  :character   Mode  :character  
 ##                                                                 
@@ -680,7 +680,7 @@ dados possui 30241 linhas</p>
 ##                                                                 
 ##                                                                 
 ##  TESTE_DE_FORMACAO   CANHONEIO          TESTEMUNHO         GEOQUIMICA       
-##  Length:30241       Length:30241       Length:30241       Length:30241      
+##  Length:30255       Length:30255       Length:30255       Length:30255      
 ##  Class :character   Class :character   Class :character   Class :character  
 ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
 ##                                                                             
@@ -688,7 +688,7 @@ dados possui 30241 linhas</p>
 ##                                                                             
 ##                                                                             
 ##   SIG_SONDA          NOM_SONDA         DHA_ATUALIZACAO    ATINGIU_PRESAL    
-##  Length:30241       Length:30241       Length:30241       Length:30241      
+##  Length:30255       Length:30255       Length:30255       Length:30255      
 ##  Class :character   Class :character   Class :character   Class :character  
 ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
 ##                                                                             
@@ -723,12 +723,12 @@ head(pocos_01)</code></pre>
 <pre><code>## # A tibble: 6 × 12
 ##   POCO     OPERADOR ESTADO BACIA BLOCO CAMPO TERRA_MAR CATEGORIA SITUACAO INICIO
 ##   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt; 
-## 1 7-ET-16… Petrobr… RN     Poti… ET    ESTR… T         Desenvol… FECHADO  01/07…
-## 2 7-ET-16… Petrobr… RN     Poti… ET    ESTR… T         Desenvol… FECHADO  26/11…
-## 3 7-ET-16… Petrobr… RN     Poti… ET    ESTR… T         Desenvol… FECHADO  10/06…
-## 4 7-ET-16… Petrobr… RN     Poti… ET    ESTR… T         Desenvol… FECHADO  12/04…
-## 5 7-ET-16… Petrobr… RN     Poti… ET    ESTR… T         Desenvol… FECHADO  14/07…
-## 6 7-ET-16… Petrobr… RN     Poti… ET    ESTR… T         Desenvol… FECHADO  09/04…
+## 1 7-PC-9-… 3R Macau RN     Poti… PC    PORT… T         Desenvol… ARRASADO 25/08…
+## 2 7-CO-11… Petrobr… RJ     Camp… CO    CORV… M         Desenvol… ABANDON… 26/08…
+## 3 7-BA-34… Petrobr… BA     Recô… BA    BURA… T         Desenvol… ABANDON… 28/08…
+## 4 7-ET-54… Petrobr… RN     Poti… ET    ESTR… T         Desenvol… PRODUZI… 30/05…
+## 5 4-FSL-6… Petrobr… ES     Espí… FSL   FAZE… T         Pioneiro… ABANDON… 31/05…
+## 6 7-CAM-6… Petrobr… RN     Poti… CAM   CANT… T         Desenvol… INJETAN… 01/06…
 ## # … with 2 more variables: TERMINO &lt;chr&gt;, PROFUNDIDADE_MEDIDA_M &lt;dbl&gt;</code></pre>
 </div>
 <div id="manipulação-de-dados" class="section level2">
@@ -736,35 +736,35 @@ head(pocos_01)</code></pre>
 <p>Vamos eliminar as linhas de dados que apresenta dados ausentes “NA”
 nas colunas TERMINO e PROFUNDIDADE_MEDIDA_M.</p>
 <pre class="r"><code>sum(is.na(pocos_01))</code></pre>
-<pre><code>## [1] 30217</code></pre>
+<pre><code>## [1] 30235</code></pre>
 <pre class="r"><code>sum(is.na(pocos_01$INICIO))</code></pre>
 <pre><code>## [1] 0</code></pre>
 <pre class="r"><code>sum(is.na(pocos_01$TERMINO))</code></pre>
-<pre><code>## [1] 1853</code></pre>
+<pre><code>## [1] 1861</code></pre>
 <pre class="r"><code>sum(is.na(pocos_01$PROFUNDIDADE_MEDIDA_M))</code></pre>
-<pre><code>## [1] 17794</code></pre>
+<pre><code>## [1] 17787</code></pre>
 <pre class="r"><code>pocos_01 &lt;- pocos_01 %&gt;% drop_na(any_of(c(&quot;TERMINO&quot;,
                                           &quot;PROFUNDIDADE_MEDIDA_M&quot;)))
 # melhorando a visualização dos dados
 knitr::kable(
   head(pocos_01, 10), booktabs = TRUE,
   caption = &#39;Uma tabela mais elegante com as 10 primeras linhas de pocos_01.&#39;)</code></pre>
-<table>
+<table style="width:100%;">
 <caption>Uma tabela mais elegante com as 10 primeras linhas de
 pocos_01.</caption>
 <colgroup>
+<col width="8%" />
+<col width="5%" />
+<col width="4%" />
+<col width="5%" />
+<col width="3%" />
+<col width="8%" />
+<col width="5%" />
 <col width="9%" />
-<col width="6%" />
-<col width="4%" />
-<col width="6%" />
-<col width="4%" />
-<col width="6%" />
-<col width="6%" />
-<col width="10%" />
-<col width="6%" />
-<col width="11%" />
-<col width="11%" />
 <col width="15%" />
+<col width="10%" />
+<col width="10%" />
+<col width="12%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -784,35 +784,35 @@ pocos_01.</caption>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">7-ET-1690D-RN</td>
+<td align="left">1-MOR-1-RN</td>
 <td align="left">Petrobras</td>
 <td align="left">RN</td>
 <td align="left">Potiguar</td>
-<td align="left">ET</td>
-<td align="left">ESTREITO</td>
+<td align="left">BEN</td>
+<td align="left">BENFICA</td>
 <td align="left">T</td>
-<td align="left">Desenvolvimento</td>
+<td align="left">Pioneiro</td>
 <td align="left">FECHADO</td>
-<td align="left">01/07/2017 00:00</td>
-<td align="left">02/07/2017 00:00</td>
-<td align="right">292.8</td>
+<td align="left">12/06/1994 00:00</td>
+<td align="left">28/06/1994 00:00</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="even">
-<td align="left">7-ET-1684-RN</td>
+<td align="left">7-REP-28-RN</td>
 <td align="left">Petrobras</td>
 <td align="left">RN</td>
 <td align="left">Potiguar</td>
-<td align="left">ET</td>
-<td align="left">ESTREITO</td>
+<td align="left">BEN</td>
+<td align="left">BENFICA</td>
 <td align="left">T</td>
 <td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">10/06/2017 00:00</td>
-<td align="left">12/06/2017 00:00</td>
-<td align="right">276.0</td>
+<td align="left">INJETANDO</td>
+<td align="left">12/04/1995 00:00</td>
+<td align="left">18/04/1995 00:00</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="odd">
-<td align="left">7-ET-1681D-RN</td>
+<td align="left">7-ET-647-RN</td>
 <td align="left">Petrobras</td>
 <td align="left">RN</td>
 <td align="left">Potiguar</td>
@@ -820,116 +820,116 @@ pocos_01.</caption>
 <td align="left">ESTREITO</td>
 <td align="left">T</td>
 <td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">12/04/2017 00:00</td>
-<td align="left">14/04/2017 00:00</td>
-<td align="right">295.6</td>
+<td align="left">INJETANDO</td>
+<td align="left">16/04/1995 00:00</td>
+<td align="left">18/04/1995 00:00</td>
+<td align="right">277.2</td>
 </tr>
 <tr class="even">
-<td align="left">7-ET-1679D-RN</td>
+<td align="left">7-MRL-54-RJS</td>
 <td align="left">Petrobras</td>
-<td align="left">RN</td>
-<td align="left">Potiguar</td>
-<td align="left">ET</td>
-<td align="left">ESTREITO</td>
-<td align="left">T</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">MRL</td>
+<td align="left">MARLIM</td>
+<td align="left">M</td>
 <td align="left">Desenvolvimento</td>
 <td align="left">FECHADO</td>
-<td align="left">14/07/2017 00:00</td>
-<td align="left">15/07/2017 00:00</td>
-<td align="right">306.5</td>
+<td align="left">30/05/1996 00:00</td>
+<td align="left">13/06/1996 00:00</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="odd">
-<td align="left">7-ET-1677-RN</td>
+<td align="left">7-BVS-13-RN</td>
 <td align="left">Petrobras</td>
 <td align="left">RN</td>
 <td align="left">Potiguar</td>
-<td align="left">ET</td>
-<td align="left">ESTREITO</td>
+<td align="left">BEN</td>
+<td align="left">BENFICA</td>
 <td align="left">T</td>
 <td align="left">Desenvolvimento</td>
 <td align="left">FECHADO</td>
-<td align="left">09/04/2017 00:00</td>
-<td align="left">09/04/2017 00:00</td>
-<td align="right">277.0</td>
+<td align="left">06/06/1996 00:00</td>
+<td align="left">15/06/1996 00:00</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="even">
-<td align="left">7-ET-1674-RN</td>
+<td align="left">9-LUC-31D-AM</td>
 <td align="left">Petrobras</td>
-<td align="left">RN</td>
-<td align="left">Potiguar</td>
-<td align="left">ET</td>
-<td align="left">ESTREITO</td>
+<td align="left">AM</td>
+<td align="left">Solimões</td>
+<td align="left">LUC</td>
+<td align="left">LESTE DO URUCU</td>
 <td align="left">T</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">12/05/2017 00:00</td>
-<td align="left">14/05/2017 00:00</td>
-<td align="right">284.4</td>
+<td align="left">Especial</td>
+<td align="left">ABANDONADO PERMANENTEMENTE</td>
+<td align="left">10/06/1996 00:00</td>
+<td align="left">15/08/1996 00:00</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="odd">
-<td align="left">7-ET-1673-RN</td>
+<td align="left">1-RJS-500-RJS</td>
 <td align="left">Petrobras</td>
-<td align="left">RN</td>
-<td align="left">Potiguar</td>
-<td align="left">NA</td>
-<td align="left">ESTREITO</td>
-<td align="left">T</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">20/10/2017 00:00</td>
-<td align="left">21/10/2017 00:00</td>
-<td align="right">273.6</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">ESP</td>
+<td align="left">ESPADARTE</td>
+<td align="left">M</td>
+<td align="left">Pioneiro</td>
+<td align="left">ABANDONADO PERMANENTEMENTE</td>
+<td align="left">10/06/1996 00:00</td>
+<td align="left">19/07/1996 00:00</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="even">
-<td align="left">7-ET-1714D-RN</td>
+<td align="left">8-MRL-36D-RJS</td>
 <td align="left">Petrobras</td>
-<td align="left">RN</td>
-<td align="left">Potiguar</td>
-<td align="left">ET</td>
-<td align="left">ESTREITO</td>
-<td align="left">T</td>
-<td align="left">Desenvolvimento</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">MRL</td>
+<td align="left">MARLIM</td>
+<td align="left">M</td>
+<td align="left">Injeção</td>
 <td align="left">FECHADO</td>
-<td align="left">20/07/2017 00:00</td>
-<td align="left">21/07/2017 00:00</td>
-<td align="right">295.0</td>
+<td align="left">27/10/1993 00:00</td>
+<td align="left">15/11/1993 00:00</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="odd">
-<td align="left">7-ET-1713-RN</td>
+<td align="left">3-ESP-2-RJS</td>
 <td align="left">Petrobras</td>
-<td align="left">RN</td>
-<td align="left">Potiguar</td>
-<td align="left">ET</td>
-<td align="left">ESTREITO</td>
-<td align="left">T</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">25/06/2017 00:00</td>
-<td align="left">26/06/2017 00:00</td>
-<td align="right">283.3</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">ESP</td>
+<td align="left">ESPADARTE</td>
+<td align="left">M</td>
+<td align="left">Extensão</td>
+<td align="left">ABANDONADO PERMANENTEMENTE</td>
+<td align="left">09/05/1995 00:00</td>
+<td align="left">19/06/1995 00:00</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="even">
-<td align="left">7-ET-1710-RN</td>
+<td align="left">8-AB-49D-RJS</td>
 <td align="left">Petrobras</td>
-<td align="left">RN</td>
-<td align="left">Potiguar</td>
-<td align="left">ET</td>
-<td align="left">ESTREITO</td>
-<td align="left">T</td>
-<td align="left">Desenvolvimento</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">AB</td>
+<td align="left">ALBACORA</td>
+<td align="left">M</td>
+<td align="left">Injeção</td>
 <td align="left">FECHADO</td>
-<td align="left">28/06/2017 00:00</td>
-<td align="left">28/06/2017 00:00</td>
-<td align="right">281.0</td>
+<td align="left">15/04/1996 00:00</td>
+<td align="left">30/07/1996 00:00</td>
+<td align="right">0.0</td>
 </tr>
 </tbody>
 </table>
 <pre class="r"><code>sum(is.na(pocos_01))</code></pre>
-<pre><code>## [1] 4324</code></pre>
+<pre><code>## [1] 4328</code></pre>
 <p><strong>Veja que existia um grande número de dados
 ausentes</strong></p>
-<p>Antes: 30241 linhas Depois: 10702 linhas</p>
+<p>Antes: 30255 linhas Depois: 10715 linhas</p>
 </div>
 <div id="corrigindo-tipo-de-dados" class="section level2">
 <h2>Corrigindo tipo de dados</h2>
@@ -988,7 +988,7 @@ summary(pocos_02)</code></pre>
 <caption>Uma tabela mais elegante com as 10 primeras linhas de
 pocos_02.</caption>
 <colgroup>
-<col width="9%" />
+<col width="10%" />
 <col width="9%" />
 <col width="4%" />
 <col width="4%" />
@@ -996,7 +996,7 @@ pocos_02.</caption>
 <col width="6%" />
 <col width="6%" />
 <col width="10%" />
-<col width="17%" />
+<col width="16%" />
 <col width="6%" />
 <col width="6%" />
 <col width="13%" />
@@ -1019,35 +1019,21 @@ pocos_02.</caption>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">7-PRG-41HA-RJS</td>
+<td align="left">1-RJS-498-RJS</td>
 <td align="left">Equinor Brasil</td>
 <td align="left">RJ</td>
 <td align="left">Campos</td>
-<td align="left">NA</td>
+<td align="left">BM-C-7</td>
 <td align="left">PEREGRINO</td>
 <td align="left">M</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">2014-11-07</td>
-<td align="left">2014-11-11</td>
-<td align="right">4543.00</td>
+<td align="left">Pioneiro</td>
+<td align="left">ABANDONADO PERMANENTEMENTE</td>
+<td align="left">1994-07-07</td>
+<td align="left">1994-08-17</td>
+<td align="right">0.00</td>
 </tr>
 <tr class="even">
-<td align="left">7-PRG-43H-RJS</td>
-<td align="left">Equinor Brasil</td>
-<td align="left">RJ</td>
-<td align="left">Campos</td>
-<td align="left">NA</td>
-<td align="left">PEREGRINO</td>
-<td align="left">M</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">2014-12-21</td>
-<td align="left">2015-01-18</td>
-<td align="right">6382.80</td>
-</tr>
-<tr class="odd">
-<td align="left">7-PRG-58H-RJS</td>
+<td align="left">7-PRG-2HB-RJS</td>
 <td align="left">Equinor Brasil</td>
 <td align="left">RJ</td>
 <td align="left">Campos</td>
@@ -1055,41 +1041,13 @@ pocos_02.</caption>
 <td align="left">PEREGRINO</td>
 <td align="left">M</td>
 <td align="left">Desenvolvimento</td>
-<td align="left">ABANDONADO PERMANENTEMENTE</td>
-<td align="left">2017-02-25</td>
-<td align="left">2017-04-09</td>
-<td align="right">6762.00</td>
-</tr>
-<tr class="even">
-<td align="left">7-PRG-57HA-RJS</td>
-<td align="left">Equinor Brasil</td>
-<td align="left">RJ</td>
-<td align="left">Campos</td>
-<td align="left">NA</td>
-<td align="left">PEREGRINO</td>
-<td align="left">M</td>
-<td align="left">Desenvolvimento</td>
 <td align="left">FECHADO</td>
-<td align="left">2017-01-15</td>
-<td align="left">2017-01-20</td>
-<td align="right">8613.00</td>
+<td align="left">2011-01-16</td>
+<td align="left">2011-02-03</td>
+<td align="right">4676.00</td>
 </tr>
 <tr class="odd">
-<td align="left">7-PRG-48H-RJS</td>
-<td align="left">Equinor Brasil</td>
-<td align="left">RJ</td>
-<td align="left">Campos</td>
-<td align="left">NA</td>
-<td align="left">PEREGRINO</td>
-<td align="left">M</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">ABANDONADO PERMANENTEMENTE</td>
-<td align="left">2015-06-16</td>
-<td align="left">2015-07-06</td>
-<td align="right">5765.50</td>
-</tr>
-<tr class="even">
-<td align="left">7-PRG-53H-RJS</td>
+<td align="left">7-PRG-64HP-RJS</td>
 <td align="left">Equinor Brasil</td>
 <td align="left">RJ</td>
 <td align="left">Campos</td>
@@ -1098,26 +1056,12 @@ pocos_02.</caption>
 <td align="left">M</td>
 <td align="left">Desenvolvimento</td>
 <td align="left">FECHADO</td>
-<td align="left">2015-11-12</td>
-<td align="left">2015-12-09</td>
-<td align="right">5495.70</td>
-</tr>
-<tr class="odd">
-<td align="left">7-PRG-42H-RJS</td>
-<td align="left">Equinor Brasil</td>
-<td align="left">RJ</td>
-<td align="left">Campos</td>
-<td align="left">NA</td>
-<td align="left">PEREGRINO</td>
-<td align="left">M</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">2014-12-03</td>
-<td align="left">2014-12-29</td>
-<td align="right">5555.00</td>
+<td align="left">2018-11-11</td>
+<td align="left">2018-12-05</td>
+<td align="right">5790.00</td>
 </tr>
 <tr class="even">
-<td align="left">7-PRG-57H-RJS</td>
+<td align="left">7-PRG-65HP-RJS</td>
 <td align="left">Equinor Brasil</td>
 <td align="left">RJ</td>
 <td align="left">Campos</td>
@@ -1126,12 +1070,12 @@ pocos_02.</caption>
 <td align="left">M</td>
 <td align="left">Desenvolvimento</td>
 <td align="left">ABANDONADO PERMANENTEMENTE</td>
-<td align="left">2016-11-26</td>
-<td align="left">2016-12-18</td>
-<td align="right">6532.72</td>
+<td align="left">2019-01-05</td>
+<td align="left">2019-01-20</td>
+<td align="right">4386.00</td>
 </tr>
 <tr class="odd">
-<td align="left">7-PRG-47H-RJS</td>
+<td align="left">7-PRG-73HP-RJS</td>
 <td align="left">Equinor Brasil</td>
 <td align="left">RJ</td>
 <td align="left">Campos</td>
@@ -1140,12 +1084,26 @@ pocos_02.</caption>
 <td align="left">M</td>
 <td align="left">Desenvolvimento</td>
 <td align="left">FECHADO</td>
-<td align="left">2015-05-12</td>
-<td align="left">2015-05-29</td>
-<td align="right">4661.00</td>
+<td align="left">2022-02-25</td>
+<td align="left">2022-03-09</td>
+<td align="right">5694.00</td>
 </tr>
 <tr class="even">
-<td align="left">7-PRG-49H-RJS</td>
+<td align="left">8-PRG-68H-RJS</td>
+<td align="left">Equinor Brasil</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">NA</td>
+<td align="left">PEREGRINO</td>
+<td align="left">M</td>
+<td align="left">Injeção</td>
+<td align="left">EM AVALIAÇÃO</td>
+<td align="left">2019-08-16</td>
+<td align="left">2019-09-12</td>
+<td align="right">4133.00</td>
+</tr>
+<tr class="odd">
+<td align="left">7-PRG-66HP-RJS</td>
 <td align="left">Equinor Brasil</td>
 <td align="left">RJ</td>
 <td align="left">Campos</td>
@@ -1154,9 +1112,51 @@ pocos_02.</caption>
 <td align="left">M</td>
 <td align="left">Desenvolvimento</td>
 <td align="left">FECHADO</td>
-<td align="left">2015-06-28</td>
-<td align="left">2015-08-21</td>
-<td align="right">8080.20</td>
+<td align="left">2019-02-11</td>
+<td align="left">2019-03-07</td>
+<td align="right">6529.00</td>
+</tr>
+<tr class="even">
+<td align="left">7-PRG-71HP-RJS</td>
+<td align="left">Equinor Brasil</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">NA</td>
+<td align="left">PEREGRINO</td>
+<td align="left">M</td>
+<td align="left">Desenvolvimento</td>
+<td align="left">ABANDONADO PERMANENTEMENTE</td>
+<td align="left">2020-12-08</td>
+<td align="left">2020-12-11</td>
+<td align="right">3646.00</td>
+</tr>
+<tr class="odd">
+<td align="left">7-PRG-71HPA-RJS</td>
+<td align="left">Equinor Brasil</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">NA</td>
+<td align="left">PEREGRINO</td>
+<td align="left">M</td>
+<td align="left">Desenvolvimento</td>
+<td align="left">FECHADO</td>
+<td align="left">2020-12-18</td>
+<td align="left">2020-01-06</td>
+<td align="right">5404.00</td>
+</tr>
+<tr class="even">
+<td align="left">7-PRG-40HP-RJS</td>
+<td align="left">Equinor Brasil</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">NA</td>
+<td align="left">PEREGRINO</td>
+<td align="left">M</td>
+<td align="left">Desenvolvimento</td>
+<td align="left">FECHADO</td>
+<td align="left">2014-07-27</td>
+<td align="left">2014-08-03</td>
+<td align="right">4797.74</td>
 </tr>
 </tbody>
 </table>
@@ -1165,8 +1165,8 @@ pocos_02.</caption>
 <p>Os poços possuem diversas categorias, vamos ver que categorias
 existem nestes poços do bloco BES-100.</p>
 <pre class="r"><code>unique(pocos_02$CATEGORIA)</code></pre>
-<pre><code>## [1] &quot;Desenvolvimento&quot; &quot;Extensão&quot;        &quot;Pioneiro&quot;        &quot;Injeção&quot;        
-## [5] &quot;Especial&quot;</code></pre>
+<pre><code>## [1] &quot;Pioneiro&quot;        &quot;Desenvolvimento&quot; &quot;Injeção&quot;         &quot;Especial&quot;       
+## [5] &quot;Extensão&quot;</code></pre>
 </div>
 <div id="filtrando-poços-de-desenvolvimento" class="section level3">
 <h3>Filtrando poços de desenvolvimento</h3>
@@ -1207,7 +1207,7 @@ summary(pocos_03)</code></pre>
 <caption>Uma tabela mais elegante com as 10 primeras linhas de
 pocos_03.</caption>
 <colgroup>
-<col width="9%" />
+<col width="10%" />
 <col width="9%" />
 <col width="4%" />
 <col width="4%" />
@@ -1215,7 +1215,7 @@ pocos_03.</caption>
 <col width="6%" />
 <col width="6%" />
 <col width="10%" />
-<col width="17%" />
+<col width="16%" />
 <col width="6%" />
 <col width="6%" />
 <col width="13%" />
@@ -1238,35 +1238,7 @@ pocos_03.</caption>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">7-PRG-41HA-RJS</td>
-<td align="left">Equinor Brasil</td>
-<td align="left">RJ</td>
-<td align="left">Campos</td>
-<td align="left">NA</td>
-<td align="left">PEREGRINO</td>
-<td align="left">M</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">2014-11-07</td>
-<td align="left">2014-11-11</td>
-<td align="right">4543.00</td>
-</tr>
-<tr class="even">
-<td align="left">7-PRG-43H-RJS</td>
-<td align="left">Equinor Brasil</td>
-<td align="left">RJ</td>
-<td align="left">Campos</td>
-<td align="left">NA</td>
-<td align="left">PEREGRINO</td>
-<td align="left">M</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">2014-12-21</td>
-<td align="left">2015-01-18</td>
-<td align="right">6382.80</td>
-</tr>
-<tr class="odd">
-<td align="left">7-PRG-58H-RJS</td>
+<td align="left">7-PRG-2HB-RJS</td>
 <td align="left">Equinor Brasil</td>
 <td align="left">RJ</td>
 <td align="left">Campos</td>
@@ -1274,13 +1246,13 @@ pocos_03.</caption>
 <td align="left">PEREGRINO</td>
 <td align="left">M</td>
 <td align="left">Desenvolvimento</td>
-<td align="left">ABANDONADO PERMANENTEMENTE</td>
-<td align="left">2017-02-25</td>
-<td align="left">2017-04-09</td>
-<td align="right">6762.00</td>
+<td align="left">FECHADO</td>
+<td align="left">2011-01-16</td>
+<td align="left">2011-02-03</td>
+<td align="right">4676.00</td>
 </tr>
 <tr class="even">
-<td align="left">7-PRG-57HA-RJS</td>
+<td align="left">7-PRG-64HP-RJS</td>
 <td align="left">Equinor Brasil</td>
 <td align="left">RJ</td>
 <td align="left">Campos</td>
@@ -1289,54 +1261,12 @@ pocos_03.</caption>
 <td align="left">M</td>
 <td align="left">Desenvolvimento</td>
 <td align="left">FECHADO</td>
-<td align="left">2017-01-15</td>
-<td align="left">2017-01-20</td>
-<td align="right">8613.00</td>
+<td align="left">2018-11-11</td>
+<td align="left">2018-12-05</td>
+<td align="right">5790.00</td>
 </tr>
 <tr class="odd">
-<td align="left">7-PRG-48H-RJS</td>
-<td align="left">Equinor Brasil</td>
-<td align="left">RJ</td>
-<td align="left">Campos</td>
-<td align="left">NA</td>
-<td align="left">PEREGRINO</td>
-<td align="left">M</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">ABANDONADO PERMANENTEMENTE</td>
-<td align="left">2015-06-16</td>
-<td align="left">2015-07-06</td>
-<td align="right">5765.50</td>
-</tr>
-<tr class="even">
-<td align="left">7-PRG-53H-RJS</td>
-<td align="left">Equinor Brasil</td>
-<td align="left">RJ</td>
-<td align="left">Campos</td>
-<td align="left">NA</td>
-<td align="left">PEREGRINO</td>
-<td align="left">M</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">2015-11-12</td>
-<td align="left">2015-12-09</td>
-<td align="right">5495.70</td>
-</tr>
-<tr class="odd">
-<td align="left">7-PRG-42H-RJS</td>
-<td align="left">Equinor Brasil</td>
-<td align="left">RJ</td>
-<td align="left">Campos</td>
-<td align="left">NA</td>
-<td align="left">PEREGRINO</td>
-<td align="left">M</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">2014-12-03</td>
-<td align="left">2014-12-29</td>
-<td align="right">5555.00</td>
-</tr>
-<tr class="even">
-<td align="left">7-PRG-57H-RJS</td>
+<td align="left">7-PRG-65HP-RJS</td>
 <td align="left">Equinor Brasil</td>
 <td align="left">RJ</td>
 <td align="left">Campos</td>
@@ -1345,26 +1275,12 @@ pocos_03.</caption>
 <td align="left">M</td>
 <td align="left">Desenvolvimento</td>
 <td align="left">ABANDONADO PERMANENTEMENTE</td>
-<td align="left">2016-11-26</td>
-<td align="left">2016-12-18</td>
-<td align="right">6532.72</td>
-</tr>
-<tr class="odd">
-<td align="left">7-PRG-47H-RJS</td>
-<td align="left">Equinor Brasil</td>
-<td align="left">RJ</td>
-<td align="left">Campos</td>
-<td align="left">NA</td>
-<td align="left">PEREGRINO</td>
-<td align="left">M</td>
-<td align="left">Desenvolvimento</td>
-<td align="left">FECHADO</td>
-<td align="left">2015-05-12</td>
-<td align="left">2015-05-29</td>
-<td align="right">4661.00</td>
+<td align="left">2019-01-05</td>
+<td align="left">2019-01-20</td>
+<td align="right">4386.00</td>
 </tr>
 <tr class="even">
-<td align="left">7-PRG-49H-RJS</td>
+<td align="left">7-PRG-73HP-RJS</td>
 <td align="left">Equinor Brasil</td>
 <td align="left">RJ</td>
 <td align="left">Campos</td>
@@ -1373,9 +1289,93 @@ pocos_03.</caption>
 <td align="left">M</td>
 <td align="left">Desenvolvimento</td>
 <td align="left">FECHADO</td>
-<td align="left">2015-06-28</td>
-<td align="left">2015-08-21</td>
-<td align="right">8080.20</td>
+<td align="left">2022-02-25</td>
+<td align="left">2022-03-09</td>
+<td align="right">5694.00</td>
+</tr>
+<tr class="odd">
+<td align="left">7-PRG-66HP-RJS</td>
+<td align="left">Equinor Brasil</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">NA</td>
+<td align="left">PEREGRINO</td>
+<td align="left">M</td>
+<td align="left">Desenvolvimento</td>
+<td align="left">FECHADO</td>
+<td align="left">2019-02-11</td>
+<td align="left">2019-03-07</td>
+<td align="right">6529.00</td>
+</tr>
+<tr class="even">
+<td align="left">7-PRG-71HP-RJS</td>
+<td align="left">Equinor Brasil</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">NA</td>
+<td align="left">PEREGRINO</td>
+<td align="left">M</td>
+<td align="left">Desenvolvimento</td>
+<td align="left">ABANDONADO PERMANENTEMENTE</td>
+<td align="left">2020-12-08</td>
+<td align="left">2020-12-11</td>
+<td align="right">3646.00</td>
+</tr>
+<tr class="odd">
+<td align="left">7-PRG-71HPA-RJS</td>
+<td align="left">Equinor Brasil</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">NA</td>
+<td align="left">PEREGRINO</td>
+<td align="left">M</td>
+<td align="left">Desenvolvimento</td>
+<td align="left">FECHADO</td>
+<td align="left">2020-12-18</td>
+<td align="left">2020-01-06</td>
+<td align="right">5404.00</td>
+</tr>
+<tr class="even">
+<td align="left">7-PRG-40HP-RJS</td>
+<td align="left">Equinor Brasil</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">NA</td>
+<td align="left">PEREGRINO</td>
+<td align="left">M</td>
+<td align="left">Desenvolvimento</td>
+<td align="left">FECHADO</td>
+<td align="left">2014-07-27</td>
+<td align="left">2014-08-03</td>
+<td align="right">4797.74</td>
+</tr>
+<tr class="odd">
+<td align="left">7-PRG-8HPA-RJS</td>
+<td align="left">Equinor Brasil</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">NA</td>
+<td align="left">PEREGRINO</td>
+<td align="left">M</td>
+<td align="left">Desenvolvimento</td>
+<td align="left">ABANDONADO PERMANENTEMENTE</td>
+<td align="left">2011-11-07</td>
+<td align="left">2011-12-02</td>
+<td align="right">4959.87</td>
+</tr>
+<tr class="even">
+<td align="left">7-PRG-72HP-RJS</td>
+<td align="left">Equinor Brasil</td>
+<td align="left">RJ</td>
+<td align="left">Campos</td>
+<td align="left">NA</td>
+<td align="left">PEREGRINO</td>
+<td align="left">M</td>
+<td align="left">Desenvolvimento</td>
+<td align="left">FECHADO</td>
+<td align="left">2021-11-17</td>
+<td align="left">2021-12-08</td>
+<td align="right">5302.00</td>
 </tr>
 </tbody>
 </table>
@@ -1386,19 +1386,19 @@ pocos_03.</caption>
 <p>Vamos criar uma coluna que nos dará a duração da perfuração dos
 poços.</p>
 <pre class="r"><code>pocos_03$INICIO[1]</code></pre>
-<pre><code>## [1] &quot;2014-11-07&quot;</code></pre>
+<pre><code>## [1] &quot;2011-01-16&quot;</code></pre>
 <pre class="r"><code>pocos_03$TERMINO[1]</code></pre>
-<pre><code>## [1] &quot;2014-11-11&quot;</code></pre>
+<pre><code>## [1] &quot;2011-02-03&quot;</code></pre>
 <pre class="r"><code>pocos_03$TERMINO[1] - pocos_03$INICIO[1]</code></pre>
-<pre><code>## Time difference of 4 days</code></pre>
+<pre><code>## Time difference of 18 days</code></pre>
 <pre class="r"><code>difftime(pocos_03$TERMINO[1], pocos_03$INICIO[1], units = &quot;days&quot;)</code></pre>
-<pre><code>## Time difference of 4 days</code></pre>
+<pre><code>## Time difference of 18 days</code></pre>
 <pre class="r"><code>tempo &lt;- difftime(pocos_03$TERMINO[1], pocos_03$INICIO[1], units = &quot;days&quot;)
 str(tempo)</code></pre>
-<pre><code>##  &#39;difftime&#39; num 4
+<pre><code>##  &#39;difftime&#39; num 18
 ##  - attr(*, &quot;units&quot;)= chr &quot;days&quot;</code></pre>
 <pre class="r"><code>(pocos_03$INICIO[1] %--% pocos_03$TERMINO[1])/ddays(1)</code></pre>
-<pre><code>## [1] 4</code></pre>
+<pre><code>## [1] 18</code></pre>
 <pre class="r"><code>pocos_03 &lt;- pocos_03 %&gt;% mutate(TPERF = (INICIO %--% TERMINO)/ddays(1))
 summary(pocos_03)</code></pre>
 <pre><code>##      POCO             OPERADOR            ESTADO             BACIA          
@@ -1500,7 +1500,7 @@ names(pocos_04)</code></pre>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNhcnJlZ2FuZG8gZGFkb3MsIE1hbmlwdWxhbmRvIGUgVmlzdWFsaXphbmRvIg0KYXV0aG9yOiAiUmljYXJkbyBBY2Npb2x5Ig0KZGF0ZTogJyBgciBTeXMuRGF0ZSgpYCAnDQpvdXRwdXQ6DQogIGh0bWxfZG9jdW1lbnQ6DQogICAgdG9jOiB5ZXMNCiAgICBjb2RlX2Rvd25sb2FkOiB5ZXMNCi0tLQ0KDQpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0NCmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSwgZmlnLnJldGluYSA9IDMsIGZpZy5oZWlnaHQ9NywgZmlnLndpZHRoPTEwLCBkZXY9YygicG5nIiksIGZpZy5wYXRoPSJpbWFnZW5zL0F1bGEwMS8iKQ0KDQpgYGANCg0KDQojIyBFbnRyYWRhIGRlIGRhZG9zIG5vIFINCg0KIyMgTGVuZG8gZGFkb3MgZGUgYXJxdWl2b3MgY3N2DQoNCmBgYHtyIGNzdn0NCmxpYnJhcnkocmVhZHIpDQp1cmwgPC0gImh0dHBzOi8vd3d3Lmdvdi5ici9hbnAvcHQtYnIvY2VudHJhaXMtZGUtY29udGV1ZG8vZGFkb3MtYWJlcnRvcy9hcnF1aXZvcy1hY2Vydm8tZGUtZGFkb3MtdGVjbmljb3MvdGFiZWxhLXBvY29zLmNzdiINCiMjIE8gcmVhZF9kZWxpbSBwZXJtaXRlIHF1ZSBzZWphIGRlZmluaWRvIG8gdGlwbyBkZSBkZWxpbWl0YWRvciBkb3MgZGFkb3MNCnBvY29zIDwtIHJlYWRfZGVsaW0odXJsLCBkZWxpbSA9ICI7IiwgbG9jYWxlPSBsb2NhbGUoZGVjaW1hbF9tYXJrID0gIiwiKSwgY29sX25hbWVzID0gVFJVRSkNCmhlYWQocG9jb3MpDQpgYGANCg0KDQojIyBCaWJsaW90ZWNhcw0KDQpWYW1vcyBjYXJyZWdhciBhcyBiaWJsaW90ZWNhcyBxdWUgc2Vyw6NvIHVzYWRhcyBuYSBtYW5pcHVsYcOnw6NvIGUgdmlzdWFsaXphw6fDo28gZGUgZGFkb3MuIA0KDQpPIHBhY290ZSB0aWR5dmVyc2UgY2FycmVnYSBkaXZlcnNvcyBwYWNvdGVzIG11aXRvIHV0ZWlzIG5hIG1hbmlwdWxhw6fDo28gZSB2aXN1YWxpemHDp8OjbyBkZSBkYWRvcyANCg0KDQpgYGB7ciBjYXJyZWdhbmRvX2JpYmxpb3RlY2FzLCBlY2hvPVRSVUUsIG1lc3NhZ2U9VFJVRX0NCmxpYnJhcnkoInRpZHl2ZXJzZSIpDQpgYGANCg0KDQpWYW1vcyBwcmltZWlybyBjb25oZWNlciBvIHF1ZSB0ZW0gbmEgYmFzZSBkZSBkYWRvcyBwb2Nvcy4gQSBiYXNlIGRlIGRhZG9zIHBvc3N1aSBgciAgbnJvdyhwb2NvcylgIGxpbmhhcw0KDQpgYGB7ciBjb25oZWNlbmRvX3BvY29zfQ0KY2xhc3MocG9jb3MpICAjIFRpcG8gZGUgYmFzZSBkZSBkYWRvcw0Kc3VtbWFyeShwb2NvcykgIyBTdW1hcmlvIGRhIGJhc2UgZGUgZGFkb3MNCmBgYA0KDQojIyBEYWRvcyBkZSBwb8Onb3MNCg0KT3MgZGFkb3MgZGEgdGFiZWxhIHBvw6dvcyB0ZW0gNjAgY29sdW5hcy4NCg0KVmFtb3MgaW5pY2lhbG1lbnRlIHNlbGVjaW9uYXIgYWxndW1hcyBjb2x1bmFzIHBhcmEgcG9kZXJtb3MgdHJhYmFsaGFyIGNvbSBvcyBkYWRvcy4NCg0KKipBcyBjb2x1bmFzIHF1ZSB2YW1vcyB0cmFiYWxoYXIgc8OjbzoqKg0KDQoxKSBQT0NPDQoyKSBPUEVSQURPUg0KMykgRVNUQURPDQo0KSBCQUNJQQ0KNSkgQkxPQ08NCjYpIENBTVBPDQo3KSBURVJSQV9NQVINCjgpIENBVEVHT1JJQQ0KOSkgU0lUVUFDQU8NCjEwKSBJTklDSU8NCjExKSBURVJNSU5PDQoxMikgUFJPRlVORElEQURFX01FRElEQV9NDQoNClBhcmEgc2VsZWNpb25hciBjb2x1bmFzIHVzYW1vcyBhIGZ1bsOnw6NvIGBzZWxlY3RgDQoNCmBgYHtyIHNlbGVjaW9uYW5kb30NCiMjIFZhbW9zIHNlbGVjaW9uYXIgYXMgY29sdW5hcyBsaXN0YWRhcyBhY2ltYQ0KcG9jb3NfMDEgPC0gcG9jb3MgJT4lIHNlbGVjdChQT0NPLE9QRVJBRE9SLEVTVEFETyxCQUNJQSxCTE9DTywgQ0FNUE8sVEVSUkFfTUFSLENBVEVHT1JJQSxTSVRVQUNBTywgSU5JQ0lPLCBURVJNSU5PLCBQUk9GVU5ESURBREVfTUVESURBX00pDQpoZWFkKHBvY29zXzAxKQ0KYGBgDQoNCg0KIyMgTWFuaXB1bGHDp8OjbyBkZSBkYWRvcw0KVmFtb3MgZWxpbWluYXIgYXMgbGluaGFzIGRlIGRhZG9zIHF1ZSBhcHJlc2VudGEgZGFkb3MgYXVzZW50ZXMgIk5BIiBuYXMgY29sdW5hcyBURVJNSU5PIGUgUFJPRlVORElEQURFX01FRElEQV9NLg0KDQpgYGB7ciBlbGltaW5hbmRvX2xpbmhhc30NCnN1bShpcy5uYShwb2Nvc18wMSkpDQpzdW0oaXMubmEocG9jb3NfMDEkSU5JQ0lPKSkNCnN1bShpcy5uYShwb2Nvc18wMSRURVJNSU5PKSkNCnN1bShpcy5uYShwb2Nvc18wMSRQUk9GVU5ESURBREVfTUVESURBX00pKQ0KcG9jb3NfMDEgPC0gcG9jb3NfMDEgJT4lIGRyb3BfbmEoYW55X29mKGMoIlRFUk1JTk8iLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIlBST0ZVTkRJREFERV9NRURJREFfTSIpKSkNCiMgbWVsaG9yYW5kbyBhIHZpc3VhbGl6YcOnw6NvIGRvcyBkYWRvcw0Ka25pdHI6OmthYmxlKA0KICBoZWFkKHBvY29zXzAxLCAxMCksIGJvb2t0YWJzID0gVFJVRSwNCiAgY2FwdGlvbiA9ICdVbWEgdGFiZWxhIG1haXMgZWxlZ2FudGUgY29tIGFzIDEwIHByaW1lcmFzIGxpbmhhcyBkZSBwb2Nvc18wMS4nKQ0Kc3VtKGlzLm5hKHBvY29zXzAxKSkNCmBgYA0KDQoqKlZlamEgcXVlIGV4aXN0aWEgdW0gZ3JhbmRlIG7Dum1lcm8gZGUgZGFkb3MgYXVzZW50ZXMqKg0KDQpBbnRlczogYHIgIG5yb3cocG9jb3MpYCBsaW5oYXMNCkRlcG9pczogYHIgIG5yb3cocG9jb3NfMDEpYCBsaW5oYXMNCg0KIyMgQ29ycmlnaW5kbyB0aXBvIGRlIGRhZG9zDQoNCkFzIGNvbHVuYXMgSU5JQ0lPIGUgVEVSTUlOTyBzw6NvIGRhdGFzLCBtYXMgZm9yYW0gbGlkYXMgY29tbyBjYXJhY3RlciwgdmFtb3MgY29ycmlnaXIgaXN0byENCg0KUGFyYSB0cmFiYWxoYXIgY29tIGRhdGFzIHZhbW9zIHVzYXIgbyBwYWNvdGUgYGx1YnJpZGF0ZWANCg0KYGBge3IgdGlwb19kYWRvc30NCmxpYnJhcnkobHVicmlkYXRlKQ0KcG9jb3NfMDEkSU5JQ0lPIDwtIGFzX2RhdGUocG9jb3NfMDEkSU5JQ0lPLCBmb3JtYXQ9IiVkLyVtLyVZIikNCnBvY29zXzAxJFRFUk1JTk8gPC0gYXNfZGF0ZShwb2Nvc18wMSRURVJNSU5PLCBmb3JtYXQ9IiVkLyVtLyVZIikNCmBgYA0KDQojIyBGaWx0cmFuZG8gZGFkb3MNCg0KVmFtb3MgYW5hbGlzYXIgb3MgcG/Dp29zIGRlIHVtYSBkZXRyZW1pbmFkYSByZWdpw6NvLCBwYXJhIGlzdG8gcG9kZW1vcyBmbHRyYXIgb3MgcG/Dp29zIGRlIHVtIGJsb2NvLg0KVmFtb3MgZmlsdHJhciBzb21lbnRlIG9zIHBvw6dvcyBkbyBDQU1QTyBQRVJFR1JJTk8gdXNhbmRvIGEgZnVuw6fDo28gYGZpbHRlcmAuDQoNCmBgYHtyIGZpbHRyYW5kb30NCnBvY29zXzAyIDwtIHBvY29zXzAxICU+JSBmaWx0ZXIoQ0FNUE89PSJQRVJFR1JJTk8iKSAjIyAgDQpzdW1tYXJ5KHBvY29zXzAyKQ0Ka25pdHI6OmthYmxlKA0KICBoZWFkKHBvY29zXzAyLCAxMCksIGJvb2t0YWJzID0gVFJVRSwNCiAgY2FwdGlvbiA9ICdVbWEgdGFiZWxhIG1haXMgZWxlZ2FudGUgY29tIGFzIDEwIHByaW1lcmFzIGxpbmhhcyBkZSBwb2Nvc18wMi4nKQ0KYGBgDQoNCiMjIyBBdmFsaWFuZG8gb3MgZGFkb3MNCg0KT3MgcG/Dp29zIHBvc3N1ZW0gZGl2ZXJzYXMgY2F0ZWdvcmlhcywgdmFtb3MgdmVyIHF1ZSBjYXRlZ29yaWFzIGV4aXN0ZW0gbmVzdGVzIHBvw6dvcyBkbyBibG9jbyBCRVMtMTAwLg0KDQpgYGB7ciBpZGVudGlmaWNhbmRvfQ0KdW5pcXVlKHBvY29zXzAyJENBVEVHT1JJQSkNCmBgYA0KDQojIyMgRmlsdHJhbmRvIHBvw6dvcyBkZSBkZXNlbnZvbHZpbWVudG8NCg0KYGBge3IgZmlsdHJhbmRvMn0NCnBvY29zXzAzIDwtIHBvY29zXzAyICU+JSBmaWx0ZXIoQ0FURUdPUklBPT0iRGVzZW52b2x2aW1lbnRvIikgIyMgIA0Kc3VtbWFyeShwb2Nvc18wMykNCmtuaXRyOjprYWJsZSgNCiAgaGVhZChwb2Nvc18wMywgMTApLCBib29rdGFicyA9IFRSVUUsDQogIGNhcHRpb24gPSAnVW1hIHRhYmVsYSBtYWlzIGVsZWdhbnRlIGNvbSBhcyAxMCBwcmltZXJhcyBsaW5oYXMgZGUgcG9jb3NfMDMuJykNCmBgYA0KDQojIyBDcmlhbmRvIHVtYSBjb2x1bmEgY29tIG11dGF0ZQ0KDQpWYW1vcyBjcmlhciB1bWEgY29sdW5hIHF1ZSBub3MgZGFyw6EgYSBkdXJhw6fDo28gZGEgcGVyZnVyYcOnw6NvIGRvcyBwb8Onb3MuDQoNCmBgYHtyIGNyaWFuZG9fY29sdW5hfQ0KcG9jb3NfMDMkSU5JQ0lPWzFdDQpwb2Nvc18wMyRURVJNSU5PWzFdDQpwb2Nvc18wMyRURVJNSU5PWzFdIC0gcG9jb3NfMDMkSU5JQ0lPWzFdDQpkaWZmdGltZShwb2Nvc18wMyRURVJNSU5PWzFdLCBwb2Nvc18wMyRJTklDSU9bMV0sIHVuaXRzID0gImRheXMiKQ0KdGVtcG8gPC0gZGlmZnRpbWUocG9jb3NfMDMkVEVSTUlOT1sxXSwgcG9jb3NfMDMkSU5JQ0lPWzFdLCB1bml0cyA9ICJkYXlzIikNCnN0cih0ZW1wbykNCihwb2Nvc18wMyRJTklDSU9bMV0gJS0tJSBwb2Nvc18wMyRURVJNSU5PWzFdKS9kZGF5cygxKQ0KcG9jb3NfMDMgPC0gcG9jb3NfMDMgJT4lIG11dGF0ZShUUEVSRiA9IChJTklDSU8gJS0tJSBURVJNSU5PKS9kZGF5cygxKSkNCnN1bW1hcnkocG9jb3NfMDMpDQpgYGANCg0KIyMjIEVsaW1pbmFuZG8gY29sdW5hcyBjb20gdGVtcG9zIG5lZ2F0aXZvcw0KDQoNCg0KYGBge3IgZmlsdHJhbmRvX2NvbHVuYX0NCnBvY29zXzAzIDwtIHBvY29zXzAzICU+JSBmaWx0ZXIoVFBFUkYgPiAwKSANCmBgYA0KDQoNCg0KIyMgVmlzdWFsaXphbmRvIG9zIGRhZG9zIGRlIFBFUkVHUklOTw0KDQojIyMgQm94LVBsb3QNCg0KYGBge3IgYm94cGxvdH0NCmdncGxvdChwb2Nvc18wMywgYWVzKHg9Q0FNUE8sIHk9VFBFUkYpKSArDQogIGdlb21fYm94cGxvdCgpDQpgYGANCg0KDQpWZWphIHF1ZSBleGlzdGVtIGFsZ3VucyB0ZW1wb3MgYmVtIGVsZXZhZG9zIHF1ZSBlc3TDo28gcmVwcmVzZW50YWRvcyBwb3IgcG9udG9zIG5vIGJveC1wbG90LiBFbGVzIHBvZGVtIHNlciBjb25zaWRlcmFkb3MgcG9udG9zIGFmYXN0YWRvcyAob3V0bGllcnMpLCBxdWUgbmVzdGUgY2FzbyB2YW1vcyBlbGltaW5hci4NCg0KDQpgYGB7ciBvdXRsaWVyc30NCnBvY29zXzA0IDwtIHBvY29zXzAzICU+JSBmaWx0ZXIoVFBFUkYgPCAxMDApDQpnZ3Bsb3QocG9jb3NfMDQsIGFlcyh4PUNBTVBPLCB5PVRQRVJGKSkgKw0KICBnZW9tX2JveHBsb3QoKQ0KYGBgDQoNCg0KIyMjIEhpc3RvZ3JhbWENCg0KYGBge3IgaGlzdG9ncmFtYX0NCmdncGxvdChwb2Nvc18wNCwgYWVzKHg9VFBFUkYpKSArDQogIGdlb21faGlzdG9ncmFtKCkNCmBgYA0KDQoNClZlamEgcXVlIGRlc3RhIGZvcm1hIG8gZ2dwbG90IHVzYSBvIHNldSBwYWRyw6NvIGRlIDMwIGZhaXhhcyBkZSBkYWRvcywgcXVlIGdlcmFsbWVudGUgbsOjbyDDqSBvIG1haXMgYWRlcXVhZG8uDQoNClZhbW9zIHVzYXIgdW1hIHJlZ3JhIGFkZXF1YWRhIHBhcmEgZGVmaW5pw6fDo28gZGUgbsO6bWVybyBkZSBmYWl4YXMuDQoNCiMjIyBDcmlhbmRvIHVtIGhpc3RvZ3JhbWEgdXNhbmRvIGEgcmVncmEgZGUgU3R1cmdlcw0KDQpBIHJlZ3JhIGRlIFN0dXJnZXMgaW5kaWNhIGByIHJvdW5kKDErMy4zMjIqbG9nMTAobnJvdyhwb2Nvc18wNCkpLDApYCBmYWl4YXMgZW5xdWFudG8gcXVlIG8gcGFkcsOjbyBkbyBnZ3Bsb3QyIMOpIDMwLiAgDQoNCmBgYHtyIFN0dXJnZXN9DQpnZ3Bsb3QocG9jb3NfMDQsIGFlcyh4ID0gVFBFUkYpKSArDQogIGdlb21faGlzdG9ncmFtKGJpbnMgPSByb3VuZCgxKzMuMzIyKmxvZzEwKG5yb3cocG9jb3NfMDQpKSwwKSkNCmBgYA0KDQpWZWphIHF1ZSBhZ29yYSB0ZW1vcyB1bSBoaXN0b2dyYW1hIG1haXMgc3VhdmUuDQoNCg0KIyMjIEdyw6FmaWNvIGRlIERpc3BlcnPDo28NCg0KYGBge3IgZGlzcGVyc2FvfQ0KZ2dwbG90KHBvY29zXzA0LCBhZXMoeD1QUk9GVU5ESURBREVfTUVESURBX00sIHk9VFBFUkYpKSArIA0KICBnZW9tX3BvaW50KCkNCmBgYA0KDQpQb2RlbW9zIHBlcmNlYmVyIHF1ZSBow6EgdW1hIHJlbGHDp8OjbyBlbnRyZSBvIHRlbXBvIGRlIHBlcmZ1cmHDp8OjbyBlIGEgcHJvZnVuZGlkYWRlIGRvIHBvw6dvLg0KDQpUYW1iw6ltIMOpIHBvc3PDrXZlbCBzZSBwZXJjZWJlciBxdWUgYWluZGEgZXhpc3RlbSBkYWRvcyBjb20gY29tcG9ydGFtZW50b3MgZXN0cmFuaG9zLiBQb8Onb3MgcmFzb3MgY29tIHByb2Z1bmRpZGFkZSBtdWl0byBkaWZlcmVudGUgZG9zIGRlbWFpcywgYWzDqW0gZGlzc28gdW0gcG/Dp28gbXVpdG8gcHJvZnVuZG8gY29tIGR1cmHDp8OjbyBtdWl0byBwZXF1ZW5hLg0KDQpTZSBmb3NzZW1vcyBjb25zdHJ1aXIgdW0gbW9kZWxvIGNlcnRhbWVudGUgdGVyw61tb3MgcXVlIGludmVzdGlnYXIgbyBwb3JxdWUgZGVzdGVzIGNvbXBvcnRhbWVudG9zLg0KDQoNCiMjIyBBbHRlcmFuZG8gbm9tZSBkYXMgY29sdW5hcw0KDQpgYGB7ciByZW5vbWVhbmRvX2NvbHVuYXN9DQpuYW1lcyhwb2Nvc18wNCkNCm5hbWVzKHBvY29zXzA0KSA8LSB0b2xvd2VyKG5hbWVzKHBvY29zXzA0KSkNCm5hbWVzKHBvY29zXzA0KQ0KYGBgDQoNCg0KDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNhcnJlZ2FuZG8gZGFkb3MsIE1hbmlwdWxhbmRvIGUgVmlzdWFsaXphbmRvIg0KYXV0aG9yOiAiUmljYXJkbyBBY2Npb2x5Ig0KZGF0ZTogJyBgciBTeXMuRGF0ZSgpYCAnDQpvdXRwdXQ6DQogaHRtbF9kb2N1bWVudDoNCiAgICB0b2M6IHllcw0KICAgIGNvZGVfZG93bmxvYWQ6IHllcw0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFLCBmaWcucmV0aW5hID0gMywgZmlnLmhlaWdodD03LCBmaWcud2lkdGg9MTAsIGRldj1jKCJwbmciKSwgZmlnLnBhdGg9ImltYWdlbnMvQXVsYTAxLyIpDQoNCmBgYA0KDQoNCiMjIEVudHJhZGEgZGUgZGFkb3Mgbm8gUg0KDQojIyBMZW5kbyBkYWRvcyBkZSBhcnF1aXZvcyBjc3YNCg0KYGBge3IgY3N2fQ0KbGlicmFyeShyZWFkcikNCnVybCA8LSAiaHR0cHM6Ly93d3cuZ292LmJyL2FucC9wdC1ici9jZW50cmFpcy1kZS1jb250ZXVkby9kYWRvcy1hYmVydG9zL2FycXVpdm9zLWFjZXJ2by1kZS1kYWRvcy10ZWNuaWNvcy90YWJlbGEtcG9jb3MuY3N2Ig0KIyMgTyByZWFkX2RlbGltIHBlcm1pdGUgcXVlIHNlamEgZGVmaW5pZG8gbyB0aXBvIGRlIGRlbGltaXRhZG9yIGRvcyBkYWRvcw0KcG9jb3MgPC0gcmVhZF9kZWxpbSh1cmwsIGRlbGltID0gIjsiLCBsb2NhbGU9IGxvY2FsZShkZWNpbWFsX21hcmsgPSAiLCIpLCBjb2xfbmFtZXMgPSBUUlVFKQ0KaGVhZChwb2NvcykNCmBgYA0KDQoNCiMjIEJpYmxpb3RlY2FzDQoNClZhbW9zIGNhcnJlZ2FyIGFzIGJpYmxpb3RlY2FzIHF1ZSBzZXLDo28gdXNhZGFzIG5hIG1hbmlwdWxhw6fDo28gZSB2aXN1YWxpemHDp8OjbyBkZSBkYWRvcy4gDQoNCk8gcGFjb3RlIHRpZHl2ZXJzZSBjYXJyZWdhIGRpdmVyc29zIHBhY290ZXMgbXVpdG8gdXRlaXMgbmEgbWFuaXB1bGHDp8OjbyBlIHZpc3VhbGl6YcOnw6NvIGRlIGRhZG9zIA0KDQoNCmBgYHtyIGNhcnJlZ2FuZG9fYmlibGlvdGVjYXMsIGVjaG89VFJVRSwgbWVzc2FnZT1UUlVFfQ0KbGlicmFyeSgidGlkeXZlcnNlIikNCmBgYA0KDQoNClZhbW9zIHByaW1laXJvIGNvbmhlY2VyIG8gcXVlIHRlbSBuYSBiYXNlIGRlIGRhZG9zIHBvY29zLiBBIGJhc2UgZGUgZGFkb3MgcG9zc3VpIGByICBucm93KHBvY29zKWAgbGluaGFzDQoNCmBgYHtyIGNvbmhlY2VuZG9fcG9jb3N9DQpjbGFzcyhwb2NvcykgICMgVGlwbyBkZSBiYXNlIGRlIGRhZG9zDQpzdW1tYXJ5KHBvY29zKSAjIFN1bWFyaW8gZGEgYmFzZSBkZSBkYWRvcw0KYGBgDQoNCiMjIERhZG9zIGRlIHBvw6dvcw0KDQpPcyBkYWRvcyBkYSB0YWJlbGEgcG/Dp29zIHRlbSA2MCBjb2x1bmFzLg0KDQpWYW1vcyBpbmljaWFsbWVudGUgc2VsZWNpb25hciBhbGd1bWFzIGNvbHVuYXMgcGFyYSBwb2Rlcm1vcyB0cmFiYWxoYXIgY29tIG9zIGRhZG9zLg0KDQoqKkFzIGNvbHVuYXMgcXVlIHZhbW9zIHRyYWJhbGhhciBzw6NvOioqDQoNCjEpIFBPQ08NCjIpIE9QRVJBRE9SDQozKSBFU1RBRE8NCjQpIEJBQ0lBDQo1KSBCTE9DTw0KNikgQ0FNUE8NCjcpIFRFUlJBX01BUg0KOCkgQ0FURUdPUklBDQo5KSBTSVRVQUNBTw0KMTApIElOSUNJTw0KMTEpIFRFUk1JTk8NCjEyKSBQUk9GVU5ESURBREVfTUVESURBX00NCg0KUGFyYSBzZWxlY2lvbmFyIGNvbHVuYXMgdXNhbW9zIGEgZnVuw6fDo28gYHNlbGVjdGANCg0KYGBge3Igc2VsZWNpb25hbmRvfQ0KIyMgVmFtb3Mgc2VsZWNpb25hciBhcyBjb2x1bmFzIGxpc3RhZGFzIGFjaW1hDQpwb2Nvc18wMSA8LSBwb2NvcyAlPiUgc2VsZWN0KFBPQ08sT1BFUkFET1IsRVNUQURPLEJBQ0lBLEJMT0NPLCBDQU1QTyxURVJSQV9NQVIsQ0FURUdPUklBLFNJVFVBQ0FPLCBJTklDSU8sIFRFUk1JTk8sIFBST0ZVTkRJREFERV9NRURJREFfTSkNCmhlYWQocG9jb3NfMDEpDQpgYGANCg0KDQojIyBNYW5pcHVsYcOnw6NvIGRlIGRhZG9zDQpWYW1vcyBlbGltaW5hciBhcyBsaW5oYXMgZGUgZGFkb3MgcXVlIGFwcmVzZW50YSBkYWRvcyBhdXNlbnRlcyAiTkEiIG5hcyBjb2x1bmFzIFRFUk1JTk8gZSBQUk9GVU5ESURBREVfTUVESURBX00uDQoNCmBgYHtyIGVsaW1pbmFuZG9fbGluaGFzfQ0Kc3VtKGlzLm5hKHBvY29zXzAxKSkNCnN1bShpcy5uYShwb2Nvc18wMSRJTklDSU8pKQ0Kc3VtKGlzLm5hKHBvY29zXzAxJFRFUk1JTk8pKQ0Kc3VtKGlzLm5hKHBvY29zXzAxJFBST0ZVTkRJREFERV9NRURJREFfTSkpDQpwb2Nvc18wMSA8LSBwb2Nvc18wMSAlPiUgZHJvcF9uYShhbnlfb2YoYygiVEVSTUlOTyIsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUFJPRlVORElEQURFX01FRElEQV9NIikpKQ0KIyBtZWxob3JhbmRvIGEgdmlzdWFsaXphw6fDo28gZG9zIGRhZG9zDQprbml0cjo6a2FibGUoDQogIGhlYWQocG9jb3NfMDEsIDEwKSwgYm9va3RhYnMgPSBUUlVFLA0KICBjYXB0aW9uID0gJ1VtYSB0YWJlbGEgbWFpcyBlbGVnYW50ZSBjb20gYXMgMTAgcHJpbWVyYXMgbGluaGFzIGRlIHBvY29zXzAxLicpDQpzdW0oaXMubmEocG9jb3NfMDEpKQ0KYGBgDQoNCioqVmVqYSBxdWUgZXhpc3RpYSB1bSBncmFuZGUgbsO6bWVybyBkZSBkYWRvcyBhdXNlbnRlcyoqDQoNCkFudGVzOiBgciAgbnJvdyhwb2NvcylgIGxpbmhhcw0KRGVwb2lzOiBgciAgbnJvdyhwb2Nvc18wMSlgIGxpbmhhcw0KDQojIyBDb3JyaWdpbmRvIHRpcG8gZGUgZGFkb3MNCg0KQXMgY29sdW5hcyBJTklDSU8gZSBURVJNSU5PIHPDo28gZGF0YXMsIG1hcyBmb3JhbSBsaWRhcyBjb21vIGNhcmFjdGVyLCB2YW1vcyBjb3JyaWdpciBpc3RvIQ0KDQpQYXJhIHRyYWJhbGhhciBjb20gZGF0YXMgdmFtb3MgdXNhciBvIHBhY290ZSBgbHVicmlkYXRlYA0KDQpgYGB7ciB0aXBvX2RhZG9zfQ0KbGlicmFyeShsdWJyaWRhdGUpDQpwb2Nvc18wMSRJTklDSU8gPC0gYXNfZGF0ZShwb2Nvc18wMSRJTklDSU8sIGZvcm1hdD0iJWQvJW0vJVkiKQ0KcG9jb3NfMDEkVEVSTUlOTyA8LSBhc19kYXRlKHBvY29zXzAxJFRFUk1JTk8sIGZvcm1hdD0iJWQvJW0vJVkiKQ0KYGBgDQoNCiMjIEZpbHRyYW5kbyBkYWRvcw0KDQpWYW1vcyBhbmFsaXNhciBvcyBwb8Onb3MgZGUgdW1hIGRldHJlbWluYWRhIHJlZ2nDo28sIHBhcmEgaXN0byBwb2RlbW9zIGZsdHJhciBvcyBwb8Onb3MgZGUgdW0gYmxvY28uDQpWYW1vcyBmaWx0cmFyIHNvbWVudGUgb3MgcG/Dp29zIGRvIENBTVBPIFBFUkVHUklOTyB1c2FuZG8gYSBmdW7Dp8OjbyBgZmlsdGVyYC4NCg0KYGBge3IgZmlsdHJhbmRvfQ0KcG9jb3NfMDIgPC0gcG9jb3NfMDEgJT4lIGZpbHRlcihDQU1QTz09IlBFUkVHUklOTyIpICMjICANCnN1bW1hcnkocG9jb3NfMDIpDQprbml0cjo6a2FibGUoDQogIGhlYWQocG9jb3NfMDIsIDEwKSwgYm9va3RhYnMgPSBUUlVFLA0KICBjYXB0aW9uID0gJ1VtYSB0YWJlbGEgbWFpcyBlbGVnYW50ZSBjb20gYXMgMTAgcHJpbWVyYXMgbGluaGFzIGRlIHBvY29zXzAyLicpDQpgYGANCg0KIyMjIEF2YWxpYW5kbyBvcyBkYWRvcw0KDQpPcyBwb8Onb3MgcG9zc3VlbSBkaXZlcnNhcyBjYXRlZ29yaWFzLCB2YW1vcyB2ZXIgcXVlIGNhdGVnb3JpYXMgZXhpc3RlbSBuZXN0ZXMgcG/Dp29zIGRvIGJsb2NvIEJFUy0xMDAuDQoNCmBgYHtyIGlkZW50aWZpY2FuZG99DQp1bmlxdWUocG9jb3NfMDIkQ0FURUdPUklBKQ0KYGBgDQoNCiMjIyBGaWx0cmFuZG8gcG/Dp29zIGRlIGRlc2Vudm9sdmltZW50bw0KDQpgYGB7ciBmaWx0cmFuZG8yfQ0KcG9jb3NfMDMgPC0gcG9jb3NfMDIgJT4lIGZpbHRlcihDQVRFR09SSUE9PSJEZXNlbnZvbHZpbWVudG8iKSAjIyAgDQpzdW1tYXJ5KHBvY29zXzAzKQ0Ka25pdHI6OmthYmxlKA0KICBoZWFkKHBvY29zXzAzLCAxMCksIGJvb2t0YWJzID0gVFJVRSwNCiAgY2FwdGlvbiA9ICdVbWEgdGFiZWxhIG1haXMgZWxlZ2FudGUgY29tIGFzIDEwIHByaW1lcmFzIGxpbmhhcyBkZSBwb2Nvc18wMy4nKQ0KYGBgDQoNCiMjIENyaWFuZG8gdW1hIGNvbHVuYSBjb20gbXV0YXRlDQoNClZhbW9zIGNyaWFyIHVtYSBjb2x1bmEgcXVlIG5vcyBkYXLDoSBhIGR1cmHDp8OjbyBkYSBwZXJmdXJhw6fDo28gZG9zIHBvw6dvcy4NCg0KYGBge3IgY3JpYW5kb19jb2x1bmF9DQpwb2Nvc18wMyRJTklDSU9bMV0NCnBvY29zXzAzJFRFUk1JTk9bMV0NCnBvY29zXzAzJFRFUk1JTk9bMV0gLSBwb2Nvc18wMyRJTklDSU9bMV0NCmRpZmZ0aW1lKHBvY29zXzAzJFRFUk1JTk9bMV0sIHBvY29zXzAzJElOSUNJT1sxXSwgdW5pdHMgPSAiZGF5cyIpDQp0ZW1wbyA8LSBkaWZmdGltZShwb2Nvc18wMyRURVJNSU5PWzFdLCBwb2Nvc18wMyRJTklDSU9bMV0sIHVuaXRzID0gImRheXMiKQ0Kc3RyKHRlbXBvKQ0KKHBvY29zXzAzJElOSUNJT1sxXSAlLS0lIHBvY29zXzAzJFRFUk1JTk9bMV0pL2RkYXlzKDEpDQpwb2Nvc18wMyA8LSBwb2Nvc18wMyAlPiUgbXV0YXRlKFRQRVJGID0gKElOSUNJTyAlLS0lIFRFUk1JTk8pL2RkYXlzKDEpKQ0Kc3VtbWFyeShwb2Nvc18wMykNCmBgYA0KDQojIyMgRWxpbWluYW5kbyBjb2x1bmFzIGNvbSB0ZW1wb3MgbmVnYXRpdm9zDQoNCg0KDQpgYGB7ciBmaWx0cmFuZG9fY29sdW5hfQ0KcG9jb3NfMDMgPC0gcG9jb3NfMDMgJT4lIGZpbHRlcihUUEVSRiA+IDApIA0KYGBgDQoNCg0KDQojIyBWaXN1YWxpemFuZG8gb3MgZGFkb3MgZGUgUEVSRUdSSU5PDQoNCiMjIyBCb3gtUGxvdA0KDQpgYGB7ciBib3hwbG90fQ0KZ2dwbG90KHBvY29zXzAzLCBhZXMoeD1DQU1QTywgeT1UUEVSRikpICsNCiAgZ2VvbV9ib3hwbG90KCkNCmBgYA0KDQoNClZlamEgcXVlIGV4aXN0ZW0gYWxndW5zIHRlbXBvcyBiZW0gZWxldmFkb3MgcXVlIGVzdMOjbyByZXByZXNlbnRhZG9zIHBvciBwb250b3Mgbm8gYm94LXBsb3QuIEVsZXMgcG9kZW0gc2VyIGNvbnNpZGVyYWRvcyBwb250b3MgYWZhc3RhZG9zIChvdXRsaWVycyksIHF1ZSBuZXN0ZSBjYXNvIHZhbW9zIGVsaW1pbmFyLg0KDQoNCmBgYHtyIG91dGxpZXJzfQ0KcG9jb3NfMDQgPC0gcG9jb3NfMDMgJT4lIGZpbHRlcihUUEVSRiA8IDEwMCkNCmdncGxvdChwb2Nvc18wNCwgYWVzKHg9Q0FNUE8sIHk9VFBFUkYpKSArDQogIGdlb21fYm94cGxvdCgpDQpgYGANCg0KDQojIyMgSGlzdG9ncmFtYQ0KDQpgYGB7ciBoaXN0b2dyYW1hfQ0KZ2dwbG90KHBvY29zXzA0LCBhZXMoeD1UUEVSRikpICsNCiAgZ2VvbV9oaXN0b2dyYW0oKQ0KYGBgDQoNCg0KVmVqYSBxdWUgZGVzdGEgZm9ybWEgbyBnZ3Bsb3QgdXNhIG8gc2V1IHBhZHLDo28gZGUgMzAgZmFpeGFzIGRlIGRhZG9zLCBxdWUgZ2VyYWxtZW50ZSBuw6NvIMOpIG8gbWFpcyBhZGVxdWFkby4NCg0KVmFtb3MgdXNhciB1bWEgcmVncmEgYWRlcXVhZGEgcGFyYSBkZWZpbmnDp8OjbyBkZSBuw7ptZXJvIGRlIGZhaXhhcy4NCg0KIyMjIENyaWFuZG8gdW0gaGlzdG9ncmFtYSB1c2FuZG8gYSByZWdyYSBkZSBTdHVyZ2VzDQoNCkEgcmVncmEgZGUgU3R1cmdlcyBpbmRpY2EgYHIgcm91bmQoMSszLjMyMipsb2cxMChucm93KHBvY29zXzA0KSksMClgIGZhaXhhcyBlbnF1YW50byBxdWUgbyBwYWRyw6NvIGRvIGdncGxvdDIgw6kgMzAuICANCg0KYGBge3IgU3R1cmdlc30NCmdncGxvdChwb2Nvc18wNCwgYWVzKHggPSBUUEVSRikpICsNCiAgZ2VvbV9oaXN0b2dyYW0oYmlucyA9IHJvdW5kKDErMy4zMjIqbG9nMTAobnJvdyhwb2Nvc18wNCkpLDApKQ0KYGBgDQoNClZlamEgcXVlIGFnb3JhIHRlbW9zIHVtIGhpc3RvZ3JhbWEgbWFpcyBzdWF2ZS4NCg0KDQojIyMgR3LDoWZpY28gZGUgRGlzcGVyc8Ojbw0KDQpgYGB7ciBkaXNwZXJzYW99DQpnZ3Bsb3QocG9jb3NfMDQsIGFlcyh4PVBST0ZVTkRJREFERV9NRURJREFfTSwgeT1UUEVSRikpICsgDQogIGdlb21fcG9pbnQoKQ0KYGBgDQoNClBvZGVtb3MgcGVyY2ViZXIgcXVlIGjDoSB1bWEgcmVsYcOnw6NvIGVudHJlIG8gdGVtcG8gZGUgcGVyZnVyYcOnw6NvIGUgYSBwcm9mdW5kaWRhZGUgZG8gcG/Dp28uDQoNClRhbWLDqW0gw6kgcG9zc8OtdmVsIHNlIHBlcmNlYmVyIHF1ZSBhaW5kYSBleGlzdGVtIGRhZG9zIGNvbSBjb21wb3J0YW1lbnRvcyBlc3RyYW5ob3MuIFBvw6dvcyByYXNvcyBjb20gcHJvZnVuZGlkYWRlIG11aXRvIGRpZmVyZW50ZSBkb3MgZGVtYWlzLCBhbMOpbSBkaXNzbyB1bSBwb8OnbyBtdWl0byBwcm9mdW5kbyBjb20gZHVyYcOnw6NvIG11aXRvIHBlcXVlbmEuDQoNClNlIGZvc3NlbW9zIGNvbnN0cnVpciB1bSBtb2RlbG8gY2VydGFtZW50ZSB0ZXLDrW1vcyBxdWUgaW52ZXN0aWdhciBvIHBvcnF1ZSBkZXN0ZXMgY29tcG9ydGFtZW50b3MuDQoNCg0KIyMjIEFsdGVyYW5kbyBub21lIGRhcyBjb2x1bmFzDQoNCmBgYHtyIHJlbm9tZWFuZG9fY29sdW5hc30NCm5hbWVzKHBvY29zXzA0KQ0KbmFtZXMocG9jb3NfMDQpIDwtIHRvbG93ZXIobmFtZXMocG9jb3NfMDQpKQ0KbmFtZXMocG9jb3NfMDQpDQpgYGANCg0KDQoNCg==</div>
 
 
 

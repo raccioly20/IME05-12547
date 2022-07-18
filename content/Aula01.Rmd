@@ -3,9 +3,7 @@ title: "Carregando dados, Manipulando e Visualizando"
 author: "Ricardo Accioly"
 date: ' `r Sys.Date()` '
 output:
-  pdf_document:
-    toc: yes
-  html_document:
+ html_document:
     toc: yes
     code_download: yes
 ---
