@@ -1,0 +1,114 @@
+---
+title: "Viés vs Variância"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+ html_document:
+    toc: yes
+    code_download: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 7, 
+                      fig.height= 5,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula07_2/")
+```
+
+
+## Carregando bibliotecas
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(caret)
+```
+
+
+## Dados de propaganda 
+
+
+```{r carrega-dados}
+propaganda <- read_excel("E:/OneDrive/UERJ/2. R/@R/Propaganda.xlsx")
+```
+
+## Renomeando 
+
+```{r renomeando}
+propaganda <- propaganda %>% rename(Jornal = Newspaper, Vendas = Sales)
+
+```
+
+## Sumario
+
+```{r sumario}
+summary(propaganda)
+nrow(propaganda)
+```
+
+## Criando amostra de treino e teste
+
+```{r}
+set.seed(21)
+y <- propaganda$Vendas
+indice_teste <- createDataPartition(y, times = 1, p = 0.40, list = FALSE)
+
+conj_treino <- propaganda %>% slice(-indice_teste)
+conj_teste <- propaganda %>% slice(indice_teste)
+
+str(conj_treino)
+str(conj_teste)
+```
+
+
+## Criando funçoes para avaliar modelos 
+
+```{r funcoes_de_avaliacao}
+rmse <- function(modelo, dados, resposta) {
+  real <- subset(dados, select = resposta, drop = TRUE)
+  previsto <- predict(modelo, dados)
+  sqrt(mean((real - previsto)^ 2))
+}
+aval_complex <- function(modelo) {
+  length(coef(modelo)) - 1
+}
+```
+
+
+## Criando modelos dos mais simples até os mais complexos
+
+```{r mod_complexos}
+mod1 <- lm( Vendas ~ TV, data = conj_treino)
+mod2 <- lm( Vendas ~ TV + Radio, data = conj_treino)
+mod3 <- lm(Vendas ~ TV + Radio + Jornal, data = conj_treino)
+mod4 <- lm(Vendas ~ TV + Radio + Jornal + I(TV ^ 2), data = conj_treino)
+mod5 <- lm(Vendas ~ TV + Radio + Jornal + I(TV ^ 2) + I(Radio ^ 2), data = conj_treino)
+mod6 <- lm(Vendas ~ TV + Radio + Jornal + I(TV ^ 2) + I(Radio ^ 2) + I(Jornal ^ 2), data = conj_treino)
+```
+
+
+## Avaliando os modelos
+
+```{r}
+lista_modelos <- list(mod1, mod2, mod3, mod4, mod5, mod6)
+rmse_treino <- sapply(lista_modelos, rmse, dados = conj_treino, resposta = "Vendas")
+rmse_teste <- sapply(lista_modelos, rmse, dados = conj_teste, resposta = "Vendas")
+complexidade <- sapply(lista_modelos, aval_complex)
+junta_tudo <- data.frame(complex = complexidade, rmse = rmse_treino, 
+                         conjunto = rep("treino", length(rmse_treino)))
+junta_tudo <- junta_tudo %>% 
+               add_row(data.frame(complex = complexidade, rmse = rmse_teste, 
+                         conjunto = rep("teste", length(rmse_teste))))
+ggplot(data = junta_tudo, aes(x = complex, y = rmse, col = conjunto)) +
+     geom_line() +
+     geom_point() +
+     labs(x = "Complexidade do modelo", 
+          y = "RMSE - Erro padrão do resíduo", 
+          title = "Avaliação dos modelos")
+```
+
+
+

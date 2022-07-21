@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ricardo Accioly" />
 
-<meta name="date" content="2022-03-23" />
+<meta name="date" content="2022-07-21" />
 
 <title>Seleção de Modelos</title>
 
@@ -230,6 +230,8 @@ window.initializeCodeFolding = function(show) {
   // select all R code blocks
   var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia, pre.foldable');
   rCodeBlocks.each(function() {
+    // skip if the block has fold-none class
+    if ($(this).hasClass('fold-none')) return;
 
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
@@ -468,46 +470,46 @@ pre code {
 
 <h1 class="title toc-ignore">Seleção de Modelos</h1>
 <h4 class="author">Ricardo Accioly</h4>
-<h4 class="date">2022-03-23</h4>
+<h4 class="date">2022-07-21</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#carregando-bibliotecas">Carregando Bibliotecas</a></li>
-<li><a href="#carregando-os-dados">Carregando os dados</a></li>
-<li><a href="#explicação-das-variáveis">Explicação das
-variáveis</a></li>
-<li><a href="#conjunto-de-teste-e-treino">Conjunto de teste e
-treino</a></li>
-<li><a href="#matriz-de-correlação">Matriz de correlação</a></li>
-<li><a href="#matriz-de-dispersão">Matriz de dispersão</a></li>
-<li><a href="#métodos-de-seleção-de-modelo">Métodos de seleção de
+<li><a href="#carregando-bibliotecas" id="toc-carregando-bibliotecas">Carregando Bibliotecas</a></li>
+<li><a href="#carregando-os-dados" id="toc-carregando-os-dados">Carregando os dados</a></li>
+<li><a href="#explicação-das-variáveis" id="toc-explicação-das-variáveis">Explicação das variáveis</a></li>
+<li><a href="#conjunto-de-teste-e-treino" id="toc-conjunto-de-teste-e-treino">Conjunto de teste e treino</a></li>
+<li><a href="#matriz-de-correlação" id="toc-matriz-de-correlação">Matriz
+de correlação</a></li>
+<li><a href="#matriz-de-dispersão" id="toc-matriz-de-dispersão">Matriz
+de dispersão</a></li>
+<li><a href="#métodos-de-seleção-de-modelo" id="toc-métodos-de-seleção-de-modelo">Métodos de seleção de
 modelo</a></li>
-<li><a href="#nvmax13">nvmax=13</a></li>
-<li><a href="#avaliando-os-modelos">Avaliando os modelos</a></li>
-<li><a href="#como-extrair-detalhes-do-ajuste">Como extrair detalhes do
+<li><a href="#nvmax13" id="toc-nvmax13">nvmax=13</a></li>
+<li><a href="#avaliando-os-modelos" id="toc-avaliando-os-modelos">Avaliando os modelos</a></li>
+<li><a href="#como-extrair-detalhes-do-ajuste" id="toc-como-extrair-detalhes-do-ajuste">Como extrair detalhes do
 ajuste</a></li>
-<li><a href="#forward-stepwise-passo-a-passo-à-frente">Forward Stepwise
-(passo a passo à frente)</a></li>
-<li><a href="#como-extrair-detalhes-do-ajuste-1">Como extrair detalhes
-do ajuste</a></li>
-<li><a href="#backward-stepwise-passo-a-passo-atrás">Backward Stepwise
-(passo a passo atrás)</a></li>
-<li><a href="#como-extrair-detalhes-do-ajuste-2">Como extrair detalhes
-do ajuste</a></li>
-<li><a href="#comportamento-dos-erros-de-treino-e-teste">Comportamento
-dos erros de treino e teste</a></li>
-<li><a href="#testando-outra-estatística-de-seleção-de-modelos---bic">Testando
+<li><a href="#forward-stepwise-passo-a-passo-à-frente" id="toc-forward-stepwise-passo-a-passo-à-frente">Forward Stepwise (passo
+a passo à frente)</a></li>
+<li><a href="#como-extrair-detalhes-do-ajuste-1" id="toc-como-extrair-detalhes-do-ajuste-1">Como extrair detalhes do
+ajuste</a></li>
+<li><a href="#backward-stepwise-passo-a-passo-atrás" id="toc-backward-stepwise-passo-a-passo-atrás">Backward Stepwise (passo
+a passo atrás)</a></li>
+<li><a href="#como-extrair-detalhes-do-ajuste-2" id="toc-como-extrair-detalhes-do-ajuste-2">Como extrair detalhes do
+ajuste</a></li>
+<li><a href="#comportamento-dos-erros-de-treino-e-teste" id="toc-comportamento-dos-erros-de-treino-e-teste">Comportamento dos
+erros de treino e teste</a></li>
+<li><a href="#testando-outra-estatística-de-seleção-de-modelos---bic" id="toc-testando-outra-estatística-de-seleção-de-modelos---bic">Testando
 outra estatística de seleção de modelos - BIC</a></li>
-<li><a href="#usando-o-cp-novamente">Usando o Cp novamente</a></li>
-<li><a href="#comparando-os-dois-modelos-com-o-lm">Comparando os dois
-modelos com o lm()</a></li>
-<li><a href="#eliminando-a-variável-não-significativa">Eliminando a
-variável não significativa</a></li>
-<li><a href="#avaliando-colinearidade">Avaliando Colinearidade</a></li>
-<li><a href="#testando-os-dois-modelos-com-o-conjunto-de-teste">Testando
-os dois modelos com o conjunto de teste</a></li>
+<li><a href="#usando-o-cp-novamente" id="toc-usando-o-cp-novamente">Usando o Cp novamente</a></li>
+<li><a href="#comparando-os-dois-modelos-com-o-lm" id="toc-comparando-os-dois-modelos-com-o-lm">Comparando os dois modelos
+com o lm()</a></li>
+<li><a href="#eliminando-a-variável-não-significativa" id="toc-eliminando-a-variável-não-significativa">Eliminando a variável
+não significativa</a></li>
+<li><a href="#avaliando-colinearidade" id="toc-avaliando-colinearidade">Avaliando Colinearidade</a></li>
+<li><a href="#testando-os-dois-modelos-com-o-conjunto-de-teste" id="toc-testando-os-dois-modelos-com-o-conjunto-de-teste">Testando os
+dois modelos com o conjunto de teste</a></li>
 </ul>
 </div>
 
@@ -1013,6 +1015,15 @@ str(conj_treino)</code></pre>
 
 #ryhgivfqvc .gt_super {
   font-size: 65%;
+}
+
+#ryhgivfqvc .gt_two_val_uncert {
+  display: inline-block;
+  line-height: 1em;
+  text-align: right;
+  font-size: 60%;
+  vertical-align: -0.25em;
+  margin-left: 0.1em;
 }
 
 #ryhgivfqvc .gt_footnote_marks {
