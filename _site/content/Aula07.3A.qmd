@@ -1,0 +1,267 @@
+---
+title: "Seleção de Modelos"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+format:
+ html:
+    toc: true
+    code-fold: true
+    code-tools: true
+    code-link: true
+    fig.retina: 3
+    fig.height: 7
+    fig.width: 10
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+#| warning: false
+```
+
+## Carregando Bibliotecas
+
+```{r bibliotecas, message=FALSE}
+library(MASS)
+library(tidyverse)
+library(leaps)
+```
+
+## Carregando os dados
+
+```{r Dados }
+data(Boston)
+head(Boston)
+summary(Boston)
+nrow(Boston)
+```
+
+## Explicação das variáveis
+
+```{r Boston}
+# Boston Database
+# 
+# 1) crim - taxa de criminalidade per capita por cidade.
+# 
+# 2) zn - proporção de terrenos residenciais para lotes acima de 25,000 sq.ft.
+# 
+# 3) indus - proporção de negócios não comerciais por acres e por cidade.
+# 
+# 4) chas - variável dummy do Rio Charles (= 1 se próximo do rio; 0 de outra forma).
+# 
+# 5) nox - concentração de óxido de nitrogênio (partes por 10 milhões).
+# 
+# 6) rm - número médio de cômodos por habitação
+# 
+# 7) age - proporção da unidade ocupadas pelos proprietários construídas antes 1940.
+# 
+# 8) dis - média ponderada das distâncias dos 5 pontos de emprego em Boston.
+# 
+# 9) rad - indice de acessibilidade das avenidas radiais.
+# 
+# 10) tax - valor cheio da taxa de propriedade por $10,000.
+# 
+# 11) ptratio - razão aluno-professor por cidade.
+# 
+# 12) black - 1000(Bk−0.63)21000(Bk−0.63)2 proporção de negros por cidade.
+# 
+# 13) lstat - percentual de baixo status da população.
+# 
+# 14) medv - valor mediano das casas ocupadas pelos proprietário em $1000s. (Var. Resposta)
+```
+
+## Conjunto de teste e treino
+
+```{r treino_teste}
+library(caret)
+set.seed(21)
+y <- Boston$medv
+indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
+
+conj_treino <- Boston %>% slice(-indice_teste)
+conj_teste <- Boston %>% slice(indice_teste)
+
+str(conj_treino)
+str(conj_teste)
+gt::gt(head(conj_treino, 10))
+```
+
+## Matriz de correlação
+
+```{r corrplot1, fig.height=4.5, figure.width=8, message=FALSE}
+library(corrplot)
+mat_corr <- cor(conj_treino)
+corrplot(mat_corr)
+```
+
+\newpage
+
+## Matriz de dispersão
+
+```{r splom2}
+library(psych)
+pairs.panels(conj_treino,
+             method = "pearson", # metodo de correlação
+             hist.col = "#00AFBB",
+             density = TRUE,  # mostra graficos de densidade
+             ellipses = FALSE # mostra elipses de correlação
+             )
+```
+
+\newpage
+
+## Métodos de seleção de modelo
+
+```{r melhor_modelo}
+## Best Subset sem definir o número máx de subsets a ser avaliado
+ajusreg.comp <- regsubsets(medv ~ ., data=conj_treino)
+summary(ajusreg.comp)
+## Não testou todas as combinações possíveis
+```
+
+## nvmax=13
+
+```{r modelo_completo}
+ajusreg.comp <- regsubsets(medv ~ ., data=conj_treino, nvmax=13)
+sumario.reg <- summary(ajusreg.comp)
+sumario.reg
+names(sumario.reg)
+```
+
+## Avaliando os modelos
+
+```{r avaliando}
+## Os modelos vão ser escolhidos com base no menor Cp
+plot(sumario.reg$cp,xlab="Número de Variáveis",ylab="Cp")
+which.min(sumario.reg$cp)
+points(11,sumario.reg$cp[11],pch=20,col="red")
+```
+
+## Como extrair detalhes do ajuste
+
+```{r detalhes}
+coef(ajusreg.comp,11)  
+```
+
+## Forward Stepwise (passo a passo à frente)
+
+```{r FR}
+ajusreg.fwd <- regsubsets(medv ~ . , data=conj_treino,nvmax=13, method="forward")
+sumario.reg.fwd <- summary(ajusreg.fwd)
+sumario.reg.fwd 
+which.min(sumario.reg.fwd$cp)
+plot(sumario.reg.fwd$cp,xlab="Número de Variáveis",ylab="Cp")
+points(11,sumario.reg.fwd$cp[11],pch=20,col="red")
+```
+
+## Como extrair detalhes do ajuste
+
+```{r detalhes2}
+coef(ajusreg.fwd,11)  
+```
+
+## Backward Stepwise (passo a passo atrás)
+
+```{r BR, fig.height=4.5, figure.width=6.5}
+ajusreg.bwd <- regsubsets(medv ~ . , data=conj_treino,nvmax=13, method="backward")
+sumario.reg.bwd <- summary(ajusreg.bwd)
+sumario.reg.bwd
+which.min(sumario.reg.bwd$cp)
+plot(sumario.reg.bwd$cp,xlab="Número de Variáveis",ylab="Cp")
+points(11,sumario.reg.bwd$cp[11],pch=20,col="red")
+```
+
+## Como extrair detalhes do ajuste
+
+```{r detalhes3}
+coef(ajusreg.bwd,11)  
+```
+
+## Comportamento dos erros de treino e teste
+
+```{r erros}
+## Codigo original de T. Hastie
+reg.fwd <- regsubsets(medv ~ . ,data=conj_treino,nvmax=13, method="forward")
+val.erro <- rep(NA,13)
+x.teste <- model.matrix(medv~.,data=conj_teste)
+for(i in 1:13){
+  coefi <- coef(reg.fwd,id=i)
+  pred <- x.teste[,names(coefi)]%*%coefi
+  val.erro[i] <- mean((conj_teste$medv - pred)^2)
+}
+plot(sqrt(val.erro),ylab="Raiz do EQM",ylim=c(4,8),pch=19,type="b")
+points(sqrt(reg.fwd$rss[-1]/403),col="blue",pch=19,type="b")
+legend("topright",legend=c("Treino","Teste"),col=c("blue","black"),pch=19)
+```
+
+## Testando outra estatística de seleção de modelos - BIC
+
+```{r BIC}
+ajusreg.fwd1 <- regsubsets(medv ~ . , data=conj_treino,nvmax=13, method="forward")
+sumario.reg.fwd1 <- summary(ajusreg.fwd1)
+names(sumario.reg.fwd1)
+
+which.min(sumario.reg.fwd1$bic)
+plot(sumario.reg.fwd1$bic,xlab="Número de Variáveis",ylab="BIC")
+points(7,sumario.reg.fwd1$bic[7],pch=20,col="red")
+coef(ajusreg.fwd1,7)  
+
+
+```
+
+## Usando o Cp novamente
+
+```{r cp_denovo}
+which.min(sumario.reg.fwd1$cp)
+plot(sumario.reg.fwd1$cp,xlab="Número de Variáveis",ylab="Cp")
+points(11,sumario.reg.fwd1$cp[11],pch=20,col="red")
+coef(ajusreg.fwd1,11)
+```
+
+## Comparando os dois modelos com o lm()
+
+```{r comparando}
+## Usando o lm para ajustar o modelo com as variáveis selecionadas pelo BIC
+mod_bic <- lm(medv ~ chas + nox + rm + dis + ptratio + black + lstat, data=conj_treino) 
+summary(mod_bic)
+mod_cp <- lm(medv ~ crim + zn + chas + nox + rm + dis + rad + tax + ptratio + black + lstat, data=conj_treino)
+summary(mod_cp)
+```
+
+## Eliminando a variável não significativa
+
+```{r eliminando}
+mod_cp2 <- lm(medv ~ zn + chas + nox + rm + dis + rad + tax + ptratio + black + lstat, data=conj_treino)
+summary(mod_cp2)
+```
+
+## Avaliando Colinearidade
+
+Uma investigação minuciosa da multicollinearidade envolverá a análise do valor do $R^2$ que resulta da regressão de cada uma das variáveis explicativas contra todas as outras. A relação entre as variáveis explicativas pode ser julgada examinando uma quantidade chamada fator de inflacionário da variância (FIV) ou Variance Inflation Factor (VIF). Seja $Rj~^{2}$ o quadrado do coeficiente de correlação múltipla que resulta quando a variável explicativa $Xj~$ é ajustada contra todas as outras variáveis explicativas. Então o vif para $Xj~$ é $VIFj = 1 / (1-Rj~^{2})$
+
+**A regra geral é que vifs superiores a 4 justificam novas investigações, enquanto VIFs superiores a 10 são sinais de multicollinearidade grave que requerem correção.**
+
+```{r car, message=FALSE}
+library(car)
+vif(mod_cp2)
+## Vamos eliminar tax e ver o que acontece
+mod_cp3 <- lm(medv ~ zn + chas + nox + rm + dis + rad + ptratio + black + lstat, data=conj_treino)
+summary(mod_cp3)
+vif(mod_cp3)
+```
+
+## Testando os dois modelos com o conjunto de teste
+
+```{r C_teste}
+# Modelo com base no Cp
+summary(mod_cp3)$sigma
+summary(mod_cp3)$adj.r.squared
+sqrt(mean((conj_teste$medv - predict(mod_cp3, conj_teste)) ^ 2))
+
+# Modelo com base no BIC
+mod_bic <- lm(medv ~ chas + nox + rm + dis + ptratio + black + lstat, data=conj_treino) 
+summary(mod_bic)$sigma
+summary(mod_bic)$adj.r.squared
+sqrt(mean((conj_teste$medv - predict(mod_bic, conj_teste)) ^ 2))
+```
