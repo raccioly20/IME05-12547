@@ -83,7 +83,9 @@ y <- Boston$medv
 indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
 
 conj_treino <- Boston %>% slice(-indice_teste)
+conj_treino <- conj_treino %>% select(-rad)
 conj_teste <- Boston %>% slice(indice_teste)
+conj_teste <- conj_teste %>% select(-rad)
 str(conj_treino)
 str(conj_teste)
 
@@ -165,6 +167,12 @@ y_prev <- predict(ajusreg.ridge2, s = m_lamb, newx = x_teste)
 sqrt(mean((y_prev - y_teste)^2))
 ```
 
+
+```{r sem rad}
+conj_treino <- Boston %>% slice(-indice_teste)
+```
+
+
 ## LASSO
 
 Primeiro ajustamos com todos os dados como no caso do Ridge
@@ -213,7 +221,7 @@ Observando so resultados de erro vemos que tanto a regressão Ridge como o LASSO
 
 ```{r erro_teste}
 coef(ajusreg.comp,11) 
-outro_mod <- lm(medv ~ crim + zn + chas + nox + rm + dis + rad + tax + ptratio + black + lstat, data=conj_treino)
+outro_mod <- lm(medv ~ crim + zn + chas + nox + rm + dis + tax + ptratio + black + lstat, data=conj_treino)
 summary(outro_mod)
 sqrt(mean((conj_teste$medv - predict(outro_mod, conj_teste)) ^ 2)) 
 ```
