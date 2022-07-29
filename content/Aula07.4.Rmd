@@ -171,6 +171,7 @@ Primeiro ajustamos com todos os dados como no caso do Ridge
 
 ```{r LASSO}
 ajusreg.lasso <- glmnet(x_treino,y_treino, alpha = 1)
+plot(ajusreg.lasso, xvar="lambda", label=TRUE) # Representando os coeficientes
 plot_glmnet(ajusreg.lasso)
 ```
 
