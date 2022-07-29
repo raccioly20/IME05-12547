@@ -31,7 +31,7 @@ data(Boston)
 
 ## Carregando os dados
 
-Vamos utilizar neste exemplo os dados contidos na biblioteca MASS. A base de dados Boston tem `r nrow(Boston)` de valores preços medianos de casas na região de Boston com 13 outras variáveis explicativas (potencialmente).  Vamos explorar os dados e ajustar modelos com penalização o Ridge e o LASSO e depois vamos comparar com os mínimos quadrados.  
+Vamos utilizar neste exemplo os dados contidos na biblioteca MASS. A base de dados Boston tem `r nrow(Boston)` de valores preços medianos de casas na região de Boston com 13 outras variáveis explicativas (potencialmente). Vamos explorar os dados e ajustar modelos com penalização o Ridge e o LASSO e depois vamos comparar com os mínimos quadrados.
 
 ```{r Dados}
 head(Boston)
@@ -91,8 +91,7 @@ str(conj_teste)
 
 ## Métodos de Regularização
 
-O pacote glmnet não usa a linguagem de formula, em particular nós devemos passar $x$ como uma matriz e $y$ como um vetor, pois não se usa a sintaxe $y \sim x$.
-Com isso será necessário ajustar x e y. A função model.matrix() é particularmente útil para criar x; não só produz uma matriz correspondente as variáveis explicativas, **mas também transforma automaticamente quaisquer variáveis qualitativas em variáveis dummy. Esta última propriedade é importante porque o glmnet() só pode tomar insumos numéricos e quantitativos.**
+O pacote glmnet não usa a linguagem de formula, em particular nós devemos passar $x$ como uma matriz e $y$ como um vetor, pois não se usa a sintaxe $y \sim x$. Com isso será necessário ajustar x e y. A função model.matrix() é particularmente útil para criar x; não só produz uma matriz correspondente as variáveis explicativas, **mas também transforma automaticamente quaisquer variáveis qualitativas em variáveis dummy. Esta última propriedade é importante porque o glmnet() só pode tomar insumos numéricos e quantitativos.**
 
 ```{r preparando_dados}
 x_treino <- model.matrix(medv ~ . , data = conj_treino)[, -1]
@@ -104,24 +103,20 @@ y_teste = conj_teste$medv
 
 ## Regressão Ridge
 
-Primeiro vamos ajustar um modelo de regressão Ridge. Isso é conseguido chamando `glmnet()` com `alpha=0`, se `alpha=1` então  `glmnet()` ajusta um lasso.(veja o arquivo de ajuda). 
+Primeiro vamos ajustar um modelo de regressão Ridge. Isso é conseguido chamando `glmnet()` com `alpha=0`, se `alpha=1` então `glmnet()` ajusta um lasso.(veja o arquivo de ajuda).
 
 ```{r Ridge}
 ## Estabelecendo um grid de valores para lambda
-grid <- 10^seq(10, -2, length = 100)
+grid <- 10^seq(-2, 10, length = 100)
 ajusreg.ridge <- glmnet(x_treino, y_treino, alpha=0, lambda = grid)
 
 ```
 
-Por padrão, a função `glmnet()` executa a regressão ridge automaticamente
-selecionando a faixa de valores de $\lambda$. No entanto, aqui nós escolhemos implementar usando uma grade de valores que variam de $\lambda = 10^{10}$ a $\lambda = 10^{-2}$, cobrindo toda a gama de cenários do modelo nulo contendo apenas o coeficiente linear até o ajuste dos mínimos quadrados. 
+Por padrão, a função `glmnet()` executa a regressão ridge automaticamente selecionando a faixa de valores de $\lambda$. No entanto, aqui nós escolhemos implementar usando uma grade de valores que variam de $\lambda = 10^{-2}$ a $\lambda = 10^{10}$, cobrindo toda a gama de cenários do modelo nulo contendo apenas o coeficiente linear até o ajuste dos mínimos quadrados.
 
-Também podemos calcular o modelo para um valor particular de $\lambda$ que não é um dos valores de grade. Observe que, por padrão, a função `glmnet()` padroniza as
-variáveis para que elas estejam na mesma escala. **Esta padronização é muito importante no caso da regressão Ridge, pois ela é afetada pela mudança de escala das variáveis explicativas.**  
+Também podemos calcular o modelo para um valor particular de $\lambda$ que não é um dos valores de grade. Observe que, por padrão, a função `glmnet()` padroniza as variáveis para que elas estejam na mesma escala. **Esta padronização é muito importante no caso da regressão Ridge, pois ela é afetada pela mudança de escala das variáveis explicativas.**
 
 Associado a cada valor de $\lambda$ existe um vetor de coeficientes de regressão de ridge, que é armazenado em uma matriz que pode ser acessada por 'coef()'. Neste caso, é uma matriz $14 \times 100$, com 14 linhas (uma para cada preditor, mais uma para o coeficiente linear) e 100 colunas (uma para cada valor de $\lambda$).
-
-
 
 ```{r r1}
 dim(coef(ajusreg.ridge))
@@ -129,7 +124,7 @@ plot(ajusreg.ridge, xvar="lambda", label=TRUE) # Representando os coeficientes
 
 ```
 
-Quando $\lambda$ é grande o esperado é que os coeficentes sejam pequenos e quando $\lambda$ é pequeno os coeficientes assumem valores maiores. 
+Quando $\lambda$ é grande o esperado é que os coeficentes sejam pequenos e quando $\lambda$ é pequeno os coeficientes assumem valores maiores.
 
 ```{r r2}
 ajusreg.ridge$lambda[1] # Mostra primeiro valor de lambda
@@ -138,20 +133,18 @@ ajusreg.ridge$lambda[100] # Mostra centésimo valor de lambda
 coef(ajusreg.ridge)[,100] # Mostra os coeficientes associados com o centésimo valor
 ```
 
-
 ```{r r3}
 library(plotmo)
 plot_glmnet(ajusreg.ridge)
 ```
 
-
 ## Cross-Validation no Ridge
 
-Nós podemos usar o k-fold cross validation para identificar o melhor valor de $\lambda$ 
+Nós podemos usar o k-fold cross validation para identificar o melhor valor de $\lambda$
 
 A biblioteca glmnet já tem internamente uma função para uso do crosss validation. O default são 10 envelopes de dados `nfold=10`.
 
-```{r}
+```{r r4}
 set.seed(21)
 ridge_cv <- cv.glmnet(x_treino,y_treino, alpha=0) ## por padrão k=10
 plot(ridge_cv)
@@ -165,14 +158,12 @@ coef(ridge_cv, s=m_lamb)
 
 Em seguida avaliamos seu MSE no conjunto de teste, usando $\lambda$ = m_lamb. Observe o uso da função 'predict()': desta vez temos previsões para um conjunto de teste, com o argumento `newx`.
 
-
 ```{r avaliando}
 ajusreg.ridge2 <- glmnet(x_treino, y_treino, alpha=0, lambda = m_lamb)
 y_prev <- predict(ajusreg.ridge2, s = m_lamb, newx = x_teste)
 # Metricas de desempenho
 sqrt(mean((y_prev - y_teste)^2))
 ```
-
 
 ## LASSO
 
@@ -182,7 +173,6 @@ Primeiro ajustamos com todos os dados como no caso do Ridge
 ajusreg.lasso <- glmnet(x_treino,y_treino, alpha = 1)
 plot_glmnet(ajusreg.lasso)
 ```
-
 
 ## Validação Cruzada no LASSO
 
@@ -195,8 +185,6 @@ log(m_lamb1)
 coef(lasso_cv, s=m_lamb1)
 ```
 
-
-
 ## Avaliando com conjunto de teste
 
 ```{r lasso2}
@@ -206,9 +194,7 @@ y_prev <- predict(ajusreg.lasso2, s = m_lamb1, newx = x_teste)
 sqrt(mean((y_prev - y_teste)^2))
 ```
 
-
 ## Comparando com a seleção de modelos usando o Cp
-
 
 ```{r outro}
 library(leaps)
@@ -231,10 +217,9 @@ summary(outro_mod)
 sqrt(mean((conj_teste$medv - predict(outro_mod, conj_teste)) ^ 2)) 
 ```
 
-
 ## E o BIC?
 
-E se escolhessemos o BIC como critério de seleção de variáveis explicativas? Neste caso os resultados foram iguais ao Cp. Entretanto, dá para perceber que o BIC apresentou uma certa estabilidade entre 7 e 9 variáveis. Se quisermos ter um modelo mais enxuto poderiamos optar por 7 variáveis.    
+E se escolhessemos o BIC como critério de seleção de variáveis explicativas? Neste caso os resultados foram iguais ao Cp. Entretanto, dá para perceber que o BIC apresentou uma certa estabilidade entre 7 e 9 variáveis. Se quisermos ter um modelo mais enxuto poderiamos optar por 7 variáveis.
 
 ```{r BIC}
 ajusreg.comp1 <- regsubsets(medv ~ ., data=conj_treino, nvmax=13)
@@ -248,4 +233,3 @@ outro_mod1 <- lm(medv ~ chas + nox + rm + dis + ptratio + black + lstat, data=co
 summary(outro_mod1)
 sqrt(mean((conj_teste$medv - predict(outro_mod1, conj_teste)) ^ 2))
 ```
-
