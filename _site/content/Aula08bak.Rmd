@@ -1,0 +1,299 @@
+---
+title: "Classificação - Primeiros Passos"
+author: "Ricardo Accioly"
+date: "`r Sys.Date()`"
+output:
+ html_document:
+    toc: yes
+    code_download: yes
+---
+
+# Primeiros Passos
+
+Baseado no livro Introduction to Data Science: Data Analysis and Prediction Algorithms with R, Rafael A. Irizarry. (https://rafalab.github.io/dsbook/)
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 9, 
+                      fig.height= 7,  
+                      fig.retina = 3,
+                      message = FALSE, 
+                      warning = FALSE,
+                      dev=c("png"), 
+                      fig.path="imagens/Aula08/")
+```
+
+
+## Carregando Bibliotecas
+
+
+```{r bibliotecas, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(caret)
+library(dslabs)
+data(heights)
+```
+
+## Traduzindo 
+
+```{r ajustes-dados}
+head(heights)
+str(heights)
+alturas <- heights %>%
+  # traduz dados para o português e transforma polegada para metro
+  mutate(
+          sex = case_when(
+                           sex == "Male" ~ "Masculino",
+                           sex == "Female" ~ "Feminino"
+                          ), 
+          altura = height * 2.54 / 100 ) %>%
+  rename( sexo = sex) %>% 
+  select(sexo , altura)
+head(alturas)
+str(alturas)
+```
+
+## Alterando
+
+```{r fator}
+alturas <- data.frame(sexo = factor(alturas$sexo), altura = alturas$altura)
+str(alturas)
+head(alturas)
+```
+
+## Definindo x e y 
+
+```{r}
+y <- alturas$sexo
+x <- alturas$altura
+```
+
+## Treino e Teste
+
+```{r amostras-treino-teste}
+set.seed(2021)
+indice_teste <- createDataPartition(y, times = 1, p = 0.2, list = FALSE)
+conj_teste <- alturas[indice_teste, ]
+conj_treino <- alturas[-indice_teste, ]
+head(conj_teste)
+str(conj_teste)
+summary(conj_teste)
+head(conj_treino)
+str(conj_treino)
+summary(conj_treino)
+```
+
+
+## Chutar a resposta!!!!!
+
+
+```{r chute}
+y_chapeu <- sample(c("Masculino", "Feminino"), length(indice_teste), replace = TRUE) %>% 
+  factor(levels = levels(conj_teste$sexo))
+```
+
+## Calcula precisão
+
+```{r precisao}
+mean(y_chapeu == conj_teste$sexo)
+
+```
+
+## Melhorando 
+
+```{r melhora-chute}
+alturas %>% group_by(sexo) %>% summarize(mean(altura), sd(altura))
+media_Homem <- mean(alturas[alturas$sexo=="Masculino",]$altura)
+desv_pad_Homem <- sd(alturas[alturas$sexo=="Masculino",]$altura)
+media_Homem
+desv_pad_Homem
+media_Homem - 2*desv_pad_Homem
+y_chapeu <- ifelse(x > media_Homem - 2*desv_pad_Homem , "Masculino", "Feminino") %>% factor(levels = levels(conj_teste$sexo))
+mean(y == y_chapeu)
+```
+
+## Qual o melhor ponto de corte?
+
+```{r melhorando-pontodecorte}
+pontodecorte <- seq(1.54, 1.78, by = 0.01)
+precisao <- map_dbl(pontodecorte, function(x){
+  y_chapeu <- ifelse(conj_treino$altura > x, "Masculino", "Feminino") %>% 
+    factor(levels = levels(conj_teste$sexo))
+  mean(y_chapeu == conj_treino$sexo)
+})
+max(precisao)
+melhor_ponto <- pontodecorte[which.max(precisao)]
+melhor_ponto
+plot(pontodecorte, precisao) 
+abline(v=melhor_ponto)
+y_chapeu <- ifelse(conj_teste$altura > melhor_ponto, "Masculino", "Feminino") %>% 
+  factor(levels = levels(conj_teste$sexo))
+y_chapeu <- factor(y_chapeu)
+mean(y_chapeu == conj_teste$sexo)
+
+```
+
+## Melhorando o gráfico
+
+```{r grafico}
+library(ggplot2)
+dados <- data.frame(pontodecorte, precisao)
+ggplot(data=dados, aes(x=pontodecorte, y=precisao)) + geom_point() +
+       geom_vline(xintercept = melhor_ponto, linetype="dashed", color="red")
+```
+
+## Matriz de Confusão
+
+```{r matriz_conf}
+table(previsto = y_chapeu, real = conj_teste$sexo)
+conj_teste %>% 
+  mutate(y_chapeu = y_chapeu) %>%
+  group_by(sexo) %>% 
+  summarize(precisao = mean(y_chapeu == sexo))
+confusionMatrix(data = y_chapeu, reference = conj_teste$sexo)
+```
+
+## Maximizando a estatística F1
+
+```{r max-f1}
+pontodecorte <- seq(1.54, 1.78, by = 0.01)
+F_1 <- map_dbl(pontodecorte, function(x){
+  y_chapeu <- ifelse(conj_treino$altura > x, "Masculino", "Feminino") %>% 
+    factor(levels = levels(conj_teste$sexo))
+  F_meas(data = y_chapeu, reference = factor(conj_treino$sexo))
+})
+max(F_1)
+melhor_ponto <- pontodecorte[which.max(F_1)]
+melhor_ponto
+dados <- data.frame(pontodecorte, F_1)
+ggplot(data=dados, aes(x=pontodecorte, y=F_1)) + geom_point() +
+       geom_vline(xintercept = melhor_ponto, linetype="dashed", color="red")
+y_chapeu <- ifelse(conj_teste$altura > melhor_ponto, "Masculino", "Feminino") %>% 
+  factor(levels = levels(conj_teste$sexo))
+confusionMatrix(data = y_chapeu, reference = conj_teste$sexo)
+```
+
+
+## Voltando a chutar
+```{r volta_chute}
+p <- 0.9
+y_chapeu <- sample(c("Masculino", "Feminino"), length(indice_teste), 
+                   replace = TRUE, prob=c(p, 1-p)) %>% factor(levels = levels(conj_teste$sexo))
+mean(y_chapeu == conj_teste$sexo)
+```
+
+
+## Curva ROC
+
+```{r roc1}
+     ggplot() +
+     geom_abline(intercept = 0, slope = 1.) + 
+     labs(x = "Taxa Positiva Falsa (1 - Especificidade)", 
+          y = "Taxa Positiva Verdadeira (Sensibilidade)", 
+          title = "Curva ROC") +
+     scale_x_continuous(limits = c(0, 1.0)) + 
+     scale_y_continuous(limits = c(0, 1.0))
+```
+
+
+## Testando probabilidades
+
+```{r chute_dif_probs}
+probs <- seq(0, 1, length.out = 10)
+chutando <- map_df(probs, function(p){
+     y_chapeu <- 
+          sample(c("Masculino", "Feminino"), length(indice_teste), replace = TRUE,                            prob=c(p, 1-p)) %>%  factor(levels = levels(conj_teste$sexo))
+      list(metodo = "Chutando",
+           TPF = 1 - specificity(y_chapeu, conj_teste$sexo),
+           TPV = sensitivity(y_chapeu, conj_teste$sexo)) 
+})
+     chutando %>%
+     ggplot(aes(TPF, TPV)) +
+     geom_line() +
+     geom_point() +
+     geom_abline(intercept = 0, slope = 1.) + 
+     labs(x = "Taxa Positiva Falsa (1 - Especificidade)", 
+          y = "Taxa Positiva Verdadeira (Sensibilidade)", 
+          title = "Curva ROC Método Chutando") +
+     scale_x_continuous(limits = c(0, 1.0)) + 
+     scale_y_continuous(limits = c(0, 1.0))
+```
+
+
+## Comparando os dois métodos
+
+
+```{r roc2, fig.width=8}
+pontodecorte <- seq(1.27 , 1.92, by = 0.01)
+altura_ptdecorte <- map_df(pontodecorte, function(x){
+     y_chapeu <- ifelse(conj_teste$altura > x, "Masculino", "Feminino") %>% 
+                 factor(levels = levels(conj_teste$sexo))
+     list(metodo = "Corte por Altura",
+        TPF = 1 - specificity(y_chapeu, conj_teste$sexo),
+        TPV = sensitivity(y_chapeu, conj_teste$sexo)) 
+})
+bind_rows(chutando, altura_ptdecorte) %>%
+     ggplot(aes(TPF, TPV, color = metodo)) +
+     geom_line() +
+     geom_point() +
+     geom_abline(intercept = 0, slope = 1.) + 
+     labs(x = "Taxa Positiva Falsa (TPF)", 
+          y = "Taxa Positiva Verdadeira(TPV)", 
+          title = "Curva ROC") +
+     scale_x_continuous(limits = c(0, 1.0)) + 
+     scale_y_continuous(limits = c(0, 1.0))
+
+```
+
+## Pontos da curva ROC
+
+```{r roc3}
+map_df(pontodecorte, function(x){
+     y_chapeu <- ifelse(conj_teste$altura > x, "Masculino", "Feminino") %>% 
+                  factor(levels = c("Masculino", "Feminino"))
+     list(metodo = "Corte por Altura",
+          corte = round(x, 2), 
+          TPF = 1 - specificity(y_chapeu, conj_teste$sexo),
+          TPV = sensitivity(y_chapeu, conj_teste$sexo)) 
+}) %>%
+     ggplot(aes(TPF, TPV, label = corte)) +
+     geom_line() +
+     geom_point() +
+     geom_text(nudge_y = - 0.05, size = 3, check_overlap = TRUE) +
+     scale_x_continuous(limits = c(0, 1.0)) + 
+     scale_y_continuous(limits = c(0, 1.0))
+```
+
+
+## Curva Precisão-Recall
+
+```{r precisao-recall, fig.width=8}
+chutando <- map_df(probs, function(p){
+            y_chapeu <- sample(c("Masculino", "Feminino"), length(indice_teste), 
+            replace = TRUE, prob=c(p, 1-p)) %>% 
+            factor(levels = c("Masculino", "Feminino"))
+     list(metodo = "Chutando",
+           recall = sensitivity(y_chapeu, conj_teste$sexo),
+           precisao = posPredValue(y_chapeu, conj_teste$sexo))
+})
+altura_ptdecorte <- map_df(pontodecorte, function(x){
+     y_chapeu <- ifelse(conj_teste$altura > x, "Masculino", "Feminino") %>% 
+          factor(levels = c("Masculino", "Feminino"))
+      list(metodo = "Corte por Altura",
+           recall = sensitivity(y_chapeu, conj_teste$sexo),
+           precisao = posPredValue(y_chapeu, conj_teste$sexo))
+})
+bind_rows(chutando, altura_ptdecorte) %>%
+     ggplot(aes(recall, precisao, color = metodo)) +
+     geom_line() +
+     geom_point() +
+     labs(x = "Recall ou Taxa Positiva Verdeira (TPV)", 
+          y = "Precisão ou Valor Preditivo Positivo (VPP)", 
+          title = "Curva Precisão - Recall") +
+     scale_x_continuous(limits = c(0, 1.0)) + 
+     scale_y_continuous(limits = c(0, 1.0))
+```
+
+
+
+
