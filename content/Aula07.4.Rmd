@@ -168,11 +168,6 @@ sqrt(mean((y_prev - y_teste)^2))
 ```
 
 
-```{r sem rad}
-conj_treino <- Boston %>% slice(-indice_teste)
-```
-
-
 ## LASSO
 
 Primeiro ajustamos com todos os dados como no caso do Ridge
@@ -207,12 +202,12 @@ sqrt(mean((y_prev - y_teste)^2))
 
 ```{r outro}
 library(leaps)
-ajusreg.comp <- regsubsets(medv ~ ., data=conj_treino, nvmax=13)
+ajusreg.comp <- regsubsets(medv ~ ., data=conj_treino, nvmax=12)
 sumario.reg <- summary(ajusreg.comp)
 ## Os modelos vão ser escolhidos com base no menor Cp
 plot(sumario.reg$cp,xlab="Número de Variáveis",ylab="Cp")
 which.min(sumario.reg$cp)
-points(11,sumario.reg$cp[11],pch=20,col="red")
+points(9,sumario.reg$cp[9],pch=20,col="red")
 ```
 
 ## Ajustando no lm() e vendo o erro no conjunto de teste
@@ -220,8 +215,8 @@ points(11,sumario.reg$cp[11],pch=20,col="red")
 Observando so resultados de erro vemos que tanto a regressão Ridge como o LASSO apresentaram valores de erro maiores que o modelo definido através da melhor seleção de modelos (best subset regression). Aqui usamos o Cp de Mallows como critério de deleção de variáveis.
 
 ```{r erro_teste}
-coef(ajusreg.comp,11) 
-outro_mod <- lm(medv ~ crim + zn + chas + nox + rm + dis + tax + ptratio + black + lstat, data=conj_treino)
+coef(ajusreg.comp,9) 
+outro_mod <- lm(medv ~ zn + chas + nox + rm + age + dis + ptratio + black + lstat, data=conj_treino)
 summary(outro_mod)
 sqrt(mean((conj_teste$medv - predict(outro_mod, conj_teste)) ^ 2)) 
 ```
@@ -231,7 +226,7 @@ sqrt(mean((conj_teste$medv - predict(outro_mod, conj_teste)) ^ 2))
 E se escolhessemos o BIC como critério de seleção de variáveis explicativas? Neste caso os resultados foram iguais ao Cp. Entretanto, dá para perceber que o BIC apresentou uma certa estabilidade entre 7 e 9 variáveis. Se quisermos ter um modelo mais enxuto poderiamos optar por 7 variáveis.
 
 ```{r BIC}
-ajusreg.comp1 <- regsubsets(medv ~ ., data=conj_treino, nvmax=13)
+ajusreg.comp1 <- regsubsets(medv ~ ., data=conj_treino, nvmax=12)
 sumario.reg1 <- summary(ajusreg.comp1)
 ## Os modelos vão ser escolhidos com base no menor BIC
 plot(sumario.reg1$bic,xlab="Número de Variáveis",ylab="BIC")
