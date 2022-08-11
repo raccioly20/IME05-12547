@@ -103,16 +103,6 @@ ggplot(conj_treino, aes(x=as.factor(estudante), y=receita)) +
 ```
 
 
-## Explorando um pouco mais Balanço e Receita
-
-```{r histogramas}
-ggplot(conj_treino, aes(x=balanco)) +
-  geom_histogram(bins = round(1+3.322*log10(nrow(conj_treino)),0))
-ggplot(conj_treino, aes(x=receita)) +
-    geom_histogram(bins = round(1+3.322*log10(nrow(conj_treino)),0))
-```
-
-
 ## Balanço vs Receita
 
 

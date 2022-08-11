@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ricardo Accioly" />
 
-<meta name="date" content="2022-04-27" />
+<meta name="date" content="2022-08-11" />
 
 <title>Regressão Logística - SMOTE</title>
 
@@ -230,6 +230,8 @@ window.initializeCodeFolding = function(show) {
   // select all R code blocks
   var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia, pre.foldable');
   rCodeBlocks.each(function() {
+    // skip if the block has fold-none class
+    if ($(this).hasClass('fold-none')) return;
 
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
@@ -468,7 +470,7 @@ pre code {
 
 <h1 class="title toc-ignore">Regressão Logística - SMOTE</h1>
 <h4 class="author">Ricardo Accioly</h4>
-<h4 class="date">2022-04-27</h4>
+<h4 class="date">2022-08-11</h4>
 
 </div>
 
@@ -540,7 +542,7 @@ credito &lt;- credito %&gt;% mutate( estudante =  case_when(
                           ))
 
 str(credito)</code></pre>
-<pre><code>## tibble [10,000 x 4] (S3: tbl_df/tbl/data.frame)
+<pre><code>## tibble [10,000 × 4] (S3: tbl_df/tbl/data.frame)
 ##  $ inadimplente: Factor w/ 2 levels &quot;Nao&quot;,&quot;Sim&quot;: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ estudante   : num [1:10000] 0 1 0 0 0 1 0 1 0 0 ...
 ##  $ balanco     : num [1:10000] 730 817 1074 529 786 ...
